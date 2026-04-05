@@ -171,6 +171,16 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .drag-h{color:var(--t3);cursor:grab;font-size:16px;padding:4px;touch-action:none;flex-shrink:0}
 .list-spot-row.drag-over{background:var(--bg2)}
 
+/* 1-day feasibility warning */
+.day-warn{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:14px;margin-bottom:16px}
+.day-warn.tight{background:#FFF8EE;border:1px solid #FFE4A8}
+.day-warn.hard{background:#FFF0F0;border:1px solid #FFCACA}
+.day-warn-body{flex:1;min-width:0}
+.day-warn-title{font-size:13px;font-weight:700;color:#111;margin-bottom:2px}
+.day-warn-sub{font-size:12px;color:var(--t2);line-height:1.5}
+.day-warn-cta{margin-top:8px;padding:5px 12px;background:#111;color:#fff;border:none;border-radius:999px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.day-warn-cta:active{opacity:.8}
+
 /* excluded */
 .excl-section{margin-top:16px;padding-top:8px;border-top:1px solid var(--border)}
 .excl-hdr{display:flex;align-items:center;justify-content:space-between;padding:8px 0;cursor:pointer}
@@ -572,11 +582,27 @@ function kMeans(spots, k) {
   return asgn.map(a=>remap[a]);
 }
 
-function recomputeClusters(){
+function recomputeClusters(k){
   const active=activeSpots();
-  const k=active.length<=3?1:active.length<=5?2:3;
-  const asgn=kMeans(active,k);
+  const useK=k||(active.length<=3?1:active.length<=5?2:3);
+  const asgn=kMeans(active,useK);
   active.forEach((sp,i)=>{sp.cluster=asgn[i]??0;});
+}
+
+function calcSpreadKm(spots){
+  if(spots.length<2)return 0;
+  const lats=spots.map(s=>s.lat),lngs=spots.map(s=>s.lng);
+  const dLat=(Math.max(...lats)-Math.min(...lats))*111;
+  const dLng=(Math.max(...lngs)-Math.min(...lngs))*111*Math.cos(lats[0]*Math.PI/180);
+  return Math.sqrt(dLat*dLat+dLng*dLng);
+}
+
+function get1DayFeasibility(spots){
+  if(spots.length<=3)return null; // fine
+  const km=calcSpreadKm(spots);
+  if(spots.length>=6||km>8) return {level:'hard',km};
+  if(spots.length>=5||km>5) return {level:'tight',km};
+  return null;
 }
 
 // ═══════════════════════════════════════════
@@ -611,8 +637,8 @@ function activeSpots(){return S.spots.filter(s=>!S.excluded.has(s.id)&&s.city===
 function buildGroups(){
   const active=activeSpots();
   if(!active.length){S.routeGroups=[];return;}
-  recomputeClusters();
   const k=S.days<=1?1:S.days===2?2:3;
+  recomputeClusters(k);
   const groups=[];
   for(let ci=0;ci<k;ci++){
     const grpSpots=active.filter(s=>s.cluster===ci);
@@ -1040,6 +1066,29 @@ function selectDay(i){
 function renderListView(){
   const wrap=document.getElementById('sheet-list');
   if(!S.routeGroups.length){wrap.innerHTML='<div style="padding:20px;text-align:center;color:#999;font-size:13px">Plan에 포함된 Spot이 없어요</div>';return;}
+  // 1-day feasibility banner
+  let warnHtml='';
+  if(S.days===1){
+    const allSpots=activeSpots();
+    const feas=get1DayFeasibility(allSpots);
+    if(feas){
+      const isHard=feas.level==='hard';
+      const kmStr=feas.km?Math.round(feas.km)+'km':'';
+      const title=isHard?'하루에 다 돌기엔 무리예요':'하루가 꽤 빡빡할 것 같아요';
+      const sub=isHard
+        ?`스팟들이 ${kmStr} 범위에 퍼져 있어요. 이동만 해도 하루가 될 수 있어요.`
+        :`스팟이 많아서 이동이 많아질 거예요. 여유롭게 즐기려면 2일이 딱 맞아요.`;
+      const ctaDay=allSpots.length<=5?2:3;
+      warnHtml=`<div class="day-warn ${feas.level}">
+        <div style="font-size:22px;flex-shrink:0">${isHard?'😮':'😅'}</div>
+        <div class="day-warn-body">
+          <div class="day-warn-title">${title}</div>
+          <div class="day-warn-sub">${sub}</div>
+          <button class="day-warn-cta" onclick="setDays(${ctaDay})">${ctaDay}일로 바꾸기</button>
+        </div>
+      </div>`;
+    }
+  }
   // per-group editable summaries (keyed by group label)
   if(!S.groupSummaries)S.groupSummaries={};
   let html=S.routeGroups.map((g,gi)=>{
@@ -1100,7 +1149,7 @@ function renderListView(){
         </div>`).join(''):''}
     </div>`;
   }
-  wrap.innerHTML=html;
+  wrap.innerHTML=warnHtml+html;
 }
 
 function toggleExcl(){S.exclOpen=!S.exclOpen;renderListView();}
