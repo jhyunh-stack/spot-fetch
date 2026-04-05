@@ -93,22 +93,37 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 /* city button */
 #city-btn{position:absolute;top:16px;left:16px;z-index:50;display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:var(--glass-b);box-shadow:0 2px 10px rgba(0,0,0,0.12);font-size:14px;font-weight:700;color:var(--t1);cursor:pointer;font-family:inherit;min-height:44px}
 
-/* bottom sheet — z-index above map-wrap stacking context */
-#plan-sheet{position:absolute;bottom:0;left:0;right:0;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:var(--glass-b);border-radius:20px 20px 0 0;box-shadow:0 -4px 24px rgba(0,0,0,0.10);z-index:200;overflow:hidden;transition:height .35s cubic-bezier(.32,.72,0,1);display:flex;flex-direction:column}
-.sheet-handle-row{padding:10px 0 4px;display:flex;justify-content:center;cursor:pointer;flex-shrink:0}
-.handle{width:36px;height:4px;background:rgba(0,0,0,0.15);border-radius:2px}
+/* bottom sheet */
+#plan-sheet{
+  position:absolute;bottom:0;left:0;right:0;
+  background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
+  border-top:var(--glass-b);border-radius:20px 20px 0 0;
+  box-shadow:0 -4px 32px rgba(0,0,0,0.13);
+  z-index:200;display:flex;flex-direction:column;
+  will-change:height;
+}
+#plan-sheet.snapping{transition:height .32s cubic-bezier(.32,.72,0,1)}
 
-/* day chips (collapsed) */
-#sheet-chips{padding:6px 16px 14px;flex-shrink:0}
+/* handle zone — tall touch target */
+#sheet-handle{
+  padding:12px 16px 8px;display:flex;flex-direction:column;
+  align-items:center;gap:6px;cursor:grab;flex-shrink:0;
+  touch-action:none;user-select:none;-webkit-user-select:none;
+}
+#sheet-handle:active{cursor:grabbing}
+.handle{width:40px;height:4px;background:rgba(0,0,0,0.18);border-radius:2px;flex-shrink:0}
+#sheet-peek-label{font-size:13px;font-weight:600;color:var(--t2);white-space:nowrap}
+
+/* day chips */
+#sheet-chips{padding:4px 16px 12px;flex-shrink:0}
 .chips-row{display:flex;gap:8px;margin-bottom:8px}
 .day-chip{flex:1;padding:8px 4px;border-radius:999px;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;background:rgba(0,0,0,0.06);color:var(--t2);min-height:36px}
 .day-chip.on{color:#fff}
 .chip-summary{font-size:13px;color:var(--t2);line-height:1.4;padding:0 2px}
 
-/* list view (expanded) */
-#sheet-list{flex:1;overflow-y:auto;padding:4px 16px 24px;display:none;min-height:0}
+/* list */
+#sheet-list{flex:1;overflow-y:auto;padding:4px 16px 24px;min-height:0;overscroll-behavior:contain}
 #sheet-list::-webkit-scrollbar{display:none}
-#sheet-list.show{display:block}
 .list-day-grp{margin-bottom:4px}
 .list-day-hdr{padding:12px 0 6px}
 .list-day-badge{display:inline-flex;align-items:center;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:700;color:#fff;margin-bottom:4px}
@@ -213,8 +228,9 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     </div>
   </div>
   <div id="plan-sheet">
-    <div class="sheet-handle-row" id="sheet-handle" onclick="toggleSheet()">
+    <div id="sheet-handle">
       <div class="handle"></div>
+      <div id="sheet-peek-label"></div>
     </div>
     <div id="sheet-chips">
       <div class="chips-row" id="chips-row"></div>
@@ -403,7 +419,7 @@ const S={
   expanded:new Set(),
   routeGroups:[],
   map:null,mapInited:false,markers:{},lines:[],
-  sheetOpen:false,exclOpen:false,
+  snap:1,exclOpen:false,
 };
 recomputeClusters();
 buildGroups();
@@ -550,8 +566,8 @@ function initPlanTab(){
   if(!S.mapInited){initMap();}
   else{S.map.invalidateSize();syncMarkers();drawLines();}
   updateDaySeg();
-  S.sheetOpen=true;
-  applySheet();
+  renderDayChips();
+  snapTo(SNAP.mid);
 }
 
 // ═══════════════════════════════════════════
@@ -660,33 +676,105 @@ function updateDaySeg(){
 }
 
 // ═══════════════════════════════════════════
-// BOTTOM SHEET
+// BOTTOM SHEET — drag + snap
 // ═══════════════════════════════════════════
-function toggleSheet(){
-  S.sheetOpen=!S.sheetOpen;applySheet();
+// snap: 0=peek, 1=mid, 2=full
+const SNAP={peek:0,mid:1,full:2};
+S.snap=SNAP.mid;
+
+function snapHeights(){
+  const tabH=document.getElementById('tab-plan').offsetHeight||window.innerHeight;
+  return[88, Math.round(tabH*0.56), Math.round(tabH*0.92)];
 }
-function applySheet(){
+
+function snapTo(level,animate=true){
+  S.snap=level;
+  const h=snapHeights()[level];
   const sheet=document.getElementById('plan-sheet');
-  const list=document.getElementById('sheet-list');
   const mapWrap=document.getElementById('plan-map-wrap');
-  if(S.sheetOpen){
-    list.classList.add('show');
-    const tabH=document.getElementById('tab-plan').offsetHeight;
-    const sheetH=Math.round(tabH*0.62);
-    sheet.style.height=sheetH+'px';
-    mapWrap.style.height=(tabH-sheetH)+'px';
-    mapWrap.style.flex='none';
-    renderListView();
-    setTimeout(()=>{if(S.map)S.map.invalidateSize();},120);
+  const tabH=document.getElementById('tab-plan').offsetHeight;
+  if(animate){sheet.classList.add('snapping');setTimeout(()=>sheet.classList.remove('snapping'),340);}
+  sheet.style.height=h+'px';
+  mapWrap.style.height=Math.max(tabH-h,40)+'px';
+  mapWrap.style.flex='none';
+  // show list when not peek
+  const list=document.getElementById('sheet-list');
+  if(level===SNAP.peek){list.style.display='none';}
+  else{list.style.display='block';renderListView();}
+  updatePeekLabel();
+  setTimeout(()=>{if(S.map)S.map.invalidateSize();},50);
+}
+
+function updatePeekLabel(){
+  const el=document.getElementById('sheet-peek-label');
+  if(!el)return;
+  if(S.snap===SNAP.peek){
+    const n=activeSpots().length;
+    el.textContent=`Spot ${n}개 보기 ↑`;
+    el.style.display='';
   } else {
-    list.classList.remove('show');
-    sheet.style.height='';mapWrap.style.height='';mapWrap.style.flex='';
-    setTimeout(()=>{if(S.map)S.map.invalidateSize();},120);
-    closeDetail();
+    el.style.display='none';
   }
 }
 
-function renderSheetContent(){renderDayChips();if(S.sheetOpen)renderListView();}
+// drag logic
+(function(){
+  let startY=0,startH=0,dragging=false,velY=0,lastY=0,lastT=0;
+  function onStart(e){
+    const t=e.touches?e.touches[0]:e;
+    startY=t.clientY;lastY=t.clientY;lastT=Date.now();
+    startH=document.getElementById('plan-sheet').offsetHeight;
+    dragging=true;velY=0;
+    document.getElementById('plan-sheet').classList.remove('snapping');
+  }
+  function onMove(e){
+    if(!dragging)return;
+    e.preventDefault();
+    const t=e.touches?e.touches[0]:e;
+    const dy=startY-t.clientY;
+    const hs=snapHeights();
+    const newH=Math.max(hs[0]-10,Math.min(startH+dy,hs[2]+20));
+    document.getElementById('plan-sheet').style.height=newH+'px';
+    const now=Date.now();const dt=now-lastT||1;
+    velY=(lastY-t.clientY)/dt*1000;
+    lastY=t.clientY;lastT=now;
+  }
+  function onEnd(){
+    if(!dragging)return;
+    dragging=false;
+    const curH=document.getElementById('plan-sheet').offsetHeight;
+    const hs=snapHeights();
+    // velocity threshold: if flicking up/down strongly, jump a snap
+    let target;
+    if(velY>300)      target=Math.min(S.snap+1,SNAP.full);
+    else if(velY<-300)target=Math.max(S.snap-1,SNAP.peek);
+    else{
+      // nearest snap
+      const dists=hs.map((h,i)=>({i,d:Math.abs(h-curH)}));
+      target=dists.sort((a,b)=>a.d-b.d)[0].i;
+    }
+    snapTo(target);
+  }
+  window.addEventListener('DOMContentLoaded',()=>{
+    const h=document.getElementById('sheet-handle');
+    if(!h)return;
+    h.addEventListener('touchstart',onStart,{passive:true});
+    h.addEventListener('touchmove',onMove,{passive:false});
+    h.addEventListener('touchend',onEnd);
+    h.addEventListener('mousedown',onStart);
+    window.addEventListener('mousemove',e=>{if(dragging)onMove(e);});
+    window.addEventListener('mouseup',()=>{if(dragging)onEnd();});
+    h.addEventListener('click',()=>{
+      if(!dragging){
+        const next=[SNAP.mid,SNAP.full,SNAP.peek][S.snap];
+        snapTo(next);
+      }
+    });
+  });
+})();
+
+function applySheet(){snapTo(S.snap,false);}
+function renderSheetContent(){renderDayChips();if(S.snap!==SNAP.peek)renderListView();updatePeekLabel();}
 
 function renderDayChips(){
   const row=document.getElementById('chips-row');
