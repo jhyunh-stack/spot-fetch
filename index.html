@@ -203,9 +203,19 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .sd-name{font-size:20px;font-weight:700;letter-spacing:-.4px;color:var(--t1)}
 .sd-desc{font-size:13px;color:var(--t2);margin-top:3px}
 .sd-body{font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:14px}
-.sd-act-row{display:flex;align-items:stretch;gap:8px;margin-bottom:14px}
-.sd-map-btn{flex:1;display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:var(--bg2);border:none;cursor:pointer;font-family:inherit;text-align:left;transition:background .15s}
-.sd-map-btn:active{background:rgba(0,0,0,0.09)}
+.sd-act-row{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.sd-copy-btn{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:var(--bg2);border:none;cursor:pointer;font-family:inherit;text-align:left;transition:background .15s;width:100%}
+.sd-copy-btn:active{background:rgba(0,0,0,0.09)}
+.sd-copy-label{font-size:13px;font-weight:600;color:var(--t1)}
+.sd-copy-addr{font-size:12px;color:var(--t2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sd-copy-icon{margin-left:auto;color:var(--t3);flex-shrink:0;display:flex;align-items:center}
+.sd-src-card{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:var(--bg2)}
+.sd-src-badge{font-size:10px;font-weight:800;color:#fff;padding:3px 8px;border-radius:8px;flex-shrink:0;letter-spacing:.3px}
+.sd-src-ig{background:linear-gradient(135deg,#f09433,#dc2743,#bc1888)}
+.sd-src-tt{background:#010101}
+.sd-src-info{flex:1;min-width:0}
+.sd-src-user{font-size:12px;font-weight:600;color:var(--t2)}
+.sd-src-title{font-size:13px;font-weight:600;color:var(--t1);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sd-map-icon{font-size:20px;flex-shrink:0}
 .sd-map-label{font-size:13px;font-weight:600;color:var(--t1);line-height:1.3}
 .sd-map-sub{font-size:11px;color:var(--t2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}
@@ -831,6 +841,11 @@ function drawLines(){
 
 function openMaps(lat,lng){window.open('https://maps.google.com/?q='+lat+','+lng,'_blank');}
 function copyAddress(addr){
+  navigator.clipboard.writeText(addr).then(()=>toast('주소가 복사됐어요')).catch(()=>{
+    const el=document.createElement('textarea');el.value=addr;document.body.appendChild(el);el.select();document.execCommand('copy');document.body.removeChild(el);toast('주소가 복사됐어요');
+  });
+}
+function copyAddress(addr){
   if(navigator.clipboard){navigator.clipboard.writeText(addr).then(()=>toast('주소가 복사됐어요 📍'));}
   else{toast('주소: '+addr);}
 }
@@ -853,8 +868,16 @@ function selSpot(id){
   document.getElementById('sheet-chips').innerHTML=
     `<div class="sd-nav"><button class="sd-nav-back" onclick="closeDetail()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>목록</button></div>`;
   const reel=REELS_DATA.find(r=>r.id===sp.reelId);
-  const reelBtn=reel?`<button class="sd-reel-btn ${reel.platform==='instagram'?'sd-reel-ig':'sd-reel-tt'}" onclick="viewReel('${reel.id}')">${reel.platform==='instagram'?'IG':'TT'}</button>`:'';
   const isExcl=S.excluded.has(id);
+  const addr=sp.address||sp.name+', '+sp.city.toUpperCase();
+  const srcCard=reel?`
+    <div class="sd-src-card">
+      <span class="sd-src-badge ${reel.platform==='instagram'?'sd-src-ig':'sd-src-tt'}">${reel.platform==='instagram'?'IG':'TT'}</span>
+      <div class="sd-src-info">
+        <div class="sd-src-user">${reel.user}</div>
+        <div class="sd-src-title">${reel.title}</div>
+      </div>
+    </div>`:'';
   const list=document.getElementById('sheet-list');
   list.style.display='block';
   list.innerHTML=`
@@ -872,14 +895,14 @@ function selSpot(id){
     </div>
     <div class="sd-body">${sp.detail}</div>
     <div class="sd-act-row">
-      <button class="sd-map-btn" onclick="openMaps(${sp.lat},${sp.lng})">
-        <span class="sd-map-icon">🗺️</span>
-        <div>
-          <div class="sd-map-label">지도에서 열기</div>
-          <div class="sd-map-sub">${sp.address||'San Francisco, CA'}</div>
+      <button class="sd-copy-btn" onclick="copyAddress('${addr}')">
+        <div style="flex:1;min-width:0">
+          <div class="sd-copy-label">주소 복사</div>
+          <div class="sd-copy-addr">${addr}</div>
         </div>
+        <span class="sd-copy-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
       </button>
-      ${reelBtn}
+      ${srcCard}
     </div>`;
 }
 
