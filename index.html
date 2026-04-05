@@ -253,16 +253,25 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .bridge-reel-badge{font-size:10px;font-weight:800;color:#fff;padding:3px 8px;border-radius:8px;flex-shrink:0}
 .bridge-reel-user{font-size:12px;color:var(--t2);font-weight:600}
 .bridge-reel-title{font-size:14px;font-weight:700;color:var(--t1);margin-top:1px;line-height:1.3}
-.bridge-divider{width:100%;height:1px;background:var(--border);margin:4px 0 0}
+.bridge-divider{display:none}
+/* reel thumbnail card */
+.bridge-thumb{width:72px;height:108px;border-radius:12px;overflow:hidden;flex-shrink:0;position:relative;box-shadow:0 4px 16px rgba(0,0,0,0.18)}
+.bridge-thumb img{width:100%;height:100%;object-fit:cover}
+.bridge-thumb-badge{position:absolute;top:6px;left:6px;font-size:9px;font-weight:800;color:#fff;padding:2px 6px;border-radius:6px}
+.bridge-reel{display:flex;align-items:center;gap:14px;padding:4px 0 16px;width:100%}
+.bridge-reel-meta{flex:1;min-width:0}
+.bridge-reel-user{font-size:12px;color:var(--t2);font-weight:600}
+.bridge-reel-title{font-size:14px;font-weight:700;color:var(--t1);margin-top:2px;line-height:1.35}
+.bridge-reel-spots{font-size:11px;color:var(--t3);margin-top:4px}
+/* spot rows */
 .bridge-spots{padding:0 20px}
-.bridge-spot-row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;-webkit-tap-highlight-color:transparent}
-.bridge-spot-row:last-child{border-bottom:none}
+.bridge-spot-row{display:flex;align-items:center;gap:12px;padding:11px 0;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .bridge-spot-em{font-size:22px;flex-shrink:0;width:28px;text-align:center}
 .bridge-spot-info{flex:1;min-width:0}
 .bridge-spot-name{font-size:14px;font-weight:600;color:var(--t1)}
 .bridge-spot-desc{font-size:12px;color:var(--t2);margin-top:1px}
-.bridge-check{width:24px;height:24px;border-radius:50%;border:2px solid rgba(0,0,0,0.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .18s;font-size:13px;font-weight:700;color:transparent}
-.bridge-check.on{background:#111;border-color:#111;color:#fff}
+.bridge-check{width:22px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:rgba(0,0,0,0.18);transition:color .18s}
+.bridge-check.on{color:#111}
 .bridge-actions{padding:20px 20px 0;display:flex;flex-direction:column;align-items:center;gap:4px}
 .bridge-cta{width:100%;padding:16px;background:#111;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;min-height:52px;transition:opacity .15s}
 .bridge-cta:active{opacity:.82}
@@ -1247,12 +1256,18 @@ function renderBridge(){
   const badge=_br.platform==='instagram'
     ?'<span class="bridge-reel-badge b-ig">IG</span>'
     :'<span class="bridge-reel-badge b-tt">TT</span>';
+  const bgColor=_br.platform==='instagram'?'linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366)':'#111';
   document.getElementById('bridge-reel-info').innerHTML=`
-    ${badge}
-    <div>
+    <div class="bridge-thumb">
+      <img src="${_br.photo}" alt="">
+      <div class="bridge-thumb-badge" style="background:${_br.platform==='instagram'?'linear-gradient(135deg,#f09433,#dc2743)':'#111'}">${_br.platform==='instagram'?'IG':'TT'}</div>
+    </div>
+    <div class="bridge-reel-meta">
       <div class="bridge-reel-user">${_br.user}</div>
       <div class="bridge-reel-title">${_br.title}</div>
+      <div class="bridge-reel-spots">Spots ${_bSpots.length}개</div>
     </div>`;
+  const checkSvg=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
   document.getElementById('bridge-spots').innerHTML=_bSpots.map(sp=>`
     <div class="bridge-spot-row" onclick="toggleBridgeSel('${sp.id}')">
       <span class="bridge-spot-em">${sp.emoji}</span>
@@ -1260,14 +1275,15 @@ function renderBridge(){
         <div class="bridge-spot-name">${sp.name}</div>
         <div class="bridge-spot-desc">${sp.desc}</div>
       </div>
-      <div class="bridge-check on" id="bc-${sp.id}">✓</div>
+      <div class="bridge-check on" id="bc-${sp.id}">${checkSvg}</div>
     </div>`).join('');
 }
 
 function toggleBridgeSel(id){
   const el=document.getElementById('bc-'+id);
-  if(_bSel.has(id)){_bSel.delete(id);el.className='bridge-check';el.textContent='';}
-  else{_bSel.add(id);el.className='bridge-check on';el.textContent='✓';}
+  const svg=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+  if(_bSel.has(id)){_bSel.delete(id);el.className='bridge-check';el.innerHTML=svg;}
+  else{_bSel.add(id);el.className='bridge-check on';el.innerHTML=svg;}
 }
 
 function confirmBridge(){
