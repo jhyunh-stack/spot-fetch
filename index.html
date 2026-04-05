@@ -293,6 +293,20 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 #toast{position:absolute;bottom:calc(var(--nav) + 14px);left:50%;transform:translateX(-50%) translateY(12px);background:#111;color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;font-weight:600;white-space:nowrap;opacity:0;transition:all .28s;z-index:999;pointer-events:none}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
+/* pin drop animation */
+@keyframes pinDrop{
+  0%  {transform:translateY(-36px) scale(.5);opacity:0}
+  55% {transform:translateY(6px) scale(1.15);opacity:1}
+  75% {transform:translateY(-3px) scale(.95)}
+  100%{transform:translateY(0) scale(1);opacity:1}
+}
+@keyframes pinPulse{
+  0%  {box-shadow:0 0 0 0 rgba(255,255,255,.7)}
+  70% {box-shadow:0 0 0 14px rgba(255,255,255,0)}
+  100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}
+}
+.sf-mkr.pin-drop{animation:pinDrop .52s cubic-bezier(.34,1.56,.64,1) both,pinPulse .6s .3s ease-out both}
+
 /* LEAFLET */
 .leaflet-container{font-family:inherit}
 .sf-mkr{width:40px;height:40px;border-radius:50%;border:2.5px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.22);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:transform .2s,box-shadow .2s}
@@ -851,10 +865,6 @@ function copyAddress(addr){
     const el=document.createElement('textarea');el.value=addr;document.body.appendChild(el);el.select();document.execCommand('copy');document.body.removeChild(el);toast('주소가 복사됐어요');
   });
 }
-function copyAddress(addr){
-  if(navigator.clipboard){navigator.clipboard.writeText(addr).then(()=>toast('주소가 복사됐어요 📍'));}
-  else{toast('주소: '+addr);}
-}
 function viewReel(reelId){
   const r=REELS_DATA.find(r=>r.id===reelId);
   if(r)toast((r.platform==='instagram'?'📸':'🎵')+' '+r.user+' · 원본 릴');
@@ -1346,12 +1356,97 @@ function toggleBridgeSel(id){
 }
 
 function confirmBridge(){
+  const newIds=[..._bSel];
   _bSpots.forEach(sp=>{
     if(_bSel.has(sp.id)){S.excluded.delete(sp.id);S.newSpots.add(sp.id);}
   });
   document.getElementById('reel-bridge').style.display='none';
   buildGroups();
-  initPlanTab();
+  playBridgeAnimation(newIds);
+}
+
+function playBridgeAnimation(newIds){
+  // ensure plan tab is visible
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-plan').classList.add('active');
+  document.querySelectorAll('.nav-btn')[1].classList.add('on');
+  S.tab='plan';
+
+  const empty=document.getElementById('plan-empty');
+  const sheet=document.getElementById('plan-sheet');
+  const mapWrap=document.getElementById('plan-map-wrap');
+  empty.classList.add('hidden');
+  sheet.style.display='';
+  mapWrap.style.visibility='visible';
+
+  if(!S.mapInited){
+    initMap();
+    // initMap already calls fitActive + drawLines; just snap after settle
+    setTimeout(()=>{renderSheetContent();snapTo(SNAP.mid);},600);
+    return;
+  }
+
+  S.map.invalidateSize();
+  updateDaySeg();
+
+  // keep sheet at peek while animating
+  snapTo(SNAP.peek,false);
+
+  // step 1: fit all spots
+  const all=activeSpots();
+  if(all.length) S.map.fitBounds(all.map(s=>[s.lat,s.lng]),{padding:[70,70],animate:true,duration:.7});
+
+  // hide new markers until drop
+  syncMarkers();
+  newIds.forEach(id=>{
+    const m=S.markers[id];
+    if(m){const el=m.getElement();if(el)el.style.opacity='0';}
+  });
+
+  // step 2: staggered pin drop
+  const STAGGER=280, DROP=520;
+  newIds.forEach((id,i)=>{
+    setTimeout(()=>{
+      const m=S.markers[id];if(!m)return;
+      const el=m.getElement();if(!el)return;
+      const inner=el.querySelector('.sf-mkr');
+      if(inner){
+        el.style.opacity='1';
+        inner.classList.remove('pin-drop');
+        void inner.offsetWidth; // reflow
+        inner.classList.add('pin-drop');
+      }
+    }, 700 + i*STAGGER);
+  });
+
+  // step 3: draw route lines animated
+  const linesAt=700+newIds.length*STAGGER+DROP;
+  setTimeout(()=>drawLinesAnimated(), linesAt);
+
+  // step 4: sheet slides up
+  setTimeout(()=>{renderSheetContent();snapTo(SNAP.mid);}, linesAt+750);
+}
+
+function drawLinesAnimated(){
+  S.lines.forEach(l=>l.remove());S.lines=[];
+  S.routeGroups.forEach(g=>{
+    const spots=g.spotIds.map(id=>getSpot(id)).filter(Boolean);
+    if(spots.length<2)return;
+    const line=L.polyline(spots.map(s=>[s.lat,s.lng]),{color:C[g.ci],weight:3,opacity:.7,dashArray:'8,5'}).addTo(S.map);
+    S.lines.push(line);
+    const path=line.getElement();
+    if(path&&path.getTotalLength){
+      const len=path.getTotalLength();
+      path.style.strokeDasharray=len+' '+len;
+      path.style.strokeDashoffset=len;
+      path.style.transition='none';
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        path.style.transition='stroke-dashoffset .7s ease-in-out';
+        path.style.strokeDashoffset='0';
+      }));
+    }
+  });
 }
 
 function skipBridge(){
