@@ -1404,7 +1404,43 @@ function playBridgeAnimation(newIds){
 
   if(!S.mapInited){
     initMap();
-    setTimeout(()=>{renderSheetContent();snapTo(SNAP.mid);staggerListItems();},800);
+    // map just initialized — undo its defaults and replay animation
+    setTimeout(()=>{
+      // hide new markers, clear lines, reset to peek
+      newIds.forEach(id=>{
+        const m=S.markers[id];
+        if(m){const el=m.getElement();if(el)el.style.opacity='0';}
+      });
+      S.lines.forEach(l=>l.remove());S.lines=[];
+      snapTo(SNAP.peek,false);
+      // now run the same animation (map already ready, skip zoom delay)
+      const all=activeSpots();
+      if(all.length) S.map.flyToBounds(all.map(s=>[s.lat,s.lng]),{padding:[70,70],duration:.5,easeLinearity:.5});
+      const STAGGER=140;
+      newIds.forEach((id,i)=>{
+        setTimeout(()=>{
+          const sp=getSpot(id);
+          const m=S.markers[id];if(!m)return;
+          const el=m.getElement();if(!el)return;
+          const inner=el.querySelector('.sf-mkr');if(!inner)return;
+          el.style.opacity='1';
+          inner.classList.remove('pin-pop');void inner.offsetWidth;inner.classList.add('pin-pop');
+          if(sp&&S.map){
+            const pt=S.map.latLngToContainerPoint([sp.lat,sp.lng]);
+            const ring=document.createElement('div');
+            ring.className='map-ripple';
+            ring.style.left=pt.x+'px';ring.style.top=pt.y+'px';
+            ring.style.border=`2px solid ${C[sp.cluster??0]}`;
+            S.map.getContainer().appendChild(ring);
+            setTimeout(()=>ring.remove(),600);
+          }
+        },500+i*STAGGER);
+      });
+      const routeAt=500+newIds.length*STAGGER+50;
+      setTimeout(()=>drawLinesAnimated(),routeAt);
+      const sheetAt=routeAt+350+80;
+      setTimeout(()=>{renderSheetContent();snapTo(SNAP.mid);setTimeout(()=>staggerListItems(),320);},sheetAt);
+    },300);
     return;
   }
 
