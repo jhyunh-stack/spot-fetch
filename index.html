@@ -150,8 +150,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .list-spot-row{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;border-radius:8px}
 .list-spot-row:last-child{border-bottom:none}
 .list-spot-row:active{background:var(--bg2)}
-.list-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;background:#111;flex-shrink:0}
-.list-em{font-size:20px;flex-shrink:0}
+.list-em-wrap{width:40px;height:40px;border-radius:11px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
 .list-info{flex:1;min-width:0}
 .list-name{font-size:14px;font-weight:600;color:var(--t1)}
 .list-desc{font-size:12px;color:var(--t2);margin-top:1px}
@@ -969,8 +968,7 @@ function renderListView(){
           ontouchend="lpEnd()"
           ontouchmove="lpCancel()"
           onclick="fromList('${sp.id}')">
-          <span class="list-num">${idx+1}</span>
-          <span style="font-size:20px">${sp.emoji}</span>
+          <div class="list-em-wrap">${sp.emoji}</div>
           <div class="list-info">
             <div class="list-name">${sp.name}</div>
             <div class="list-desc">${sp.desc}</div>
