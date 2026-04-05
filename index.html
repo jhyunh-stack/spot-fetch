@@ -97,11 +97,11 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 
 /* map top bar */
 #map-top-bar{position:absolute;top:16px;left:12px;right:12px;z-index:1000;display:flex;align-items:center;justify-content:space-between;gap:8px;pointer-events:none}
-#city-btn{pointer-events:all;display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:var(--glass-b);box-shadow:0 2px 14px rgba(0,0,0,0.14);font-size:16px;font-weight:700;color:var(--t1);cursor:pointer;font-family:inherit;min-height:44px;white-space:nowrap}
-#city-btn .chevron{font-size:12px;color:var(--t2);margin-top:1px}
+#city-btn{pointer-events:all;display:flex;align-items:center;gap:6px;padding:6px 4px;background:none;border:none;font-size:20px;font-weight:800;color:var(--t1);cursor:pointer;font-family:inherit;letter-spacing:-.4px;text-shadow:0 1px 6px rgba(255,255,255,0.9),0 0 20px rgba(255,255,255,0.7)}
+#city-btn .chevron{font-size:18px;font-weight:700;color:var(--t1);margin-top:2px}
 /* day filter toggle */
-#day-filter-btn{pointer-events:all;display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:var(--glass-b);box-shadow:0 2px 14px rgba(0,0,0,0.14);font-size:15px;font-weight:700;color:var(--t1);cursor:pointer;font-family:inherit;min-height:44px;border:none}
-#day-filter-btn .chevron{font-size:12px;color:var(--t2)}
+#day-filter-btn{pointer-events:all;display:flex;align-items:center;gap:5px;padding:10px 16px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:var(--glass-b);box-shadow:0 2px 14px rgba(0,0,0,0.14);font-size:15px;font-weight:700;color:var(--t1);cursor:pointer;font-family:inherit;min-height:44px}
+#day-filter-btn .chevron{font-size:16px;color:var(--t2);line-height:1}
 #day-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:var(--bg);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);overflow:hidden;display:none;min-width:100px}
 #day-dropdown.open{display:block}
 .day-opt{display:block;width:100%;padding:13px 20px;font-size:15px;font-weight:600;color:var(--t1);background:none;border:none;cursor:pointer;font-family:inherit;text-align:left;transition:background .15s}
@@ -243,7 +243,6 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     <div id="plan-map"></div>
     <div id="map-top-bar">
       <button id="city-btn" onclick="toast('도시 전환 (다중 도시 시 활성화)')">
-        <span id="city-flag">🇺🇸</span>
         <span id="city-name-txt">San Francisco</span>
         <span class="chevron">⌄</span>
       </button>
