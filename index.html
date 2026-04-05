@@ -142,17 +142,21 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .day-chip{flex:1;padding:8px 4px;border-radius:999px;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;background:rgba(0,0,0,0.06);color:var(--t2);min-height:36px;display:flex;align-items:center;justify-content:center;gap:5px}
 .day-chip.on{color:#fff;background:#111;border:none}
 .day-chip-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.spot-new{display:inline-flex;align-items:center;padding:2px 6px;border-radius:5px;font-size:9px;font-weight:700;letter-spacing:.3px;background:#F2F2F2;color:#111;border:1px solid #DCDCDC;margin-left:5px;vertical-align:middle;line-height:1.5}
+.spot-new{font-size:11px;font-weight:500;color:var(--t3);margin-left:auto;flex-shrink:0;padding-right:6px}
 .chip-summary{font-size:13px;color:var(--t2);line-height:1.4;padding:7px 10px;background:var(--bg2);border-radius:8px;margin-top:2px}
 
 /* list */
 #sheet-list{flex:1;overflow-y:auto;padding:4px 16px calc(var(--nav) + 24px);min-height:0;overscroll-behavior:contain}
 #sheet-list::-webkit-scrollbar{display:none}
-.list-day-grp{margin-bottom:24px}
-.list-day-hdr{padding:18px 0 10px}
-.list-day-badge{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:800;letter-spacing:-.1px;color:#111;margin-bottom:10px}
-.list-day-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.list-day-sum{font-size:14px;font-weight:500;color:#444;line-height:1.55;padding:12px 14px;background:var(--bg2);border-radius:10px;margin-bottom:8px}
+.list-day-grp{margin-bottom:12px;border-radius:14px}
+.list-day-hdr{padding:12px 14px 10px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:10;border-radius:14px 14px 0 0}
+.list-day-badge{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:800;letter-spacing:-.1px;color:#111;flex-shrink:0}
+.list-day-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.list-day-sub{flex:1;font-size:12px;font-weight:400;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;cursor:text}
+.list-day-sub.placeholder{color:var(--t3);font-style:italic}
+.list-day-edit{font-size:13px;color:var(--t3);background:none;border:none;cursor:pointer;padding:2px 4px;flex-shrink:0;line-height:1}
+.list-day-edit:active{color:#111}
+.list-day-spots{padding:0 10px 10px}
 .gap-warn{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#FFFBEB;border-radius:10px;margin-bottom:8px;border:1px solid #FDE68A}
 .gap-warn-txt{font-size:12px;color:#92400E;flex:1}
 .gap-warn-btn{font-size:12px;color:#D97706;font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit;white-space:nowrap}
@@ -1054,15 +1058,28 @@ function selectDay(i){
 function renderListView(){
   const wrap=document.getElementById('sheet-list');
   if(!S.routeGroups.length){wrap.innerHTML='<div style="padding:20px;text-align:center;color:#999;font-size:13px">Plan에 포함된 Spot이 없어요</div>';return;}
+  // per-group editable summaries (keyed by group label)
+  if(!S.groupSummaries)S.groupSummaries={};
   let html=S.routeGroups.map(g=>{
     const spots=g.spotIds.map(id=>getSpot(id)).filter(Boolean);
     const gw=g.gapWarn?`<div class="gap-warn"><span style="font-size:14px">⚠️</span><span class="gap-warn-txt">${g.gapWarn}</span><button class="gap-warn-btn">추천 보기</button></div>`:'';
-    return `<div class="list-day-grp">
-      <div class="list-day-hdr">
+    const bgTint=`${C[g.ci]}0D`; // ~5% opacity
+    const hdrBg=`${C[g.ci]}12`;  // ~7% for sticky header
+    const userSummary=S.groupSummaries[g.label];
+    const summaryText=userSummary!=null?userSummary:g.summary;
+    const hasText=summaryText&&summaryText.trim().length>0;
+    const subHtml=hasText
+      ?`<span class="list-day-sub" onclick="editDaySummary('${g.label}',this)">${summaryText}</span>`
+      :`<span class="list-day-sub placeholder" onclick="editDaySummary('${g.label}',this)">이 날을 한 줄로 표현해보세요</span>`;
+    return `<div class="list-day-grp" style="background:${bgTint}">
+      <div class="list-day-hdr" style="background:${hdrBg}">
         <span class="list-day-badge"><span class="list-day-dot" style="background:${C[g.ci]}"></span>${g.label}</span>
+        ${subHtml}
+        <button class="list-day-edit" onclick="editDaySummary('${g.label}',this.previousElementSibling)" title="편집">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
       </div>
-      <div style="border-left:2px solid ${C[g.ci]}AA;margin-left:3px;padding-left:14px">
-      <div class="list-day-sum">${g.summary}</div>
+      <div class="list-day-spots">
       ${gw}
       ${spots.map((sp,idx)=>`
         <div class="list-spot-row" id="lsr-${sp.id}" draggable="true"
@@ -1076,9 +1093,10 @@ function renderListView(){
           onclick="fromList('${sp.id}')">
           <div class="list-em-wrap">${sp.emoji}</div>
           <div class="list-info">
-            <div class="list-name">${sp.name}${S.newSpots.has(sp.id)?'<span class="spot-new">NEW</span>':''}</div>
+            <div class="list-name">${sp.name}</div>
             <div class="list-desc">${sp.desc}</div>
           </div>
+          ${S.newSpots.has(sp.id)?'<span class="spot-new">new</span>':''}
           <span class="drag-h">⠿</span>
         </div>`).join('')}
       </div>
@@ -1108,6 +1126,25 @@ function renderListView(){
 }
 
 function toggleExcl(){S.exclOpen=!S.exclOpen;renderListView();}
+
+function editDaySummary(label,el){
+  if(!S.groupSummaries)S.groupSummaries={};
+  const g=S.routeGroups.find(g=>g.label===label);
+  const current=(S.groupSummaries[label]!=null?S.groupSummaries[label]:(g?g.summary:''));
+  const inp=document.createElement('input');
+  inp.type='text';
+  inp.value=current;
+  inp.placeholder='이 날을 한 줄로 표현해보세요';
+  inp.style.cssText='flex:1;border:none;background:transparent;font:inherit;font-size:12px;color:#444;outline:none;min-width:0;padding:0';
+  el.replaceWith(inp);
+  inp.focus();inp.select();
+  function commit(){
+    S.groupSummaries[label]=inp.value.trim();
+    renderListView();
+  }
+  inp.addEventListener('blur',commit);
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key==='Escape'){inp.blur();}});
+}
 
 function fromList(id){
   const sp=getSpot(id);if(!sp||!S.map)return;
