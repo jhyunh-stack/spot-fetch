@@ -339,14 +339,26 @@ border-radius: 28px;
 
 **Day 칩 (바텀 시트 내)**
 ```css
-border-radius: 999px;
-padding: 6px 14px;
-font-size: 13px;
-font-weight: 600;
-background: #111; /* 선택 시 블랙, 미선택 시 rgba(0,0,0,0.06) */
-color: #fff; /* 선택 시 */
-/* 클러스터 컬러 사용 금지 */
+/* 미선택 */
+background: rgba(0,0,0,0.06);
+color: #666;
+
+/* 선택 시 — 클러스터 컬러 tint (약하게) */
+background: rgba(클러스터컬러, 0.12~0.14);  /* 예: Day1 rgba(255,107,107,0.12) */
+color: 클러스터컬러;                          /* 예: Day1 #FF6B6B */
+border: 1.5px solid rgba(클러스터컬러, 0.30);
+/* 풀컬러 금지. tint로만 클러스터 소속감 표현 */
 ```
+
+**Day 배지 (리스트 뷰 내 `Day 1`, `Day 2`)**
+- 동일한 tint 처리 (칩과 동일 규칙)
+
+**Day AI 요약 텍스트**
+- 회색 박스(`#F8F8F8`) + `border-radius: 8px` + `padding: 7px 10px`으로 설명 블록처럼 표시
+- 버튼이 아닌 텍스트임이 명확해야 함
+
+**지도 위 컨트롤 (도시명, 일자 선택)**
+- `z-index: 1000` — Leaflet 마커 pane(600~700) 위에 항상 표시
 
 **아이콘 (네비게이션 Plan 탭)**
 - 곡선 루트 연결 아이콘 (waypoint 2개를 곡선으로 연결하는 형태)
