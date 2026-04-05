@@ -140,15 +140,14 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 /* list */
 #sheet-list{flex:1;overflow-y:auto;padding:4px 16px calc(var(--nav) + 24px);min-height:0;overscroll-behavior:contain}
 #sheet-list::-webkit-scrollbar{display:none}
-.list-day-grp{margin-bottom:4px}
-.list-day-hdr{padding:12px 0 6px}
-.list-day-badge{display:inline-flex;align-items:center;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:700;margin-bottom:4px}
-.list-day-sum{font-size:13px;color:var(--t2);line-height:1.4;padding:7px 10px;background:var(--bg2);border-radius:8px;margin-top:4px;margin-bottom:8px}
+.list-day-grp{margin-bottom:16px}
+.list-day-hdr{padding:16px 0 10px}
+.list-day-badge{display:block;font-size:13px;font-weight:800;letter-spacing:.2px;margin-bottom:6px}
+.list-day-sum{font-size:14px;color:var(--t2);line-height:1.5;padding:11px 14px;background:var(--bg2);border-radius:10px;margin-bottom:4px}
 .gap-warn{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#FFFBEB;border-radius:10px;margin-bottom:8px;border:1px solid #FDE68A}
 .gap-warn-txt{font-size:12px;color:#92400E;flex:1}
 .gap-warn-btn{font-size:12px;color:#D97706;font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit;white-space:nowrap}
-.list-spot-row{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;border-radius:8px}
-.list-spot-row:last-child{border-bottom:none}
+.list-spot-row{display:flex;align-items:center;gap:11px;padding:10px 0;cursor:pointer;transition:background .15s;border-radius:8px}
 .list-spot-row:active{background:var(--bg2)}
 .list-em-wrap{width:40px;height:40px;border-radius:11px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
 .list-info{flex:1;min-width:0}
@@ -954,7 +953,7 @@ function renderListView(){
     const gw=g.gapWarn?`<div class="gap-warn"><span style="font-size:14px">⚠️</span><span class="gap-warn-txt">${g.gapWarn}</span><button class="gap-warn-btn">추천 보기</button></div>`:'';
     return `<div class="list-day-grp">
       <div class="list-day-hdr">
-        <span class="list-day-badge" style="background:${CT[g.ci]};color:${C[g.ci]};border:1.5px solid ${CB[g.ci]}">${g.label}</span>
+        <span class="list-day-badge" style="color:${C[g.ci]}">${g.label}</span>
         <div class="list-day-sum">${g.summary}</div>
       </div>
       ${gw}
