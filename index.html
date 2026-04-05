@@ -209,7 +209,8 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .sd-copy-label{font-size:13px;font-weight:600;color:var(--t1)}
 .sd-copy-addr{font-size:12px;color:var(--t2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sd-copy-icon{margin-left:auto;color:var(--t3);flex-shrink:0;display:flex;align-items:center}
-.sd-src-card{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:var(--bg2)}
+.sd-src-card{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:var(--bg2);cursor:pointer;transition:background .15s}
+.sd-src-card:active{background:rgba(0,0,0,0.09)}
 .sd-src-badge{font-size:10px;font-weight:800;color:#fff;padding:3px 8px;border-radius:8px;flex-shrink:0;letter-spacing:.3px}
 .sd-src-ig{background:linear-gradient(135deg,#f09433,#dc2743,#bc1888)}
 .sd-src-tt{background:#010101}
@@ -875,13 +876,15 @@ function selSpot(id){
   const reel=REELS_DATA.find(r=>r.id===sp.reelId);
   const isExcl=S.excluded.has(id);
   const addr=sp.address||sp.name+', '+sp.city.toUpperCase();
+  const platName=reel?(reel.platform==='instagram'?'Instagram':'TikTok'):'';
   const srcCard=reel?`
-    <div class="sd-src-card">
-      <span class="sd-src-badge ${reel.platform==='instagram'?'sd-src-ig':'sd-src-tt'}">${reel.platform==='instagram'?'IG':'TT'}</span>
+    <div class="sd-src-card" onclick="viewReel('${reel.id}')">
+      <span class="sd-src-badge ${reel.platform==='instagram'?'sd-src-ig':'sd-src-tt'}">${platName}</span>
       <div class="sd-src-info">
         <div class="sd-src-user">${reel.user}</div>
         <div class="sd-src-title">${reel.title}</div>
       </div>
+      <span style="color:var(--t3);display:flex;align-items:center;flex-shrink:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
     </div>`:'';
   const list=document.getElementById('sheet-list');
   list.style.display='block';
