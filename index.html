@@ -166,12 +166,21 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .add-back{font-size:12px;font-weight:700;color:var(--t2);background:var(--bg2);border:none;border-radius:8px;padding:5px 10px;cursor:pointer;font-family:inherit;flex-shrink:0;min-height:32px}
 
 /* inline spot detail (inside sheet) */
-.sd-back{display:flex;align-items:center;gap:6px;padding:4px 0 12px;background:none;border:none;font-size:14px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit}
+.sd-nav{display:flex;align-items:center;padding:0 0 10px}
+.sd-nav-back{display:flex;align-items:center;gap:4px;background:none;border:none;font-size:14px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit;padding:6px 0;min-height:36px}
 .sd-hdr{display:flex;align-items:center;gap:14px;padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:14px}
 .sd-em{width:52px;height:52px;border-radius:14px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
 .sd-name{font-size:20px;font-weight:700;letter-spacing:-.4px;color:var(--t1)}
 .sd-desc{font-size:13px;color:var(--t2);margin-top:3px}
-.sd-body{font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:24px}
+.sd-body{font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:16px}
+.sd-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.sd-act-btn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:12px 14px;border-radius:12px;background:var(--bg2);border:none;cursor:pointer;font-family:inherit;transition:background .15s;text-align:left;width:100%}
+.sd-act-btn:active{background:rgba(0,0,0,0.09)}
+.sd-act-icon{font-size:17px;line-height:1;margin-bottom:3px}
+.sd-act-label{font-size:13px;font-weight:600;color:var(--t1);line-height:1.3}
+.sd-act-sub{font-size:11px;color:var(--t2);line-height:1.3}
+.sd-act-info{cursor:default}
+.sd-act-info:active{background:var(--bg2)}
 .sd-excl-btn{width:100%;padding:14px;border-radius:12px;background:var(--bg2);color:var(--t1);border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;min-height:44px}
 
 /* ═══ EXPLORE TAB ═══ */
@@ -338,30 +347,37 @@ const SPOTS_DATA = [
   {id:'s1',name:'Golden Gate Bridge',type:'viewpoint',emoji:'🌉',
    desc:'샌프란 대표 뷰포인트',
    detail:'이른 아침 안개가 걷히는 순간이 특히 아름다워요. 남쪽 뷰포인트에서 다리 전체 뷰 감상 추천. 자전거로 건너는 것도 꼭 해봐야 할 경험.',
+   address:'Golden Gate Bridge, San Francisco, CA',duration:'1-2시간',
    lat:37.8199,lng:-122.4783,reelId:'r1'},
   {id:'s2',name:'Baker Beach',type:'ocean',emoji:'🌊',
    desc:'골든게이트가 보이는 해변',
    detail:'브리지를 배경으로 한 해변. 일몰 시간대가 최고의 포토스팟. 주차는 이른 아침에 가야 여유로워요.',
+   address:'Baker Beach, San Francisco, CA',duration:'약 1시간',
    lat:37.7936,lng:-122.4833,reelId:'r1'},
   {id:'s3',name:'Warming Hut Café',type:'cafe',emoji:'☕',
    desc:'프레시디오 안 숨은 카페',
    detail:'골든게이트 바로 옆 프레시디오 공원 안 카페. 브리지 산책 후 들르기 딱 좋아요. 오가닉 샌드위치와 라떼가 인기.',
+   address:'983 Marine Dr, San Francisco, CA',duration:'30-60분',
    lat:37.8069,lng:-122.4734,reelId:'r2'},
   {id:'s4',name:'Lands End',type:'nature',emoji:'⛰️',
    desc:'바다 보이는 절벽 트레일',
    detail:'해안 절벽을 따라 걷는 산책로. 맑은 날엔 브리지까지 보여요. 왕복 3km, 난이도 쉬움. 석양 무렵이 최고.',
+   address:'Lands End Trail, San Francisco, CA',duration:'1-2시간',
    lat:37.7786,lng:-122.5089,reelId:'r3'},
   {id:'s5',name:'Outerlands',type:'cafe',emoji:'☕',
    desc:'오션 비치 옆 감성 브런치',
    detail:'Outer Sunset 지역, 오션 비치 한 블록 옆. 통나무 인테리어와 수제 빵이 유명해요. 주말 웨이팅 있지만 분위기 최고.',
+   address:'4001 Judah St, San Francisco, CA',duration:'1-1.5시간',
    lat:37.7554,lng:-122.5077,reelId:'r2'},
   {id:'s6',name:'Tartine Bakery',type:'cafe',emoji:'☕',
    desc:'전설적인 미션 베이커리',
    detail:'오후 5시부터 빵 판매 시작. 크루아상이 전설급으로 유명해요. 미션 디스트릭트 분위기도 함께 즐길 수 있어요.',
+   address:'600 Guerrero St, San Francisco, CA',duration:'30-60분',
    lat:37.7614,lng:-122.4242,reelId:'r2'},
   {id:'s7',name:'Dolores Park',type:'nature',emoji:'⛰️',
    desc:'미션의 야외 피크닉 스팟',
    detail:'타르틴에서 도보 5분. SF 로컬들이 가장 사랑하는 공원. 언덕 위에서 도심 전망이 일품이에요.',
+   address:'Dolores Park, San Francisco, CA',duration:'1-2시간',
    lat:37.7596,lng:-122.4269,reelId:'r3'},
 ];
 
@@ -438,7 +454,7 @@ function recomputeClusters(){
 // STATE
 // ═══════════════════════════════════════════
 const S={
-  tab:'spots',days:2,selDay:0,selSpot:null,
+  tab:'spots',days:2,selDay:0,selSpot:null,inDetail:false,
   spots:SPOTS_DATA.map(s=>({...s})),
   excluded:new Set(),
   expanded:new Set(),
@@ -648,17 +664,34 @@ function drawLines(){
   });
 }
 
+function openMaps(lat,lng){window.open('https://maps.google.com/?q='+lat+','+lng,'_blank');}
+function copyAddress(addr){
+  if(navigator.clipboard){navigator.clipboard.writeText(addr).then(()=>toast('주소가 복사됐어요 📍'));}
+  else{toast('주소: '+addr);}
+}
+function viewReel(reelId){
+  const r=REELS_DATA.find(r=>r.id===reelId);
+  if(r)toast((r.platform==='instagram'?'📸':'🎵')+' '+r.user+' · 원본 릴');
+}
+
 function selSpot(id){
   if(S.selSpot&&S.markers[S.selSpot]){const p=getSpot(S.selSpot);if(p)S.markers[S.selSpot].setIcon(mkIcon(p,false));}
-  S.selSpot=id;
+  S.selSpot=id;S.inDetail=true;
   const sp=getSpot(id);
   if(sp&&S.markers[id])S.markers[id].setIcon(mkIcon(sp,true));
-  // show detail inline in sheet
   snapTo(SNAP.mid);
+  // replace Day chips with back nav
+  document.getElementById('sheet-chips').innerHTML=
+    `<div class="sd-nav"><button class="sd-nav-back" onclick="closeDetail()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>목록</button></div>`;
+  const reel=REELS_DATA.find(r=>r.id===sp.reelId);
+  const reelBtn=reel?`<button class="sd-act-btn" onclick="viewReel('${reel.id}')">
+    <span class="sd-act-icon">${reel.platform==='instagram'?'📸':'🎵'}</span>
+    <span class="sd-act-label">원본 릴 보기</span>
+    <span class="sd-act-sub">${reel.user}</span>
+  </button>`:'';
   const list=document.getElementById('sheet-list');
   list.style.display='block';
   list.innerHTML=`
-    <button class="sd-back" onclick="closeDetail()">‹ 목록으로</button>
     <div class="sd-hdr">
       <div class="sd-em">${sp.emoji}</div>
       <div>
@@ -667,12 +700,33 @@ function selSpot(id){
       </div>
     </div>
     <div class="sd-body">${sp.detail}</div>
+    <div class="sd-actions">
+      <button class="sd-act-btn" onclick="openMaps(${sp.lat},${sp.lng})">
+        <span class="sd-act-icon">🗺️</span>
+        <span class="sd-act-label">지도에서 열기</span>
+        <span class="sd-act-sub">Google Maps</span>
+      </button>
+      <button class="sd-act-btn" onclick="copyAddress('${sp.address||'San Francisco, CA'}')">
+        <span class="sd-act-icon">📍</span>
+        <span class="sd-act-label">주소 복사</span>
+        <span class="sd-act-sub">${(sp.address||'').split(',')[0]}</span>
+      </button>
+      ${reelBtn}
+      <div class="sd-act-btn sd-act-info">
+        <span class="sd-act-icon">⏱️</span>
+        <span class="sd-act-label">${sp.duration||'1-2시간'}</span>
+        <span class="sd-act-sub">예상 체류시간</span>
+      </div>
+    </div>
     <button class="sd-excl-btn" onclick="excludeCurrent()">이 여행에서 빼기</button>`;
 }
 
 function closeDetail(){
   if(S.selSpot&&S.markers[S.selSpot]){const sp=getSpot(S.selSpot);if(sp)S.markers[S.selSpot].setIcon(mkIcon(sp,false));}
-  S.selSpot=null;
+  S.selSpot=null;S.inDetail=false;
+  // restore Day chips
+  document.getElementById('sheet-chips').innerHTML='<div class="chips-row" id="chips-row"></div>';
+  renderDayChips();
   renderListView();
 }
 
@@ -743,7 +797,7 @@ function snapTo(level,animate=true){
   // show list when not peek
   const list=document.getElementById('sheet-list');
   if(level===SNAP.peek){list.style.display='none';}
-  else{list.style.display='block';renderListView();}
+  else{list.style.display='block';if(!S.inDetail)renderListView();}
   updatePeekLabel();
   setTimeout(()=>{if(S.map)S.map.invalidateSize();},50);
 }
@@ -820,7 +874,9 @@ function applySheet(){snapTo(S.snap,false);}
 function renderSheetContent(){renderDayChips();if(S.snap!==SNAP.peek)renderListView();updatePeekLabel();}
 
 function renderDayChips(){
+  if(S.inDetail)return;
   const row=document.getElementById('chips-row');
+  if(!row)return;
   if(!S.routeGroups.length){row.innerHTML='';return;}
   row.innerHTML=S.routeGroups.map((g,i)=>`
     <button class="day-chip ${S.selDay===i?'on':''}"
