@@ -156,8 +156,9 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .gap-warn{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#FFFBEB;border-radius:10px;margin-bottom:8px;border:1px solid #FDE68A}
 .gap-warn-txt{font-size:12px;color:#92400E;flex:1}
 .gap-warn-btn{font-size:12px;color:#D97706;font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit;white-space:nowrap}
-.list-spot-row{display:flex;align-items:center;gap:11px;padding:10px 0;cursor:pointer;transition:background .15s;border-radius:8px}
+.list-spot-row{display:flex;align-items:center;gap:11px;padding:10px 8px;cursor:pointer;transition:background .15s;border-radius:8px;margin:0 -8px}
 .list-spot-row:active{background:var(--bg2)}
+.list-spot-row.focused{background:rgba(0,0,0,0.06)}
 .list-em-wrap{width:40px;height:40px;border-radius:11px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
 .list-info{flex:1;min-width:0}
 .list-name{font-size:14px;font-weight:600;color:var(--t1)}
@@ -173,7 +174,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .add-back{font-size:12px;font-weight:700;color:var(--t2);background:var(--bg2);border:none;border-radius:8px;padding:5px 10px;cursor:pointer;font-family:inherit;flex-shrink:0;min-height:32px}
 
 /* focused spot bar (map focus state) */
-#focused-bar{display:none;align-items:center;gap:10px;padding:4px 16px 12px}
+#focused-bar{display:none;align-items:center;gap:10px;padding:10px 14px;position:absolute;bottom:16px;left:16px;right:16px;z-index:500;background:rgba(255,255,255,0.88);-webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);border:1px solid rgba(255,255,255,0.6);border-radius:18px;box-shadow:0 4px 24px rgba(0,0,0,0.16)}
 .fbar-em{font-size:20px;flex-shrink:0}
 .fbar-name{flex:1;font-size:14px;font-weight:600;color:#111;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .fbar-btn{padding:8px 16px;background:#111;color:#fff;border:none;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
@@ -296,6 +297,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
   </div>
   <div id="plan-map-wrap">
     <div id="plan-map"></div>
+    <div id="focused-bar"></div>
     <div id="map-top-bar">
       <div id="city-btn-wrap">
         <button id="city-btn" onclick="toggleCityPicker()">
@@ -325,7 +327,6 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     <div id="sheet-handle">
       <div class="handle"></div>
       <div id="sheet-peek-label"></div>
-      <div id="focused-bar"></div>
     </div>
     <div id="sheet-chips">
       <div class="chips-row" id="chips-row"></div>
@@ -805,10 +806,10 @@ function viewReel(reelId){
 
 function selSpot(id){
   if(S.selSpot&&S.markers[S.selSpot]){const p=getSpot(S.selSpot);if(p)S.markers[S.selSpot].setIcon(mkIcon(p,false));}
-  // clear focused bar
+  // clear focused bar + row highlight
+  if(S.focusedSpot){const prevRow=document.getElementById('lsr-'+S.focusedSpot);if(prevRow)prevRow.classList.remove('focused');}
   S.focusedSpot=null;
   const bar=document.getElementById('focused-bar');if(bar)bar.style.display='none';
-  const peek=document.getElementById('sheet-peek-label');if(peek)peek.style.display='';
   S.selSpot=id;S.inDetail=true;S.newSpots.delete(id);
   const sp=getSpot(id);
   if(sp&&S.markers[id])S.markers[id].setIcon(mkIcon(sp,true));
@@ -850,10 +851,10 @@ function selSpot(id){
 function closeDetail(){
   if(S.selSpot&&S.markers[S.selSpot]){const sp=getSpot(S.selSpot);if(sp)S.markers[S.selSpot].setIcon(mkIcon(sp,false));}
   S.selSpot=null;S.inDetail=false;
-  // clear any focused bar too
+  // clear any focused bar + row highlight
+  if(S.focusedSpot){const prevRow=document.getElementById('lsr-'+S.focusedSpot);if(prevRow)prevRow.classList.remove('focused');}
   S.focusedSpot=null;
   const bar=document.getElementById('focused-bar');if(bar)bar.style.display='none';
-  const peek=document.getElementById('sheet-peek-label');if(peek)peek.style.display='';
   // restore Day chips
   document.getElementById('sheet-chips').innerHTML='<div class="chips-row" id="chips-row"></div>';
   renderDayChips();
@@ -945,7 +946,7 @@ S.snap=SNAP.mid;
 
 function snapHeights(){
   const tabH=document.getElementById('tab-plan').offsetHeight||window.innerHeight;
-  return[88, Math.round(tabH*0.56), Math.round(tabH*0.92)];
+  return[120, Math.round(tabH*0.56), Math.round(tabH*0.92)];
 }
 
 function snapTo(level,animate=true){
@@ -1110,23 +1111,25 @@ function toggleExcl(){S.exclOpen=!S.exclOpen;renderListView();}
 
 function fromList(id){
   const sp=getSpot(id);if(!sp||!S.map)return;
-  // deselect previous focused (but not full-detail)
+  // deselect previous focused row
   if(S.focusedSpot&&S.focusedSpot!==id){
     const prev=getSpot(S.focusedSpot);
     if(prev&&S.markers[S.focusedSpot])S.markers[S.focusedSpot].setIcon(mkIcon(prev,false));
+    const prevRow=document.getElementById('lsr-'+S.focusedSpot);
+    if(prevRow)prevRow.classList.remove('focused');
   }
   S.focusedSpot=id;
   S.map.setView([sp.lat,sp.lng],14,{animate:true});
   if(S.markers[id])S.markers[id].setIcon(mkIcon(sp,true));
-  // show focused bar
+  // highlight row
+  const row=document.getElementById('lsr-'+id);
+  if(row)row.classList.add('focused');
+  // show focused bar on map
   const bar=document.getElementById('focused-bar');
   if(bar){
     bar.style.display='flex';
     bar.innerHTML=`<span class="fbar-em">${sp.emoji}</span><span class="fbar-name">${sp.name}</span><button class="fbar-btn" onclick="selSpot('${id}')">자세히 보기</button>`;
   }
-  // hide peek label while bar is shown
-  const peek=document.getElementById('sheet-peek-label');
-  if(peek)peek.style.display='none';
 }
 
 // ═══════════════════════════════════════════
