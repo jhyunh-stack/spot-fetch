@@ -89,13 +89,12 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 #plan-map-wrap{flex:1;position:relative;min-height:0;z-index:1}
 #plan-map{width:100%;height:100%}
 
-/* day selector (top of map) */
-#day-selector{position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;gap:6px}
-.day-seg{padding:8px 16px;border-radius:999px;font-size:13px;font-weight:700;border:none;cursor:pointer;font-family:inherit;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);color:var(--t2);box-shadow:0 2px 10px rgba(0,0,0,0.12);transition:all .2s;min-height:44px}
+/* map top bar */
+#map-top-bar{position:absolute;top:16px;left:12px;right:12px;z-index:1000;display:flex;align-items:center;justify-content:space-between;gap:8px;pointer-events:none}
+#city-btn{pointer-events:all;display:flex;align-items:center;gap:5px;padding:8px 14px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:var(--glass-b);box-shadow:0 2px 10px rgba(0,0,0,0.12);font-size:13px;font-weight:700;color:var(--t1);cursor:pointer;font-family:inherit;min-height:40px;white-space:nowrap;max-width:160px;overflow:hidden;text-overflow:ellipsis}
+#day-selector{pointer-events:all;display:flex;gap:6px}
+.day-seg{padding:7px 14px;border-radius:999px;font-size:13px;font-weight:700;border:none;cursor:pointer;font-family:inherit;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);color:var(--t2);box-shadow:0 2px 10px rgba(0,0,0,0.12);transition:all .2s;min-height:40px}
 .day-seg.on{color:#fff;background:#111!important;backdrop-filter:none;-webkit-backdrop-filter:none}
-
-/* city button */
-#city-btn{position:absolute;top:16px;left:16px;z-index:1000;display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:var(--glass-b);box-shadow:0 2px 10px rgba(0,0,0,0.12);font-size:14px;font-weight:700;color:var(--t1);cursor:pointer;font-family:inherit;min-height:44px}
 
 /* bottom sheet */
 #plan-sheet{
@@ -221,14 +220,16 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
   </div>
   <div id="plan-map-wrap">
     <div id="plan-map"></div>
-    <button id="city-btn" onclick="toast('도시 전환 (다중 도시 시 활성화)')">
-      <span id="city-flag">🇺🇸</span>
-      <span id="city-name-txt">San Francisco</span>
-    </button>
-    <div id="day-selector">
-      <button class="day-seg" onclick="setDays(1)">1일</button>
-      <button class="day-seg on" onclick="setDays(2)">2일</button>
-      <button class="day-seg" onclick="setDays(3)">3일</button>
+    <div id="map-top-bar">
+      <button id="city-btn" onclick="toast('도시 전환 (다중 도시 시 활성화)')">
+        <span id="city-flag">🇺🇸</span>
+        <span id="city-name-txt">San Francisco</span>
+      </button>
+      <div id="day-selector">
+        <button class="day-seg" onclick="setDays(1)">1일</button>
+        <button class="day-seg on" onclick="setDays(2)">2일</button>
+        <button class="day-seg" onclick="setDays(3)">3일</button>
+      </div>
     </div>
   </div>
   <div id="plan-sheet">
@@ -238,7 +239,6 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     </div>
     <div id="sheet-chips">
       <div class="chips-row" id="chips-row"></div>
-      <div class="chip-summary" id="chip-summary"></div>
     </div>
     <div id="sheet-list"></div>
   </div>
@@ -783,14 +783,11 @@ function renderSheetContent(){renderDayChips();if(S.snap!==SNAP.peek)renderListV
 
 function renderDayChips(){
   const row=document.getElementById('chips-row');
-  const sumEl=document.getElementById('chip-summary');
-  if(!S.routeGroups.length){row.innerHTML='';sumEl.textContent='';return;}
+  if(!S.routeGroups.length){row.innerHTML='';return;}
   row.innerHTML=S.routeGroups.map((g,i)=>`
     <button class="day-chip ${S.selDay===i?'on':''}"
       style="${S.selDay===i?`--day-chip-bg:${CT[g.ci]};--day-chip-border:${CB[g.ci]};color:${C[g.ci]}`:''}"
       onclick="selectDay(${i})">${g.label}</button>`).join('');
-  const cur=S.routeGroups[S.selDay];
-  sumEl.textContent=cur?cur.summary:'';
 }
 
 function selectDay(i){
