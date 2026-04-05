@@ -1159,7 +1159,16 @@ function renderDayChips(){
 }
 
 function selectDay(i){
-  // deselect previous
+  // clear any focused spot row first
+  if(S.focusedSpot){
+    const prevSp=getSpot(S.focusedSpot);
+    if(prevSp&&S.markers[S.focusedSpot])S.markers[S.focusedSpot].setIcon(mkIcon(prevSp,false));
+    const prevRow=document.getElementById('lsr-'+S.focusedSpot);
+    if(prevRow)prevRow.classList.remove('focused');
+    S.focusedSpot=null;
+    const bar=document.getElementById('focused-bar');if(bar)bar.style.display='none';
+  }
+  // deselect previous day
   if(S.selDay!==null){
     const prev=document.getElementById('day-hdr-'+S.selDay);
     if(prev)prev.classList.remove('selected');
@@ -1287,6 +1296,12 @@ function editDaySummary(label,el){
 
 function fromList(id){
   const sp=getSpot(id);if(!sp||!S.map)return;
+  // clear any selected day header first
+  if(S.selDay!==null){
+    const prevHdr=document.getElementById('day-hdr-'+S.selDay);
+    if(prevHdr)prevHdr.classList.remove('selected');
+    S.selDay=null;
+  }
   // deselect previous focused row
   if(S.focusedSpot&&S.focusedSpot!==id){
     const prev=getSpot(S.focusedSpot);
