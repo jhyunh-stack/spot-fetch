@@ -172,8 +172,15 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .excl-row{display:flex;align-items:center;gap:10px;padding:9px 0;opacity:.7}
 .add-back{font-size:12px;font-weight:700;color:var(--t2);background:var(--bg2);border:none;border-radius:8px;padding:5px 10px;cursor:pointer;font-family:inherit;flex-shrink:0;min-height:32px}
 
+/* focused spot bar (map focus state) */
+#focused-bar{display:none;align-items:center;gap:10px;padding:4px 16px 12px}
+.fbar-em{font-size:20px;flex-shrink:0}
+.fbar-name{flex:1;font-size:14px;font-weight:600;color:#111;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fbar-btn{padding:8px 16px;background:#111;color:#fff;border:none;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
+.fbar-btn:active{opacity:.8}
+
 /* inline spot detail (inside sheet) */
-.sd-nav{display:flex;align-items:center;padding:0 0 10px}
+.sd-nav{display:flex;align-items:center;padding:4px 16px 10px}
 .sd-nav-back{display:flex;align-items:center;gap:4px;background:none;border:none;font-size:14px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit;padding:6px 0;min-height:36px}
 .sd-hdr{display:flex;align-items:center;gap:14px;padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:14px}
 .sd-em{width:52px;height:52px;border-radius:14px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
@@ -318,6 +325,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     <div id="sheet-handle">
       <div class="handle"></div>
       <div id="sheet-peek-label"></div>
+      <div id="focused-bar"></div>
     </div>
     <div id="sheet-chips">
       <div class="chips-row" id="chips-row"></div>
@@ -574,7 +582,7 @@ function recomputeClusters(){
 // STATE
 // ═══════════════════════════════════════════
 const S={
-  tab:'plan',days:2,selDay:0,selSpot:null,inDetail:false,newSpots:new Set(),city:'sf',filterCity:'',
+  tab:'plan',days:2,selDay:0,selSpot:null,inDetail:false,focusedSpot:null,newSpots:new Set(),city:'sf',filterCity:'',
   spots:SPOTS_DATA.map(s=>({...s})),
   excluded:new Set(),
   expanded:new Set(),
@@ -797,6 +805,10 @@ function viewReel(reelId){
 
 function selSpot(id){
   if(S.selSpot&&S.markers[S.selSpot]){const p=getSpot(S.selSpot);if(p)S.markers[S.selSpot].setIcon(mkIcon(p,false));}
+  // clear focused bar
+  S.focusedSpot=null;
+  const bar=document.getElementById('focused-bar');if(bar)bar.style.display='none';
+  const peek=document.getElementById('sheet-peek-label');if(peek)peek.style.display='';
   S.selSpot=id;S.inDetail=true;S.newSpots.delete(id);
   const sp=getSpot(id);
   if(sp&&S.markers[id])S.markers[id].setIcon(mkIcon(sp,true));
@@ -838,6 +850,10 @@ function selSpot(id){
 function closeDetail(){
   if(S.selSpot&&S.markers[S.selSpot]){const sp=getSpot(S.selSpot);if(sp)S.markers[S.selSpot].setIcon(mkIcon(sp,false));}
   S.selSpot=null;S.inDetail=false;
+  // clear any focused bar too
+  S.focusedSpot=null;
+  const bar=document.getElementById('focused-bar');if(bar)bar.style.display='none';
+  const peek=document.getElementById('sheet-peek-label');if(peek)peek.style.display='';
   // restore Day chips
   document.getElementById('sheet-chips').innerHTML='<div class="chips-row" id="chips-row"></div>';
   renderDayChips();
@@ -1094,8 +1110,23 @@ function toggleExcl(){S.exclOpen=!S.exclOpen;renderListView();}
 
 function fromList(id){
   const sp=getSpot(id);if(!sp||!S.map)return;
+  // deselect previous focused (but not full-detail)
+  if(S.focusedSpot&&S.focusedSpot!==id){
+    const prev=getSpot(S.focusedSpot);
+    if(prev&&S.markers[S.focusedSpot])S.markers[S.focusedSpot].setIcon(mkIcon(prev,false));
+  }
+  S.focusedSpot=id;
   S.map.setView([sp.lat,sp.lng],14,{animate:true});
-  selSpot(id);
+  if(S.markers[id])S.markers[id].setIcon(mkIcon(sp,true));
+  // show focused bar
+  const bar=document.getElementById('focused-bar');
+  if(bar){
+    bar.style.display='flex';
+    bar.innerHTML=`<span class="fbar-em">${sp.emoji}</span><span class="fbar-name">${sp.name}</span><button class="fbar-btn" onclick="selSpot('${id}')">자세히 보기</button>`;
+  }
+  // hide peek label while bar is shown
+  const peek=document.getElementById('sheet-peek-label');
+  if(peek)peek.style.display='none';
 }
 
 // ═══════════════════════════════════════════
