@@ -88,7 +88,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 /* day selector (top of map) */
 #day-selector{position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:50;display:flex;gap:6px}
 .day-seg{padding:8px 16px;border-radius:999px;font-size:13px;font-weight:700;border:none;cursor:pointer;font-family:inherit;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);color:var(--t2);box-shadow:0 2px 10px rgba(0,0,0,0.12);transition:all .2s;min-height:44px}
-.day-seg.on{color:#fff}
+.day-seg.on{color:#fff;background:#111!important;backdrop-filter:none;-webkit-backdrop-filter:none}
 
 /* city button */
 #city-btn{position:absolute;top:16px;left:16px;z-index:50;display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:var(--glass-b);box-shadow:0 2px 10px rgba(0,0,0,0.12);font-size:14px;font-weight:700;color:var(--t1);cursor:pointer;font-family:inherit;min-height:44px}
@@ -118,7 +118,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 #sheet-chips{padding:4px 16px 12px;flex-shrink:0}
 .chips-row{display:flex;gap:8px;margin-bottom:8px}
 .day-chip{flex:1;padding:8px 4px;border-radius:999px;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;background:rgba(0,0,0,0.06);color:var(--t2);min-height:36px}
-.day-chip.on{color:#fff}
+.day-chip.on{color:#fff;background:#111!important}
 .chip-summary{font-size:13px;color:var(--t2);line-height:1.4;padding:0 2px}
 
 /* list */
@@ -126,7 +126,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 #sheet-list::-webkit-scrollbar{display:none}
 .list-day-grp{margin-bottom:4px}
 .list-day-hdr{padding:12px 0 6px}
-.list-day-badge{display:inline-flex;align-items:center;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:700;color:#fff;margin-bottom:4px}
+.list-day-badge{display:inline-flex;align-items:center;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:700;color:#fff;background:#111;margin-bottom:4px}
 .list-day-sum{font-size:13px;color:var(--t2);line-height:1.4}
 .gap-warn{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#FFFBEB;border-radius:10px;margin-bottom:8px;border:1px solid #FDE68A}
 .gap-warn-txt{font-size:12px;color:#92400E;flex:1}
@@ -134,7 +134,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .list-spot-row{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;border-radius:8px}
 .list-spot-row:last-child{border-bottom:none}
 .list-spot-row:active{background:var(--bg2)}
-.list-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.list-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;background:#111;flex-shrink:0}
 .list-em{font-size:20px;flex-shrink:0}
 .list-info{flex:1;min-width:0}
 .list-name{font-size:14px;font-weight:600;color:var(--t1)}
@@ -263,7 +263,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
       <span class="nav-lb">Spots</span>
     </button>
     <button class="nav-btn" onclick="switchTab('plan')">
-      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1018 0 9 9 0 00-18 0"/><path d="M12 7v5l3 3"/></svg></span>
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="19" r="2"/><circle cx="19" cy="5" r="2"/><path d="M7 19c0-6 4-10 10-10" stroke-dasharray="none"/><circle cx="5" cy="19" r=".5" fill="currentColor" stroke="none"/><circle cx="19" cy="5" r=".5" fill="currentColor" stroke="none"/></svg></span>
       <span class="nav-lb">Plan</span>
     </button>
     <button class="nav-btn" onclick="switchTab('explore')">
@@ -519,7 +519,7 @@ function renderSpots(){
         <div class="reel-spots ${exp?'open':''}" id="rs-${r.id}">
           ${spots.map(sp=>`
             <div class="spot-mini">
-              <div class="smic-em" style="background:${CL[sp.cluster??0]}">${sp.emoji}</div>
+              <div class="smic-em" style="background:var(--bg2)">${sp.emoji}</div>
               <div>
                 <div class="smic-name">${sp.name}</div>
                 <div class="smic-desc">${sp.desc}</div>
@@ -635,7 +635,7 @@ function showDetail(id){
   const sp=getSpot(id);if(!sp)return;
   const ci=sp.cluster??0;
   document.getElementById('dc-hdr').innerHTML=`
-    <div class="dc-em" style="background:${CL[ci]}">${sp.emoji}</div>
+    <div class="dc-em" style="background:var(--bg2)">${sp.emoji}</div>
     <div style="flex:1">
       <div class="dc-name">${sp.name}</div>
       <div class="dc-desc">${sp.desc}</div>
@@ -668,10 +668,9 @@ function setDays(d){
 }
 function updateDaySeg(){
   document.querySelectorAll('.day-seg').forEach((btn,i)=>{
-    const on=i+1===S.days;
-    btn.classList.toggle('on',on);
-    btn.style.background=on?C[i]:'';
-    btn.style.color=on?'#fff':'';
+    btn.classList.toggle('on',i+1===S.days);
+    btn.style.background='';
+    btn.style.color='';
   });
 }
 
@@ -782,7 +781,6 @@ function renderDayChips(){
   if(!S.routeGroups.length){row.innerHTML='';sumEl.textContent='';return;}
   row.innerHTML=S.routeGroups.map((g,i)=>`
     <button class="day-chip ${S.selDay===i?'on':''}"
-      style="${S.selDay===i?'background:'+C[g.ci]:''}"
       onclick="selectDay(${i})">${g.label}</button>`).join('');
   const cur=S.routeGroups[S.selDay];
   sumEl.textContent=cur?cur.summary:'';
@@ -805,7 +803,7 @@ function renderListView(){
     const gw=g.gapWarn?`<div class="gap-warn"><span style="font-size:14px">⚠️</span><span class="gap-warn-txt">${g.gapWarn}</span><button class="gap-warn-btn">추천 보기</button></div>`:'';
     return `<div class="list-day-grp">
       <div class="list-day-hdr">
-        <span class="list-day-badge" style="background:${C[g.ci]}">${g.label}</span>
+        <span class="list-day-badge">${g.label}</span>
         <div class="list-day-sum">${g.summary}</div>
       </div>
       ${gw}
@@ -816,7 +814,7 @@ function renderListView(){
           ondrop="dDrop(event,'${sp.id}','${g.label}')"
           ondragend="dEnd(event)"
           onclick="fromList('${sp.id}')">
-          <span class="list-num" style="background:${C[g.ci]}">${idx+1}</span>
+          <span class="list-num">${idx+1}</span>
           <span style="font-size:20px">${sp.emoji}</span>
           <div class="list-info">
             <div class="list-name">${sp.name}</div>
