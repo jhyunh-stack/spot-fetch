@@ -133,8 +133,10 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 /* day chips */
 #sheet-chips{padding:4px 16px 12px;flex-shrink:0}
 .chips-row{display:flex;gap:8px;margin-bottom:8px}
-.day-chip{flex:1;padding:8px 4px;border-radius:999px;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;background:rgba(0,0,0,0.06);color:var(--t2);min-height:36px}
-.day-chip.on{color:#111;background:var(--day-chip-bg,rgba(0,0,0,0.08))!important;border:1.5px solid var(--day-chip-border,rgba(0,0,0,0.15))}
+.day-chip{flex:1;padding:8px 4px;border-radius:999px;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;background:rgba(0,0,0,0.06);color:var(--t2);min-height:36px;display:flex;align-items:center;justify-content:center;gap:5px}
+.day-chip.on{color:#fff;background:#111;border:none}
+.day-chip-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.spot-new{display:inline-flex;align-items:center;padding:2px 5px;border-radius:4px;font-size:9px;font-weight:800;letter-spacing:.4px;background:rgba(255,107,53,0.12);color:#E8580A;margin-left:5px;vertical-align:middle;line-height:1.4;border:1px solid rgba(255,107,53,0.22)}
 .chip-summary{font-size:13px;color:var(--t2);line-height:1.4;padding:7px 10px;background:var(--bg2);border-radius:8px;margin-top:2px}
 
 /* list */
@@ -503,7 +505,7 @@ function recomputeClusters(){
 // STATE
 // ═══════════════════════════════════════════
 const S={
-  tab:'plan',days:2,selDay:0,selSpot:null,inDetail:false,
+  tab:'plan',days:2,selDay:0,selSpot:null,inDetail:false,newSpots:new Set(),
   spots:SPOTS_DATA.map(s=>({...s})),
   excluded:new Set(),
   expanded:new Set(),
@@ -725,7 +727,7 @@ function viewReel(reelId){
 
 function selSpot(id){
   if(S.selSpot&&S.markers[S.selSpot]){const p=getSpot(S.selSpot);if(p)S.markers[S.selSpot].setIcon(mkIcon(p,false));}
-  S.selSpot=id;S.inDetail=true;
+  S.selSpot=id;S.inDetail=true;S.newSpots.delete(id);
   const sp=getSpot(id);
   if(sp&&S.markers[id])S.markers[id].setIcon(mkIcon(sp,true));
   snapTo(SNAP.mid);
@@ -931,9 +933,10 @@ function renderDayChips(){
   if(!row)return;
   if(!S.routeGroups.length){row.innerHTML='';return;}
   row.innerHTML=S.routeGroups.map((g,i)=>`
-    <button class="day-chip ${S.selDay===i?'on':''}"
-      style="${S.selDay===i?`--day-chip-bg:${CT[g.ci]};--day-chip-border:${CB[g.ci]};color:${C[g.ci]}`:''}"
-      onclick="selectDay(${i})">${g.label}</button>`).join('');
+    <button class="day-chip ${S.selDay===i?'on':''}" onclick="selectDay(${i})">
+      ${S.selDay===i?`<span class="day-chip-dot" style="background:${C[g.ci]}"></span>`:''}
+      ${g.label}
+    </button>`).join('');
 }
 
 function selectDay(i){
@@ -969,7 +972,7 @@ function renderListView(){
           onclick="fromList('${sp.id}')">
           <div class="list-em-wrap">${sp.emoji}</div>
           <div class="list-info">
-            <div class="list-name">${sp.name}</div>
+            <div class="list-name">${sp.name}${S.newSpots.has(sp.id)?'<span class="spot-new">NEW</span>':''}</div>
             <div class="list-desc">${sp.desc}</div>
           </div>
           <span class="drag-h">⠿</span>
@@ -1083,9 +1086,8 @@ function toggleBridgeSel(id){
 }
 
 function confirmBridge(){
-  // only selected spots enter the plan
   _bSpots.forEach(sp=>{
-    if(_bSel.has(sp.id)) S.excluded.delete(sp.id);
+    if(_bSel.has(sp.id)){S.excluded.delete(sp.id);S.newSpots.add(sp.id);}
   });
   document.getElementById('reel-bridge').style.display='none';
   buildGroups();
