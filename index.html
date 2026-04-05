@@ -107,11 +107,14 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .city-opt.on{font-weight:800}
 /* day filter row (below city name) */
 #city-btn-wrap{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
-#day-filter-row{pointer-events:all;display:flex;align-items:center;gap:10px}
-#day-filter-row .filter-ico{color:rgba(0,0,0,0.45);display:flex;align-items:center;flex-shrink:0;filter:drop-shadow(0 1px 3px rgba(255,255,255,0.8))}
-.day-tab{background:none;border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;color:rgba(0,0,0,0.38);padding:0;text-shadow:0 1px 4px rgba(255,255,255,0.7);transition:color .15s,font-weight .15s}
-.day-tab.on{color:rgba(0,0,0,0.82);font-weight:700}
-.day-tab:active{opacity:.6}
+#day-filter-row{pointer-events:all;display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.72);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.5);border-radius:999px;padding:3px 8px 3px 6px;box-shadow:0 1px 8px rgba(0,0,0,0.1)}
+#day-filter-row .filter-ico{color:rgba(0,0,0,0.35);display:flex;align-items:center;flex-shrink:0}
+.day-tab{background:none;border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;color:rgba(0,0,0,0.38);padding:3px 9px;border-radius:999px;transition:all .18s}
+.day-tab.on{background:#111;color:#fff;font-weight:600}
+.day-tab:active{opacity:.7}
+/* day tooltip */
+#day-tooltip{pointer-events:none;margin-top:2px;padding:5px 10px;background:rgba(0,0,0,0.72);color:#fff;font-size:11px;font-weight:500;border-radius:8px;white-space:nowrap;opacity:0;transition:opacity .3s ease;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+#day-tooltip.on{opacity:1}
 
 /* bottom sheet */
 #plan-sheet{
@@ -368,6 +371,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
           <button class="day-tab on" onclick="setDays(2)">2일</button>
           <button class="day-tab" onclick="setDays(3)">3일</button>
         </div>
+        <div id="day-tooltip"></div>
         <div id="city-picker">
           <button class="city-opt on" onclick="switchCity('sf')">🇺🇸 San Francisco</button>
           <button class="city-opt" onclick="switchCity('sydney')">🇦🇺 Sydney</button>
@@ -990,7 +994,29 @@ function undoDelete(){
 function setDays(d){
   S.days=d;
   document.querySelectorAll('.day-tab').forEach((btn,i)=>btn.classList.toggle('on',i+1===d));
+  hideDayTooltip();
   buildGroups();syncMarkers();drawLines();renderSheetContent();
+}
+function getRecommendedDays(){
+  const active=S.spots.filter(sp=>!S.excluded.has(sp.id));
+  if(active.length>=7) return 3;
+  if(active.length>=5) return 2;
+  return 1;
+}
+function showDayTooltip(){
+  const rec=getRecommendedDays();
+  const el=document.getElementById('day-tooltip');
+  if(!el) return;
+  el.textContent=`여유있게 둘러보려면 ${rec}일을 추천해요`;
+  el.classList.add('on');
+  clearTimeout(el._hideTimer);
+  el._hideTimer=setTimeout(()=>el.classList.remove('on'),3500);
+}
+function hideDayTooltip(){
+  const el=document.getElementById('day-tooltip');
+  if(!el) return;
+  clearTimeout(el._hideTimer);
+  el.classList.remove('on');
 }
 function updateDaySeg(){
   document.querySelectorAll('.day-tab').forEach((btn,i)=>btn.classList.toggle('on',i+1===S.days));
@@ -1439,7 +1465,7 @@ function playBridgeAnimation(newIds){
       const routeAt=500+newIds.length*STAGGER+50;
       setTimeout(()=>drawLinesAnimated(),routeAt);
       const sheetAt=routeAt+350+80;
-      setTimeout(()=>{renderSheetContent();snapTo(SNAP.mid);setTimeout(()=>staggerListItems(),320);},sheetAt);
+      setTimeout(()=>{renderSheetContent();snapTo(SNAP.mid);setTimeout(()=>{staggerListItems();showPlanReadyToast();},320);},sheetAt);
     },300);
     return;
   }
@@ -1534,6 +1560,9 @@ function staggerListItems(){
     el.classList.add('list-anim');
     el.style.animationDelay=i*60+'ms';
   });
+  const count=document.querySelectorAll('.list-spot-row').length;
+  const delay=count*60+400;
+  setTimeout(showDayTooltip, delay);
 }
 
 function skipBridge(){
