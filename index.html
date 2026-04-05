@@ -293,19 +293,21 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 #toast{position:absolute;bottom:calc(var(--nav) + 14px);left:50%;transform:translateX(-50%) translateY(12px);background:#111;color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;font-weight:600;white-space:nowrap;opacity:0;transition:all .28s;z-index:999;pointer-events:none}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* pin drop animation */
-@keyframes pinDrop{
-  0%  {transform:translateY(-36px) scale(.5);opacity:0}
-  55% {transform:translateY(6px) scale(1.15);opacity:1}
-  75% {transform:translateY(-3px) scale(.95)}
-  100%{transform:translateY(0) scale(1);opacity:1}
+/* pin pop animation */
+@keyframes pinPop{
+  0%  {transform:scale(0);opacity:0}
+  72% {transform:scale(1.1);opacity:1}
+  100%{transform:scale(1);opacity:1}
 }
-@keyframes pinPulse{
-  0%  {box-shadow:0 0 0 0 rgba(255,255,255,.7)}
-  70% {box-shadow:0 0 0 14px rgba(255,255,255,0)}
-  100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}
-}
-.sf-mkr.pin-drop{animation:pinDrop .52s cubic-bezier(.34,1.56,.64,1) both,pinPulse .6s .3s ease-out both}
+.sf-mkr.pin-pop{animation:pinPop .28s cubic-bezier(.34,1.2,.64,1) both}
+
+/* bridge close */
+@keyframes sheetDown{from{transform:translateY(0)}to{transform:translateY(105%)}}
+.bridge-sheet.closing{animation:sheetDown .2s ease-out forwards}
+
+/* list item stagger */
+@keyframes listIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.list-spot-row.list-anim{opacity:0;animation:listIn .22s ease-out both}
 
 /* LEAFLET */
 .leaflet-container{font-family:inherit}
@@ -1360,13 +1362,26 @@ function confirmBridge(){
   _bSpots.forEach(sp=>{
     if(_bSel.has(sp.id)){S.excluded.delete(sp.id);S.newSpots.add(sp.id);}
   });
-  document.getElementById('reel-bridge').style.display='none';
   buildGroups();
+
+  // t=0: bridge sheet slides down (200ms), backdrop fades
+  const bridge=document.getElementById('reel-bridge');
+  const bSheet=bridge.querySelector('.bridge-sheet');
+  bSheet.classList.add('closing');
+  bridge.style.transition='opacity .2s ease-out';
+  bridge.style.opacity='0';
+  setTimeout(()=>{
+    bridge.style.display='none';
+    bridge.style.opacity='';
+    bridge.style.transition='';
+    bSheet.classList.remove('closing');
+  },200);
+
   playBridgeAnimation(newIds);
 }
 
 function playBridgeAnimation(newIds){
-  // ensure plan tab is visible
+  // show plan tab immediately (map already visible behind bridge)
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
   document.getElementById('tab-plan').classList.add('active');
@@ -1382,50 +1397,55 @@ function playBridgeAnimation(newIds){
 
   if(!S.mapInited){
     initMap();
-    // initMap already calls fitActive + drawLines; just snap after settle
-    setTimeout(()=>{renderSheetContent();snapTo(SNAP.mid);},600);
+    setTimeout(()=>{renderSheetContent();snapTo(SNAP.mid);staggerListItems();},800);
     return;
   }
 
   S.map.invalidateSize();
   updateDaySeg();
-
-  // keep sheet at peek while animating
   snapTo(SNAP.peek,false);
 
-  // step 1: fit all spots
+  // t=0: zoom out to all spots (500ms, ease-in-out via Leaflet flyToBounds)
   const all=activeSpots();
-  if(all.length) S.map.fitBounds(all.map(s=>[s.lat,s.lng]),{padding:[70,70],animate:true,duration:.7});
+  if(all.length){
+    S.map.flyToBounds(all.map(s=>[s.lat,s.lng]),{padding:[70,70],duration:.5,easeLinearity:.5});
+  }
 
-  // hide new markers until drop
+  // hide new markers; sync the rest
   syncMarkers();
   newIds.forEach(id=>{
     const m=S.markers[id];
     if(m){const el=m.getElement();if(el)el.style.opacity='0';}
   });
 
-  // step 2: staggered pin drop
-  const STAGGER=280, DROP=520;
+  // t=520: pins pop one by one (140ms stagger)
+  const STAGGER=140, PIN_DUR=280;
   newIds.forEach((id,i)=>{
     setTimeout(()=>{
       const m=S.markers[id];if(!m)return;
       const el=m.getElement();if(!el)return;
       const inner=el.querySelector('.sf-mkr');
-      if(inner){
-        el.style.opacity='1';
-        inner.classList.remove('pin-drop');
-        void inner.offsetWidth; // reflow
-        inner.classList.add('pin-drop');
-      }
-    }, 700 + i*STAGGER);
+      if(!inner)return;
+      el.style.opacity='1';
+      inner.classList.remove('pin-pop');
+      void inner.offsetWidth;
+      inner.classList.add('pin-pop');
+    },520+i*STAGGER);
   });
 
-  // step 3: draw route lines animated
-  const linesAt=700+newIds.length*STAGGER+DROP;
-  setTimeout(()=>drawLinesAnimated(), linesAt);
+  // t=pins done + 50: draw route
+  const routeAt=520+newIds.length*STAGGER+50;
+  setTimeout(()=>drawLinesAnimated(),routeAt);
 
-  // step 4: sheet slides up
-  setTimeout(()=>{renderSheetContent();snapTo(SNAP.mid);}, linesAt+750);
+  // t=route done + 80: sheet rises
+  // route duration is proportional; estimate ~350ms
+  const sheetAt=routeAt+350+80;
+  setTimeout(()=>{
+    renderSheetContent();
+    snapTo(SNAP.mid);
+    // list items stagger after sheet arrives (~320ms)
+    setTimeout(()=>staggerListItems(),320);
+  },sheetAt);
 }
 
 function drawLinesAnimated(){
@@ -1433,19 +1453,30 @@ function drawLinesAnimated(){
   S.routeGroups.forEach(g=>{
     const spots=g.spotIds.map(id=>getSpot(id)).filter(Boolean);
     if(spots.length<2)return;
-    const line=L.polyline(spots.map(s=>[s.lat,s.lng]),{color:C[g.ci],weight:3,opacity:.7,dashArray:'8,5'}).addTo(S.map);
+    const line=L.polyline(spots.map(s=>[s.lat,s.lng]),{
+      color:C[g.ci],weight:2.5,opacity:.65,dashArray:'7,5'
+    }).addTo(S.map);
     S.lines.push(line);
     const path=line.getElement();
     if(path&&path.getTotalLength){
       const len=path.getTotalLength();
+      // speed: ~180px/s, min 250ms max 600ms
+      const dur=Math.min(600,Math.max(250,len/180*1000));
       path.style.strokeDasharray=len+' '+len;
       path.style.strokeDashoffset=len;
       path.style.transition='none';
       requestAnimationFrame(()=>requestAnimationFrame(()=>{
-        path.style.transition='stroke-dashoffset .7s ease-in-out';
+        path.style.transition=`stroke-dashoffset ${dur}ms ease-in-out`;
         path.style.strokeDashoffset='0';
       }));
     }
+  });
+}
+
+function staggerListItems(){
+  document.querySelectorAll('.list-spot-row').forEach((el,i)=>{
+    el.classList.add('list-anim');
+    el.style.animationDelay=i*60+'ms';
   });
 }
 
