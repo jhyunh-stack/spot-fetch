@@ -550,7 +550,8 @@ function initPlanTab(){
   if(!S.mapInited){initMap();}
   else{S.map.invalidateSize();syncMarkers();drawLines();}
   updateDaySeg();
-  renderSheetContent();
+  S.sheetOpen=true;
+  applySheet();
 }
 
 // ═══════════════════════════════════════════
