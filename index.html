@@ -703,8 +703,8 @@ function selSpot(id){
         <div class="sd-name">${sp.name}</div>
         <div class="sd-desc">${sp.desc}</div>
       </div>
-      <label class="sw" onclick="event.stopPropagation();toggleSpotPlan('${id}')">
-        <input type="checkbox" ${isExcl?'':'checked'}>
+      <label class="sw">
+        <input type="checkbox" ${isExcl?'':'checked'} onchange="toggleSpotPlan('${id}')">
         <span class="sw-track"></span>
         <span class="sw-knob"></span>
       </label>
@@ -948,8 +948,8 @@ function renderListView(){
         <div class="excl-row">
           <span style="font-size:18px">${sp.emoji}</span>
           <div class="list-info"><div class="list-name">${sp.name}</div></div>
-          <label class="sw" onclick="event.stopPropagation();toggleSpotPlan('${sp.id}')">
-            <input type="checkbox">
+          <label class="sw">
+            <input type="checkbox" onchange="toggleSpotPlan('${sp.id}')">
             <span class="sw-track"></span>
             <span class="sw-knob"></span>
           </label>
