@@ -1046,6 +1046,7 @@ function renderListView(){
         <div class="list-day-sum">${g.summary}</div>
       </div>
       ${gw}
+      <div style="border-left:2px solid ${C[g.ci]}55;margin-left:3px;padding-left:14px">
       ${spots.map((sp,idx)=>`
         <div class="list-spot-row" id="lsr-${sp.id}" draggable="true"
           ondragstart="dStart(event,'${sp.id}','${g.label}')"
@@ -1063,6 +1064,7 @@ function renderListView(){
           </div>
           <span class="drag-h">⠿</span>
         </div>`).join('')}
+      </div>
     </div>`;
   }).join('');
 
