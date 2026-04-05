@@ -165,16 +165,14 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .excl-row{display:flex;align-items:center;gap:10px;padding:9px 0;opacity:.7}
 .add-back{font-size:12px;font-weight:700;color:var(--t2);background:var(--bg2);border:none;border-radius:8px;padding:5px 10px;cursor:pointer;font-family:inherit;flex-shrink:0;min-height:32px}
 
-/* detail card */
-#detail-card{position:absolute;bottom:0;left:0;right:0;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:var(--glass-b);border-radius:20px 20px 0 0;padding:8px 20px 32px;box-shadow:0 -8px 40px rgba(0,0,0,0.12);transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1);z-index:300}
-#detail-card.on{transform:translateY(0)}
-.dc-hdr{display:flex;align-items:flex-start;gap:14px;margin:12px 0 12px}
-.dc-em{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
-.dc-name{font-size:18px;font-weight:700;letter-spacing:-.4px;color:var(--t1)}
-.dc-desc{font-size:13px;color:var(--t2);margin-top:4px;line-height:1.4}
-.dc-close{margin-left:auto;width:30px;height:30px;border-radius:50%;background:var(--bg2);border:none;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t2);flex-shrink:0}
-.dc-body{font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:16px}
-.dc-excl-btn{width:100%;padding:14px;border-radius:12px;background:var(--bg2);color:var(--t1);border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;min-height:44px}
+/* inline spot detail (inside sheet) */
+.sd-back{display:flex;align-items:center;gap:6px;padding:4px 0 12px;background:none;border:none;font-size:14px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit}
+.sd-hdr{display:flex;align-items:center;gap:14px;padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:14px}
+.sd-em{width:52px;height:52px;border-radius:14px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.sd-name{font-size:20px;font-weight:700;letter-spacing:-.4px;color:var(--t1)}
+.sd-desc{font-size:13px;color:var(--t2);margin-top:3px}
+.sd-body{font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:24px}
+.sd-excl-btn{width:100%;padding:14px;border-radius:12px;background:var(--bg2);color:var(--t1);border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;min-height:44px}
 
 /* ═══ EXPLORE TAB ═══ */
 #tab-explore{background:var(--bg2)}
@@ -268,12 +266,6 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
       <div class="chips-row" id="chips-row"></div>
     </div>
     <div id="sheet-list"></div>
-  </div>
-  <div id="detail-card">
-    <div class="sheet-handle-row"><div class="handle"></div></div>
-    <div class="dc-hdr" id="dc-hdr"></div>
-    <div class="dc-body" id="dc-body"></div>
-    <button class="dc-excl-btn" onclick="excludeCurrent()">이 여행에서 빼기</button>
   </div>
 </div>
 
@@ -661,27 +653,27 @@ function selSpot(id){
   S.selSpot=id;
   const sp=getSpot(id);
   if(sp&&S.markers[id])S.markers[id].setIcon(mkIcon(sp,true));
-  showDetail(id);
-}
-
-function showDetail(id){
-  const sp=getSpot(id);if(!sp)return;
-  const ci=sp.cluster??0;
-  document.getElementById('dc-hdr').innerHTML=`
-    <div class="dc-em" style="background:var(--bg2)">${sp.emoji}</div>
-    <div style="flex:1">
-      <div class="dc-name">${sp.name}</div>
-      <div class="dc-desc">${sp.desc}</div>
+  // show detail inline in sheet
+  snapTo(SNAP.mid);
+  const list=document.getElementById('sheet-list');
+  list.style.display='block';
+  list.innerHTML=`
+    <button class="sd-back" onclick="closeDetail()">‹ 목록으로</button>
+    <div class="sd-hdr">
+      <div class="sd-em">${sp.emoji}</div>
+      <div>
+        <div class="sd-name">${sp.name}</div>
+        <div class="sd-desc">${sp.desc}</div>
+      </div>
     </div>
-    <button class="dc-close" onclick="closeDetail()">✕</button>`;
-  document.getElementById('dc-body').textContent=sp.detail;
-  document.getElementById('detail-card').classList.add('on');
+    <div class="sd-body">${sp.detail}</div>
+    <button class="sd-excl-btn" onclick="excludeCurrent()">이 여행에서 빼기</button>`;
 }
 
 function closeDetail(){
-  document.getElementById('detail-card').classList.remove('on');
   if(S.selSpot&&S.markers[S.selSpot]){const sp=getSpot(S.selSpot);if(sp)S.markers[S.selSpot].setIcon(mkIcon(sp,false));}
   S.selSpot=null;
+  renderListView();
 }
 
 function excludeCurrent(){
