@@ -97,8 +97,14 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 
 /* map top bar */
 #map-top-bar{position:absolute;top:16px;left:12px;right:12px;z-index:1000;display:flex;align-items:center;justify-content:space-between;gap:8px;pointer-events:none}
-#city-btn{pointer-events:all;display:flex;align-items:center;gap:6px;padding:6px 4px;background:none;border:none;font-size:20px;font-weight:800;color:var(--t1);cursor:pointer;font-family:inherit;letter-spacing:-.4px;text-shadow:0 1px 6px rgba(255,255,255,0.9),0 0 20px rgba(255,255,255,0.7)}
+#city-btn-wrap{pointer-events:all;position:relative}
+#city-btn{display:flex;align-items:center;gap:6px;padding:6px 4px;background:none;border:none;font-size:20px;font-weight:800;color:var(--t1);cursor:pointer;font-family:inherit;letter-spacing:-.4px;text-shadow:0 1px 6px rgba(255,255,255,0.9),0 0 20px rgba(255,255,255,0.7)}
 #city-btn .chevron{font-size:18px;font-weight:700;color:var(--t1);margin-top:2px}
+#city-picker{position:absolute;top:calc(100% + 8px);left:0;background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.16);overflow:hidden;display:none;min-width:190px;z-index:1001}
+#city-picker.open{display:block}
+.city-opt{display:flex;align-items:center;gap:10px;width:100%;padding:13px 16px;font-size:15px;font-weight:600;color:#111;background:none;border:none;cursor:pointer;font-family:inherit;text-align:left;transition:background .15s}
+.city-opt:active{background:#f5f5f5}
+.city-opt.on{font-weight:800}
 /* day filter toggle */
 #day-filter-btn{pointer-events:all;display:flex;align-items:center;gap:5px;padding:10px 16px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:var(--glass-b);box-shadow:0 2px 14px rgba(0,0,0,0.14);font-size:15px;font-weight:700;color:var(--t1);cursor:pointer;font-family:inherit;min-height:44px}
 #day-filter-btn .chevron{font-size:16px;color:var(--t2);line-height:1}
@@ -284,10 +290,17 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
   <div id="plan-map-wrap">
     <div id="plan-map"></div>
     <div id="map-top-bar">
-      <button id="city-btn" onclick="toast('도시 전환 (다중 도시 시 활성화)')">
-        <span id="city-name-txt">San Francisco</span>
-        <span class="chevron">⌄</span>
-      </button>
+      <div id="city-btn-wrap">
+        <button id="city-btn" onclick="toggleCityPicker()">
+          <span id="city-name-txt">San Francisco</span>
+          <span class="chevron">⌄</span>
+        </button>
+        <div id="city-picker">
+          <button class="city-opt on" onclick="switchCity('sf')">🇺🇸 San Francisco</button>
+          <button class="city-opt" onclick="switchCity('sydney')">🇦🇺 Sydney</button>
+          <button class="city-opt" onclick="switchCity('seoul')">🇰🇷 Seoul</button>
+        </div>
+      </div>
       <div id="day-selector-wrap">
         <button id="day-filter-btn" onclick="toggleDayDropdown()">
           <span id="day-filter-label">2일</span>
@@ -396,53 +409,108 @@ function getGapWarning(spots) {
 // DATA
 // ═══════════════════════════════════════════
 const SPOTS_DATA = [
-  {id:'s1',name:'Golden Gate Bridge',type:'viewpoint',emoji:'🌉',
+  // ── San Francisco ──
+  {id:'s1',name:'Golden Gate Bridge',type:'viewpoint',emoji:'🌉',city:'sf',
    desc:'샌프란 대표 뷰포인트',
    detail:'이른 아침 안개가 걷히는 순간이 특히 아름다워요. 남쪽 뷰포인트에서 다리 전체 뷰 감상 추천. 자전거로 건너는 것도 꼭 해봐야 할 경험.',
    address:'Golden Gate Bridge, San Francisco, CA',duration:'1-2시간',
    lat:37.8199,lng:-122.4783,reelId:'r1'},
-  {id:'s2',name:'Baker Beach',type:'ocean',emoji:'🌊',
+  {id:'s2',name:'Baker Beach',type:'ocean',emoji:'🌊',city:'sf',
    desc:'골든게이트가 보이는 해변',
    detail:'브리지를 배경으로 한 해변. 일몰 시간대가 최고의 포토스팟. 주차는 이른 아침에 가야 여유로워요.',
    address:'Baker Beach, San Francisco, CA',duration:'약 1시간',
    lat:37.7936,lng:-122.4833,reelId:'r1'},
-  {id:'s3',name:'Warming Hut Café',type:'cafe',emoji:'☕',
+  {id:'s3',name:'Warming Hut Café',type:'cafe',emoji:'☕',city:'sf',
    desc:'프레시디오 안 숨은 카페',
    detail:'골든게이트 바로 옆 프레시디오 공원 안 카페. 브리지 산책 후 들르기 딱 좋아요. 오가닉 샌드위치와 라떼가 인기.',
    address:'983 Marine Dr, San Francisco, CA',duration:'30-60분',
    lat:37.8069,lng:-122.4734,reelId:'r2'},
-  {id:'s4',name:'Lands End',type:'nature',emoji:'⛰️',
+  {id:'s4',name:'Lands End',type:'nature',emoji:'⛰️',city:'sf',
    desc:'바다 보이는 절벽 트레일',
    detail:'해안 절벽을 따라 걷는 산책로. 맑은 날엔 브리지까지 보여요. 왕복 3km, 난이도 쉬움. 석양 무렵이 최고.',
    address:'Lands End Trail, San Francisco, CA',duration:'1-2시간',
    lat:37.7786,lng:-122.5089,reelId:'r3'},
-  {id:'s5',name:'Outerlands',type:'cafe',emoji:'☕',
+  {id:'s5',name:'Outerlands',type:'cafe',emoji:'☕',city:'sf',
    desc:'오션 비치 옆 감성 브런치',
    detail:'Outer Sunset 지역, 오션 비치 한 블록 옆. 통나무 인테리어와 수제 빵이 유명해요. 주말 웨이팅 있지만 분위기 최고.',
    address:'4001 Judah St, San Francisco, CA',duration:'1-1.5시간',
    lat:37.7554,lng:-122.5077,reelId:'r2'},
-  {id:'s6',name:'Tartine Bakery',type:'cafe',emoji:'☕',
+  {id:'s6',name:'Tartine Bakery',type:'cafe',emoji:'☕',city:'sf',
    desc:'전설적인 미션 베이커리',
    detail:'오후 5시부터 빵 판매 시작. 크루아상이 전설급으로 유명해요. 미션 디스트릭트 분위기도 함께 즐길 수 있어요.',
    address:'600 Guerrero St, San Francisco, CA',duration:'30-60분',
    lat:37.7614,lng:-122.4242,reelId:'r2'},
-  {id:'s7',name:'Dolores Park',type:'nature',emoji:'⛰️',
+  {id:'s7',name:'Dolores Park',type:'nature',emoji:'⛰️',city:'sf',
    desc:'미션의 야외 피크닉 스팟',
    detail:'타르틴에서 도보 5분. SF 로컬들이 가장 사랑하는 공원. 언덕 위에서 도심 전망이 일품이에요.',
    address:'Dolores Park, San Francisco, CA',duration:'1-2시간',
    lat:37.7596,lng:-122.4269,reelId:'r3'},
+  // ── Sydney ──
+  {id:'sy1',name:'Sydney Opera House',type:'viewpoint',emoji:'🎭',city:'sydney',
+   desc:'시드니의 상징적인 랜드마크',
+   detail:'세계에서 가장 유명한 공연 예술 센터. 선셋 시간대에 하버 브릿지와 함께 보는 뷰가 압도적이에요.',
+   address:'Bennelong Point, Sydney NSW',duration:'1-2시간',
+   lat:-33.8568,lng:151.2153,reelId:'r_sy1'},
+  {id:'sy2',name:'Bondi Beach',type:'ocean',emoji:'🌊',city:'sydney',
+   desc:'시드니 최고의 서퍼 비치',
+   detail:'시드니에서 가장 유명한 해변. 서핑 스쿨도 있고 해안 산책로(Bondi to Coogee)도 꼭 걸어봐야 해요.',
+   address:'Bondi Beach, Sydney NSW',duration:'2-3시간',
+   lat:-33.8915,lng:151.2767,reelId:'r_sy1'},
+  {id:'sy3',name:'The Rocks',type:'cafe',emoji:'☕',city:'sydney',
+   desc:'오래된 골목의 브런치 거리',
+   detail:'시드니에서 가장 오래된 구역. 주말 마켓이 열리고 독립 카페들이 즐비해요. 오페라하우스 도보 10분.',
+   address:'The Rocks, Sydney NSW',duration:'1-2시간',
+   lat:-33.8596,lng:151.2090,reelId:'r_sy2'},
+  {id:'sy4',name:'Manly Beach',type:'ocean',emoji:'🏄',city:'sydney',
+   desc:'페리 타고 가는 숨은 해변',
+   detail:'시티에서 페리로 30분. 현지인들이 더 좋아하는 한적한 해변. 페리 탑승 자체도 하버 뷰를 즐기는 경험이에요.',
+   address:'Manly Beach, Sydney NSW',duration:'반나절',
+   lat:-33.7969,lng:151.2876,reelId:'r_sy2'},
+  // ── Seoul ──
+  {id:'se1',name:'경복궁',type:'viewpoint',emoji:'🏯',city:'seoul',
+   desc:'조선 왕조의 중심 궁궐',
+   detail:'서울 한복판에 자리한 조선시대 정궁. 수문장 교대식이 유명하고, 한복 입으면 무료 입장이에요.',
+   address:'사직로 161, 종로구, 서울',duration:'1-2시간',
+   lat:37.5796,lng:126.9770,reelId:'r_se1'},
+  {id:'se2',name:'북촌 한옥마을',type:'viewpoint',emoji:'🏘️',city:'seoul',
+   desc:'전통 한옥이 즐비한 골목',
+   detail:'경복궁 바로 옆, 600년 된 한옥들이 모여있는 마을. 이른 아침이 가장 한적하고 사진이 잘 나와요.',
+   address:'계동길, 종로구, 서울',duration:'1-2시간',
+   lat:37.5826,lng:126.9831,reelId:'r_se1'},
+  {id:'se3',name:'카페 보라',type:'cafe',emoji:'☕',city:'seoul',
+   desc:'인스타 감성 자색 라떼 카페',
+   detail:'북촌에서 도보 5분. 흑임자·자색고구마 라떼로 유명한 감성 카페. 웨이팅 있지만 포토스팟으로 필수.',
+   address:'윤보선길 21, 종로구, 서울',duration:'30-60분',
+   lat:37.5788,lng:126.9854,reelId:'r_se2'},
+  {id:'se4',name:'남산타워',type:'viewpoint',emoji:'🗼',city:'seoul',
+   desc:'서울 전경이 한눈에 보이는 타워',
+   detail:'케이블카로 올라가는 게 더 재밌어요. 야경이 특히 예쁘고 자물쇠 명물도 있어요. 360도 서울 뷰.',
+   address:'남산공원길 105, 용산구, 서울',duration:'1-2시간',
+   lat:37.5512,lng:126.9882,reelId:'r_se2'},
 ];
 
 const REELS_DATA = [
-  {id:'r1',platform:'instagram',user:'@travel_sf_vibes',
+  {id:'r1',platform:'instagram',user:'@travel_sf_vibes',city:'sf',
    title:'샌프란시스코 뷰포인트 투어 🌉',savedAt:'2일 전',
    photo:'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=600&q=80'},
-  {id:'r2',platform:'tiktok',user:'@coffeehops_sf',
+  {id:'r2',platform:'tiktok',user:'@coffeehops_sf',city:'sf',
    title:'SF 카페 투어 ☕ 여기 다 가봄',savedAt:'3일 전',
    photo:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=600&q=80'},
-  {id:'r3',platform:'instagram',user:'@coastaldrive',
+  {id:'r3',platform:'instagram',user:'@coastaldrive',city:'sf',
    title:'샌프란 해안 드라이브 코스 🌊',savedAt:'5일 전',
    photo:'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=600&q=80'},
+  {id:'r_sy1',platform:'instagram',user:'@sydney_explorer',city:'sydney',
+   title:'시드니 하루 완전정복 🎭',savedAt:'1주 전',
+   photo:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=600&q=80'},
+  {id:'r_sy2',platform:'tiktok',user:'@bondibeachlife',city:'sydney',
+   title:'시드니 현지인 추천 해변 🏄',savedAt:'1주 전',
+   photo:'https://images.unsplash.com/photo-1549180030-48bf079fb38a?auto=format&fit=crop&w=600&q=80'},
+  {id:'r_se1',platform:'instagram',user:'@seoul_daily',city:'seoul',
+   title:'서울 고궁 & 한옥 투어 🏯',savedAt:'2주 전',
+   photo:'https://images.unsplash.com/photo-1517154421773-0529f29ea451?auto=format&fit=crop&w=600&q=80'},
+  {id:'r_se2',platform:'tiktok',user:'@caffeinated_seoul',city:'seoul',
+   title:'북촌 카페 & 뷰포인트 🗼',savedAt:'2주 전',
+   photo:'https://images.unsplash.com/photo-1583394293214-2b51f0f94d55?auto=format&fit=crop&w=600&q=80'},
 ];
 
 const EXPLORE_DATA = [
@@ -506,7 +574,7 @@ function recomputeClusters(){
 // STATE
 // ═══════════════════════════════════════════
 const S={
-  tab:'plan',days:2,selDay:0,selSpot:null,inDetail:false,newSpots:new Set(),
+  tab:'plan',days:2,selDay:0,selSpot:null,inDetail:false,newSpots:new Set(),city:'sf',filterCity:'',
   spots:SPOTS_DATA.map(s=>({...s})),
   excluded:new Set(),
   expanded:new Set(),
@@ -526,7 +594,7 @@ function toast(msg){
   clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),2400);
 }
 function getSpot(id){return S.spots.find(s=>s.id===id);}
-function activeSpots(){return S.spots.filter(s=>!S.excluded.has(s.id));}
+function activeSpots(){return S.spots.filter(s=>!S.excluded.has(s.id)&&s.city===S.city);}
 
 // ═══════════════════════════════════════════
 // ROUTE GROUPS
@@ -579,8 +647,9 @@ function getPlanBadge(reelId){
 
 function renderSpots(){
   const feed=document.getElementById('spots-feed');
-  const reels=REELS_DATA.filter(r=>S.spots.some(s=>s.reelId===r.id));
-  document.getElementById('spots-sub').textContent=`릴 ${reels.length}개 · Spot ${S.spots.length}개`;
+  const reels=REELS_DATA.filter(r=>S.spots.some(s=>s.reelId===r.id)&&(!S.filterCity||r.city===S.filterCity));
+  const total=S.spots.filter(s=>!S.filterCity||s.city===S.filterCity).length;
+  document.getElementById('spots-sub').textContent=`릴 ${reels.length}개 · Spot ${total}개`;
   if(!reels.length){
     feed.innerHTML=`<div style="padding:52px 20px;text-align:center;color:#999"><div style="font-size:40px;margin-bottom:12px">🔖</div><div style="font-size:14px;font-weight:600">저장된 릴이 없어요</div></div>`;
     return;
@@ -821,10 +890,34 @@ function updateDaySeg(){
 }
 // city filter for Spots tab
 function filterSpotCity(city){
+  S.filterCity=city;
   document.querySelectorAll('.city-tab').forEach(t=>t.classList.remove('on'));
   event.target.classList.add('on');
-  // all spots are SF in mock data — just visual for now
   renderSpots();
+}
+
+// Plan tab city switcher
+const CITY_META={
+  sf:{name:'San Francisco',center:[37.76,-122.47],zoom:12},
+  sydney:{name:'Sydney',center:[-33.87,151.21],zoom:12},
+  seoul:{name:'Seoul',center:[37.57,126.98],zoom:13},
+};
+function toggleCityPicker(){
+  document.getElementById('city-picker').classList.toggle('open');
+}
+function switchCity(city){
+  S.city=city;
+  const meta=CITY_META[city];
+  document.getElementById('city-name-txt').textContent=meta.name;
+  document.querySelectorAll('.city-opt').forEach((b,i)=>b.classList.toggle('on',['sf','sydney','seoul'][i]===city));
+  document.getElementById('city-picker').classList.remove('open');
+  buildGroups();
+  if(S.mapInited){
+    S.map.setView(meta.center,meta.zoom,{animate:true});
+    syncMarkers();drawLines();
+    setTimeout(()=>{const a=activeSpots();if(a.length)S.map.fitBounds(a.map(s=>[s.lat,s.lng]),{padding:[70,70]});},300);
+  }
+  renderSheetContent();
 }
 
 // ═══════════════════════════════════════════
@@ -1048,8 +1141,8 @@ const _br = REELS_DATA[0];
 const _bSpots = SPOTS_DATA.filter(s=>s.reelId===_br.id);
 const _bSel = new Set(_bSpots.map(s=>s.id));
 
-// all spots start excluded — bridge decides what enters the plan
-SPOTS_DATA.forEach(s=>S.excluded.add(s.id));
+// only bridge reel spots start excluded — other spots already in plan
+_bSpots.forEach(s=>S.excluded.add(s.id));
 
 function renderBridge(){
   const badge=_br.platform==='instagram'
