@@ -642,10 +642,15 @@ buildGroups();
 // ═══════════════════════════════════════════
 // UTILS
 // ═══════════════════════════════════════════
-function toast(msg){
+function toast(msg,action){
   const el=document.getElementById('toast');
-  el.textContent=msg;el.classList.add('on');
-  clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),2400);
+  if(action){
+    el.innerHTML=`<span>${msg}</span><button onclick="${action}()" style="margin-left:10px;background:none;border:none;color:#aaa;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;padding:0">되돌리기</button>`;
+  } else {
+    el.textContent=msg;
+  }
+  el.classList.add('on');
+  clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),3000);
 }
 function getSpot(id){return S.spots.find(s=>s.id===id);}
 function activeSpots(){return S.spots.filter(s=>!S.excluded.has(s.id)&&s.city===S.city);}
@@ -934,9 +939,28 @@ function toggleSpotPlan(id){
 
 // long press
 let _lp=null;
-function lpStart(e,id){_lp=setTimeout(()=>{_lp=null;toggleSpotPlan(id);if(navigator.vibrate)navigator.vibrate(30);},500);}
+function lpStart(e,id){_lp=setTimeout(()=>{_lp=null;deleteSpot(id);if(navigator.vibrate)navigator.vibrate([40,30,40]);},500);}
 function lpEnd(){if(_lp){clearTimeout(_lp);_lp=null;}}
 function lpCancel(){if(_lp){clearTimeout(_lp);_lp=null;}}
+
+let _undoDelete=null;
+function deleteSpot(id){
+  const sp=getSpot(id);if(!sp)return;
+  const idx=S.spots.indexOf(sp);
+  S.spots.splice(idx,1);
+  S.excluded.delete(id);S.newSpots.delete(id);
+  if(S.focusedSpot===id){S.focusedSpot=null;const b=document.getElementById('focused-bar');if(b)b.style.display='none';}
+  _undoDelete={sp,idx};
+  buildGroups();syncMarkers();drawLines();renderSheetContent();
+  toast(sp.name+' 삭제됨','undoDelete');
+}
+function undoDelete(){
+  if(!_undoDelete)return;
+  S.spots.splice(_undoDelete.idx,0,_undoDelete.sp);
+  _undoDelete=null;
+  buildGroups();syncMarkers();drawLines();renderSheetContent();
+  document.getElementById('toast').classList.remove('on');
+}
 
 // ═══════════════════════════════════════════
 // DAY SELECTOR
