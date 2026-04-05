@@ -213,6 +213,32 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .ex-btn.done-g{background:#DCFCE7;color:#16A34A;pointer-events:none}
 .ex-btn.done-b{background:#EEF2FF;color:#6366F1;pointer-events:none}
 
+/* ═══ REEL BRIDGE ═══ */
+#reel-bridge{position:absolute;inset:0;z-index:800;display:flex;flex-direction:column;justify-content:flex-end;background:rgba(0,0,0,0.38);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.bridge-sheet{background:#fff;border-radius:24px 24px 0 0;padding:0 0 36px;overflow-y:auto;animation:slideUp .36s cubic-bezier(.32,.72,0,1)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.bridge-top{display:flex;flex-direction:column;align-items:center;padding:12px 20px 16px}
+.bridge-pill{width:40px;height:4px;background:rgba(0,0,0,0.15);border-radius:2px;margin-bottom:16px}
+.bridge-label{font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px;align-self:flex-start}
+.bridge-reel{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg2);border-radius:14px;width:100%}
+.bridge-reel-badge{font-size:10px;font-weight:800;color:#fff;padding:3px 8px;border-radius:8px;flex-shrink:0}
+.bridge-reel-user{font-size:12px;color:var(--t2);font-weight:600}
+.bridge-reel-title{font-size:14px;font-weight:700;color:var(--t1);margin-top:1px;line-height:1.3}
+.bridge-divider{width:100%;height:1px;background:var(--border);margin:4px 0 0}
+.bridge-spots{padding:0 20px}
+.bridge-spot-row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.bridge-spot-row:last-child{border-bottom:none}
+.bridge-spot-em{font-size:22px;flex-shrink:0;width:28px;text-align:center}
+.bridge-spot-info{flex:1;min-width:0}
+.bridge-spot-name{font-size:14px;font-weight:600;color:var(--t1)}
+.bridge-spot-desc{font-size:12px;color:var(--t2);margin-top:1px}
+.bridge-check{width:24px;height:24px;border-radius:50%;border:2px solid rgba(0,0,0,0.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .18s;font-size:13px;font-weight:700;color:transparent}
+.bridge-check.on{background:#111;border-color:#111;color:#fff}
+.bridge-actions{padding:20px 20px 0;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bridge-cta{width:100%;padding:16px;background:#111;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;min-height:52px;transition:opacity .15s}
+.bridge-cta:active{opacity:.82}
+.bridge-skip{background:none;border:none;font-size:14px;font-weight:500;color:var(--t2);cursor:pointer;font-family:inherit;padding:12px 24px;min-height:44px}
+
 /* TOAST */
 #toast{position:absolute;bottom:calc(var(--nav) + 14px);left:50%;transform:translateX(-50%) translateY(12px);background:#111;color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;font-weight:600;white-space:nowrap;opacity:0;transition:all .28s;z-index:999;pointer-events:none}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -293,6 +319,23 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     <div class="ph-sub">다른 사람들의 루트</div>
   </div>
   <div class="ex-feed" id="ex-feed"></div>
+</div>
+
+<!-- ═══ REEL BRIDGE ═══ -->
+<div id="reel-bridge">
+  <div class="bridge-sheet">
+    <div class="bridge-top">
+      <div class="bridge-pill"></div>
+      <div class="bridge-label">릴스에서 새 스팟 발견</div>
+      <div class="bridge-reel" id="bridge-reel-info"></div>
+    </div>
+    <div class="bridge-divider"></div>
+    <div class="bridge-spots" id="bridge-spots"></div>
+    <div class="bridge-actions">
+      <button class="bridge-cta" onclick="confirmBridge()">플랜에 추가하기</button>
+      <button class="bridge-skip" onclick="skipBridge()">나중에</button>
+    </div>
+  </div>
 </div>
 
 <!-- ═══ NAV ═══ -->
@@ -1006,11 +1049,64 @@ function renderExplore(){
 }
 
 // ═══════════════════════════════════════════
+// REEL BRIDGE
+// ═══════════════════════════════════════════
+const _br = REELS_DATA[0];
+const _bSpots = SPOTS_DATA.filter(s=>s.reelId===_br.id);
+const _bSel = new Set(_bSpots.map(s=>s.id));
+
+// all spots start excluded — bridge decides what enters the plan
+SPOTS_DATA.forEach(s=>S.excluded.add(s.id));
+
+function renderBridge(){
+  const badge=_br.platform==='instagram'
+    ?'<span class="bridge-reel-badge b-ig">IG</span>'
+    :'<span class="bridge-reel-badge b-tt">TT</span>';
+  document.getElementById('bridge-reel-info').innerHTML=`
+    ${badge}
+    <div>
+      <div class="bridge-reel-user">${_br.user}</div>
+      <div class="bridge-reel-title">${_br.title}</div>
+    </div>`;
+  document.getElementById('bridge-spots').innerHTML=_bSpots.map(sp=>`
+    <div class="bridge-spot-row" onclick="toggleBridgeSel('${sp.id}')">
+      <span class="bridge-spot-em">${sp.emoji}</span>
+      <div class="bridge-spot-info">
+        <div class="bridge-spot-name">${sp.name}</div>
+        <div class="bridge-spot-desc">${sp.desc}</div>
+      </div>
+      <div class="bridge-check on" id="bc-${sp.id}">✓</div>
+    </div>`).join('');
+}
+
+function toggleBridgeSel(id){
+  const el=document.getElementById('bc-'+id);
+  if(_bSel.has(id)){_bSel.delete(id);el.className='bridge-check';el.textContent='';}
+  else{_bSel.add(id);el.className='bridge-check on';el.textContent='✓';}
+}
+
+function confirmBridge(){
+  // only selected spots enter the plan
+  _bSpots.forEach(sp=>{
+    if(_bSel.has(sp.id)) S.excluded.delete(sp.id);
+  });
+  document.getElementById('reel-bridge').style.display='none';
+  buildGroups();
+  initPlanTab();
+}
+
+function skipBridge(){
+  // all spots stay excluded, go to Spots tab
+  document.getElementById('reel-bridge').style.display='none';
+  switchTab('spots');
+}
+
+// ═══════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════
 renderSpots();
 renderExplore();
-setTimeout(initPlanTab, 100);
+renderBridge();
 </script>
 </body>
 </html>
