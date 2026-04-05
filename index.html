@@ -49,6 +49,12 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 
 /* ═══ SPOTS TAB ═══ */
 #tab-spots{background:var(--bg2)}
+/* city filter tabs */
+#spots-filter{padding:0 12px 10px;flex-shrink:0}
+.city-tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+.city-tabs::-webkit-scrollbar{display:none}
+.city-tab{flex-shrink:0;padding:7px 16px;border-radius:999px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;background:rgba(0,0,0,0.06);color:var(--t2);min-height:34px;white-space:nowrap}
+.city-tab.on{background:#111;color:#fff}
 .feed{flex:1;overflow-y:auto;padding:8px 12px calc(var(--nav) + 16px)}
 .feed::-webkit-scrollbar{display:none}
 .reel-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -91,10 +97,17 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 
 /* map top bar */
 #map-top-bar{position:absolute;top:16px;left:12px;right:12px;z-index:1000;display:flex;align-items:center;justify-content:space-between;gap:8px;pointer-events:none}
-#city-btn{pointer-events:all;display:flex;align-items:center;gap:5px;padding:8px 14px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:var(--glass-b);box-shadow:0 2px 10px rgba(0,0,0,0.12);font-size:13px;font-weight:700;color:var(--t1);cursor:pointer;font-family:inherit;min-height:40px;white-space:nowrap;max-width:160px;overflow:hidden;text-overflow:ellipsis}
-#day-selector{pointer-events:all;display:flex;gap:6px}
-.day-seg{padding:7px 14px;border-radius:999px;font-size:13px;font-weight:700;border:none;cursor:pointer;font-family:inherit;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);color:var(--t2);box-shadow:0 2px 10px rgba(0,0,0,0.12);transition:all .2s;min-height:40px}
-.day-seg.on{color:#fff;background:#111!important;backdrop-filter:none;-webkit-backdrop-filter:none}
+#city-btn{pointer-events:all;display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:var(--glass-b);box-shadow:0 2px 14px rgba(0,0,0,0.14);font-size:16px;font-weight:700;color:var(--t1);cursor:pointer;font-family:inherit;min-height:44px;white-space:nowrap}
+#city-btn .chevron{font-size:12px;color:var(--t2);margin-top:1px}
+/* day filter toggle */
+#day-filter-btn{pointer-events:all;display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:var(--glass-b);box-shadow:0 2px 14px rgba(0,0,0,0.14);font-size:15px;font-weight:700;color:var(--t1);cursor:pointer;font-family:inherit;min-height:44px;border:none}
+#day-filter-btn .chevron{font-size:12px;color:var(--t2)}
+#day-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:var(--bg);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);overflow:hidden;display:none;min-width:100px}
+#day-dropdown.open{display:block}
+.day-opt{display:block;width:100%;padding:13px 20px;font-size:15px;font-weight:600;color:var(--t1);background:none;border:none;cursor:pointer;font-family:inherit;text-align:left;transition:background .15s}
+.day-opt:active,.day-opt:hover{background:var(--bg2)}
+.day-opt.on{color:#111;font-weight:700}
+#day-selector-wrap{pointer-events:all;position:relative}
 
 /* bottom sheet */
 #plan-sheet{
@@ -207,6 +220,14 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     <div class="ph-title">Spots</div>
     <div class="ph-sub" id="spots-sub">로딩 중...</div>
   </div>
+  <div id="spots-filter">
+    <div class="city-tabs">
+      <button class="city-tab on" onclick="filterSpotCity('')">전체</button>
+      <button class="city-tab" onclick="filterSpotCity('sf')">San Francisco</button>
+      <button class="city-tab" onclick="filterSpotCity('sydney')">Sydney</button>
+      <button class="city-tab" onclick="filterSpotCity('seoul')">Seoul</button>
+    </div>
+  </div>
   <div class="feed" id="spots-feed"></div>
 </div>
 
@@ -224,11 +245,18 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
       <button id="city-btn" onclick="toast('도시 전환 (다중 도시 시 활성화)')">
         <span id="city-flag">🇺🇸</span>
         <span id="city-name-txt">San Francisco</span>
+        <span class="chevron">⌄</span>
       </button>
-      <div id="day-selector">
-        <button class="day-seg" onclick="setDays(1)">1일</button>
-        <button class="day-seg on" onclick="setDays(2)">2일</button>
-        <button class="day-seg" onclick="setDays(3)">3일</button>
+      <div id="day-selector-wrap">
+        <button id="day-filter-btn" onclick="toggleDayDropdown()">
+          <span id="day-filter-label">2일</span>
+          <span class="chevron">⌄</span>
+        </button>
+        <div id="day-dropdown">
+          <button class="day-opt" onclick="setDays(1)">1일</button>
+          <button class="day-opt on" onclick="setDays(2)">2일</button>
+          <button class="day-opt" onclick="setDays(3)">3일</button>
+        </div>
       </div>
     </div>
   </div>
@@ -670,14 +698,33 @@ function excludeCurrent(){
 // DAY SELECTOR
 // ═══════════════════════════════════════════
 function setDays(d){
-  S.days=d;updateDaySeg();buildGroups();syncMarkers();drawLines();renderSheetContent();
+  S.days=d;
+  // update dropdown
+  document.querySelectorAll('.day-opt').forEach((btn,i)=>btn.classList.toggle('on',i+1===d));
+  const lbl=document.getElementById('day-filter-label');
+  if(lbl)lbl.textContent=d+'일';
+  closeDayDropdown();
+  buildGroups();syncMarkers();drawLines();renderSheetContent();
+}
+function toggleDayDropdown(){
+  const dd=document.getElementById('day-dropdown');
+  dd.classList.toggle('open');
+}
+function closeDayDropdown(){
+  const dd=document.getElementById('day-dropdown');
+  if(dd)dd.classList.remove('open');
 }
 function updateDaySeg(){
-  document.querySelectorAll('.day-seg').forEach((btn,i)=>{
-    btn.classList.toggle('on',i+1===S.days);
-    btn.style.background='';
-    btn.style.color='';
-  });
+  const lbl=document.getElementById('day-filter-label');
+  if(lbl)lbl.textContent=S.days+'일';
+  document.querySelectorAll('.day-opt').forEach((btn,i)=>btn.classList.toggle('on',i+1===S.days));
+}
+// city filter for Spots tab
+function filterSpotCity(city){
+  document.querySelectorAll('.city-tab').forEach(t=>t.classList.remove('on'));
+  event.target.classList.add('on');
+  // all spots are SF in mock data — just visual for now
+  renderSpots();
 }
 
 // ═══════════════════════════════════════════
