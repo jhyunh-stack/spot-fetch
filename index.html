@@ -27,11 +27,14 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 
 /* ── Bottom nav ── */
 #nav{height:var(--nav);background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:100;padding:0 16px calc(env(safe-area-inset-bottom,0) + 8px)}
-#nav-pill{display:flex;align-items:center;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:28px;box-shadow:0 4px 24px rgba(0,0,0,.13),0 1px 4px rgba(0,0,0,.06);padding:5px;gap:2px;width:100%}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 6px;cursor:pointer;color:var(--t3);transition:all .22s;background:none;border:none;font-family:inherit;border-radius:22px}
-.nav-btn.on{color:var(--accent);background:var(--accent-bg)}
-.nav-ic{font-size:20px;line-height:1}
-.nav-lb{font-size:10px;font-weight:700;letter-spacing:.1px}
+#nav-pill{display:flex;align-items:center;background:rgba(255,255,255,.75);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.6);border-radius:28px;box-shadow:0 4px 20px rgba(0,0,0,.09),0 1px 4px rgba(0,0,0,.05);padding:5px;gap:2px;width:100%}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 6px;cursor:pointer;color:var(--t3);transition:all .22s;background:none;border:none;font-family:inherit;border-radius:22px}
+.nav-btn svg{transition:stroke-width .22s}
+.nav-btn.on{color:#111827}
+.nav-btn.on svg{stroke-width:2.4}
+.nav-ic{display:flex;align-items:center;justify-content:center;line-height:1}
+.nav-lb{font-size:10px;font-weight:600;letter-spacing:.2px}
+.nav-btn.on .nav-lb{font-weight:800}
 
 /* ── Page header ── */
 .ph{padding:18px 20px 10px;flex-shrink:0}
@@ -186,8 +189,8 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .gen-title{font-size:15px;font-weight:800;color:var(--t1)}
 .gen-sub{font-size:13px;color:var(--t2);margin-top:6px}
 
-/* AI plan nudge banner (Saved 탭 하단) */
-#plan-nudge{flex-shrink:0;margin:0 12px 16px;background:linear-gradient(135deg,#5B52F0 0%,#7C6FFF 100%);color:#fff;border-radius:var(--r2);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all .2s;box-shadow:0 6px 20px rgba(108,99,255,.38)}
+/* trip nudge banner (Saved 탭 하단) */
+#plan-nudge{flex-shrink:0;margin:0 12px 16px;background:linear-gradient(135deg,#5B52F0 0%,#7C6FFF 100%);color:#fff;border-radius:var(--r2);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all .2s;box-shadow:0 6px 20px rgba(108,99,255,.35)}
 #plan-nudge:active{opacity:.9;transform:scale(.99)}
 .nudge-ai-row{display:flex;align-items:center;gap:7px;margin-bottom:4px}
 .nudge-pulse{width:7px;height:7px;border-radius:50%;background:#A5F3FC;flex-shrink:0;animation:pulse-dot 1.8s ease-in-out infinite}
@@ -199,12 +202,31 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .nudge-arrow{font-size:20px;font-weight:700}
 .nudge-cta{font-size:11px;font-weight:700;background:rgba(255,255,255,.2);padding:4px 10px;border-radius:20px;white-space:nowrap}
 
-/* destination header */
-.dest-chip{display:inline-flex;align-items:center;gap:5px;background:var(--accent-bg);color:var(--accent);border-radius:20px;padding:4px 11px;font-size:12px;font-weight:700;margin-bottom:8px}
+/* plan preview overlay (from Saved tab banner) */
+#plan-preview{position:absolute;inset:0;z-index:900;display:flex;align-items:flex-end;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .25s}
+#plan-preview.on{opacity:1;pointer-events:all}
+.pp-sheet{width:100%;background:var(--surface);border-radius:var(--r4) var(--r4) 0 0;padding:6px 20px 32px;transform:translateY(20px);transition:transform .3s cubic-bezier(.32,.72,0,1)}
+#plan-preview.on .pp-sheet{transform:translateY(0)}
+.pp-dest{font-size:24px;font-weight:800;letter-spacing:-.6px;color:var(--t1);margin:14px 0 3px}
+.pp-sub{font-size:13px;color:var(--t2);margin-bottom:18px}
+.pp-days{display:flex;gap:6px;margin-bottom:16px}
+.pp-day-btn{flex:1;padding:9px 4px;border-radius:var(--r1);border:1.5px solid var(--border);background:transparent;font-size:13px;font-weight:700;color:var(--t2);cursor:pointer;font-family:inherit;transition:all .18s}
+.pp-day-btn.on{border-color:var(--accent);background:var(--accent-bg);color:var(--accent)}
+.pp-preview{background:var(--bg);border-radius:var(--r2);padding:12px 14px;margin-bottom:18px}
+.pp-day-row{display:flex;align-items:flex-start;gap:10px;padding:7px 0}
+.pp-day-row:not(:last-child){border-bottom:1px solid var(--border)}
+.pp-day-label{font-size:11px;font-weight:800;color:#fff;padding:2px 9px;border-radius:10px;flex-shrink:0;margin-top:2px;white-space:nowrap}
+.pp-spots-txt{font-size:12px;color:var(--t2);line-height:1.6}
+.pp-save{width:100%;padding:15px;border-radius:var(--r2);background:var(--t1);color:#fff;border:none;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:-.3px;transition:all .18s}
+.pp-save:active{opacity:.9;transform:scale(.98)}
+.pp-later{width:100%;padding:10px;background:none;border:none;font-size:13px;color:var(--t3);cursor:pointer;font-family:inherit;margin-top:4px}
+
+/* destination header in route sheet */
+.dest-chip{display:inline-flex;align-items:center;gap:5px;background:var(--accent-bg);color:var(--accent);border-radius:20px;padding:4px 11px;font-size:12px;font-weight:700;margin-bottom:6px}
 
 /* save plan button */
 #save-plan-wrap{padding:12px 20px 4px;border-top:1px solid var(--border)}
-#save-plan-btn{width:100%;padding:14px;border-radius:var(--r2);background:var(--accent);color:#fff;border:none;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:-.3px;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:8px}
+#save-plan-btn{width:100%;padding:14px;border-radius:var(--r2);background:var(--t1);color:#fff;border:none;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:-.3px;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:8px}
 #save-plan-btn:active{transform:scale(.98);opacity:.9}
 #save-plan-btn.saved{background:#DCFCE7;color:#16A34A;pointer-events:none}
 
@@ -260,14 +282,14 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
       <div class="ph-sub" id="saved-sub">로딩 중...</div>
     </div>
     <div class="feed" id="saved-feed"></div>
-    <div id="plan-nudge" onclick="switchTab('plan')">
+    <div id="plan-nudge" onclick="openPlanPreview()">
       <div style="flex:1;min-width:0">
         <div class="nudge-ai-row">
           <div class="nudge-pulse"></div>
-          <div class="nudge-ai-label">AI 플랜 준비됐어요</div>
+          <div class="nudge-ai-label">Trip ready</div>
         </div>
-        <div class="nudge-label" id="nudge-label">샌프란시스코 여행</div>
-        <div class="nudge-sub" id="nudge-sub">스팟 7개 분석 완료</div>
+        <div class="nudge-label">San Francisco</div>
+        <div class="nudge-sub" id="nudge-sub">스팟 7개가 모였어요</div>
       </div>
       <div class="nudge-right">
         <span class="nudge-arrow">→</span>
@@ -276,58 +298,25 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     </div>
   </div>
 
-  <!-- ══════════════ PLAN TAB ══════════════ -->
+  <!-- ══════════════ TRIPS TAB ══════════════ -->
   <div id="tab-plan" class="tab-panel">
-    <div class="mode-bar">
-      <button class="mode-btn on" id="btn-map" onclick="setPlanMode('map')">🗺 지도 보기</button>
-      <button class="mode-btn" id="btn-spots" onclick="setPlanMode('spots')">📍 스팟별 보기</button>
-    </div>
 
-    <!-- Map View -->
-    <div id="map-view">
+    <!-- Map View (full height) -->
+    <div id="map-view" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
       <div id="map-wrapper">
         <div id="leaflet-map"></div>
-        <button id="floating-cta" onclick="openDensity()">✦ AI로 플랜 만들기</button>
       </div>
       <div class="bsheet" id="bsheet"></div>
     </div>
 
-    <!-- Spots View -->
-    <div id="spots-view" style="display:none"></div>
-
     <!-- Spot Detail Panel -->
     <div id="detail-panel"></div>
-
-    <!-- Density Modal -->
-    <div id="density-modal" onclick="if(event.target===this)closeDensity()">
-      <div class="density-sheet">
-        <div class="handle"></div>
-        <div class="density-title">AI 플랜 설정</div>
-        <div class="density-sub" id="density-sub-txt">저장한 스팟을 AI가 분석해서 최적 플랜을 만들어드릴게요</div>
-        <button class="d-opt" data-d="1" onclick="pickDensity(1)">
-          <span class="d-ic">⚡</span>
-          <div><div class="d-label">1일로 빡세게</div><div class="d-desc">모든 스팟, 하루에 몰아서</div></div>
-          <div class="d-check">✓</div>
-        </button>
-        <button class="d-opt on" data-d="2" onclick="pickDensity(2)">
-          <span class="d-ic">✌️</span>
-          <div><div class="d-label">2일로 나눠</div><div class="d-desc">여유있게 이틀에 걸쳐서</div></div>
-          <div class="d-check">✓</div>
-        </button>
-        <button class="d-opt" data-d="3" onclick="pickDensity(3)">
-          <span class="d-ic">🌅</span>
-          <div><div class="d-label">3일로 여유롭게</div><div class="d-desc">느긋하게, 각 스팟에 충분히</div></div>
-          <div class="d-check">✓</div>
-        </button>
-        <button class="d-confirm" onclick="confirmRoute()">✦ AI 플랜 생성하기</button>
-      </div>
-    </div>
 
     <!-- Generating overlay -->
     <div id="gen-overlay">
       <div class="spinner"></div>
-      <div class="gen-title">AI가 플랜 만드는 중...</div>
-      <div class="gen-sub">스팟 위치를 분석해 최적 동선 계산 중</div>
+      <div class="gen-title">플랜 만드는 중...</div>
+      <div class="gen-sub">저장된 스팟으로 최적 동선 계산 중</div>
     </div>
   </div>
 
@@ -340,17 +329,43 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     <div class="ex-feed" id="ex-feed"></div>
   </div>
 
+  <!-- ══════════════ PLAN PREVIEW OVERLAY ══════════════ -->
+  <div id="plan-preview" onclick="if(event.target===this)closePlanPreview()">
+    <div class="pp-sheet">
+      <div class="handle"></div>
+      <div class="pp-dest">San Francisco</div>
+      <div class="pp-sub" id="pp-sub">스팟 7개가 모였어요</div>
+      <div class="pp-days">
+        <button class="pp-day-btn" onclick="pickPreviewDays(1)">1 day</button>
+        <button class="pp-day-btn on" onclick="pickPreviewDays(2)">2 days</button>
+        <button class="pp-day-btn" onclick="pickPreviewDays(3)">3 days</button>
+      </div>
+      <div class="pp-preview" id="pp-preview-content"></div>
+      <button class="pp-save" onclick="saveTripFromPreview()">Save This Trip</button>
+      <button class="pp-later" onclick="closePlanPreview()">나중에</button>
+    </div>
+  </div>
+
   <!-- ══════════════ NAV ══════════════ -->
   <nav id="nav">
     <div id="nav-pill">
       <button class="nav-btn on" onclick="switchTab('saved')">
-        <span class="nav-ic">🔖</span><span class="nav-lb">저장됨</span>
+        <span class="nav-ic">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+        </span>
+        <span class="nav-lb">Saved</span>
       </button>
       <button class="nav-btn" onclick="switchTab('plan')">
-        <span class="nav-ic">🗺️</span><span class="nav-lb">플랜</span>
+        <span class="nav-ic">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+        </span>
+        <span class="nav-lb">Trips</span>
       </button>
       <button class="nav-btn" onclick="switchTab('explore')">
-        <span class="nav-ic">✨</span><span class="nav-lb">탐색</span>
+        <span class="nav-ic">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        </span>
+        <span class="nav-lb">Explore</span>
       </button>
     </div>
   </nav>
@@ -548,7 +563,51 @@ function updateNudge() {
   if (!el) return;
   const n = S.spots.length;
   el.style.display = n > 0 ? 'flex' : 'none';
-  if (sub) sub.textContent = `스팟 ${n}개 분석 완료`;
+  if (sub) sub.textContent = `스팟 ${n}개가 모였어요`;
+}
+
+// ── Plan Preview (from Saved tab banner) ──
+function openPlanPreview() {
+  const n = S.spots.length;
+  document.getElementById('pp-sub').textContent = `스팟 ${n}개가 모였어요`;
+  renderPlanPreview(S.days);
+  document.getElementById('plan-preview').classList.add('on');
+}
+
+function closePlanPreview() {
+  document.getElementById('plan-preview').classList.remove('on');
+}
+
+function pickPreviewDays(d) {
+  S.days = d;
+  document.querySelectorAll('.pp-day-btn').forEach((b,i) => {
+    b.classList.toggle('on', i+1 === d);
+  });
+  renderPlanPreview(d);
+}
+
+function renderPlanPreview(d) {
+  const cfg = ROUTES[Math.min(d, Object.keys(ROUTES).length)];
+  const rows = cfg.groups.map(g => {
+    const spots = g.ids.map(id=>S.spots.find(s=>s.id===id)).filter(Boolean);
+    if (!spots.length) return '';
+    return `
+      <div class="pp-day-row">
+        <span class="pp-day-label" style="background:${C[g.ci]}">${g.label}</span>
+        <div class="pp-spots-txt">${spots.map(s=>s.name).join(' · ')}</div>
+      </div>`;
+  }).join('');
+  document.getElementById('pp-preview-content').innerHTML = rows;
+}
+
+function saveTripFromPreview() {
+  closePlanPreview();
+  document.getElementById('gen-overlay').classList.add('on');
+  setTimeout(()=>{
+    document.getElementById('gen-overlay').classList.remove('on');
+    generateRoute();
+    switchTab('plan');
+  }, 1400);
 }
 
 // ══════════════════════════════════════════
@@ -628,7 +687,7 @@ function toggleReel(id) {
 function delReel(reelId) {
   S.spots = S.spots.filter(s=>s.reelId!==reelId);
   recomputeClusters();
-  renderSaved(); syncMap(); if(S.planMode==='spots') renderSpots();
+  renderSaved(); syncMap();
   updateBsheet();
   toast('릴이 삭제됐어요');
 }
@@ -636,7 +695,7 @@ function delReel(reelId) {
 function delSpot(spotId) {
   S.spots = S.spots.filter(s=>s.id!==spotId);
   recomputeClusters();
-  renderSaved(); syncMap(); if(S.planMode==='spots') renderSpots();
+  renderSaved(); syncMap();
   updateBsheet();
   toast('스팟이 삭제됐어요');
 }
@@ -778,9 +837,6 @@ function renderBsheet() { updateBsheet(); }
 
 function updateBsheet() {
   if (!S.mapInited) return;
-  // floating CTA 표시/숨김
-  const cta = document.getElementById('floating-cta');
-  if (cta) cta.classList.toggle('hidden', S.planState !== 'pre');
 
   const el = document.getElementById('bsheet');
   if (S.planState === 'pre') {
@@ -797,6 +853,7 @@ function updateBsheet() {
           </div>
         </div>
         <div class="chips">${chips}</div>
+        <button class="gen-btn" onclick="switchTab('saved');setTimeout(openPlanPreview,200)">플랜 만들기 →</button>
       </div>`;
   } else {
     const groups = S.routeGroups.map((g)=>{
@@ -832,8 +889,8 @@ function updateBsheet() {
       <div class="route-hdr">
         <div class="route-title-row">
           <div>
-            <div class="dest-chip">📍 샌프란시스코 여행</div>
-            <div class="route-title">AI가 만든 ${S.days}일 플랜 ✦</div>
+            <div class="dest-chip">📍 San Francisco</div>
+            <div class="route-title">${S.days}일 플랜</div>
           </div>
           <button class="reset-btn" onclick="resetRoute()">다시 설정</button>
         </div>
@@ -898,7 +955,7 @@ function generateRoute() {
   });
 
   updateBsheet();
-  toast(`AI가 ${S.days}일 플랜을 만들었어요 ✦`);
+  toast(`${S.days}일 플랜이 완성됐어요`);
 }
 
 function savePlan() {
@@ -906,7 +963,7 @@ function savePlan() {
   if (!btn) return;
   btn.textContent = '저장 완료 ✓';
   btn.classList.add('saved');
-  toast('샌프란시스코 여행 플랜이 저장됐어요 🔖');
+  toast('San Francisco 플랜이 저장됐어요 🔖');
 }
 
 // ── 루트 스팟 삭제 ──
