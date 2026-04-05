@@ -131,7 +131,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 #sheet-peek-label{font-size:13px;font-weight:600;color:var(--t2);white-space:nowrap}
 
 /* day chips */
-#sheet-chips{padding:4px 16px 12px;flex-shrink:0}
+#sheet-chips{padding:0;flex-shrink:0}
 .chips-row{display:flex;gap:8px;margin-bottom:8px}
 .day-chip{flex:1;padding:8px 4px;border-radius:999px;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;background:rgba(0,0,0,0.06);color:var(--t2);min-height:36px;display:flex;align-items:center;justify-content:center;gap:5px}
 .day-chip.on{color:#fff;background:#111;border:none}
@@ -144,7 +144,8 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 #sheet-list::-webkit-scrollbar{display:none}
 .list-day-grp{margin-bottom:16px}
 .list-day-hdr{padding:16px 0 10px}
-.list-day-badge{display:block;font-size:13px;font-weight:800;letter-spacing:.2px;margin-bottom:6px}
+.list-day-badge{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:800;letter-spacing:.2px;color:#111;margin-bottom:6px}
+.list-day-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .list-day-sum{font-size:14px;color:var(--t2);line-height:1.5;padding:11px 14px;background:var(--bg2);border-radius:10px;margin-bottom:4px}
 .gap-warn{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#FFFBEB;border-radius:10px;margin-bottom:8px;border:1px solid #FDE68A}
 .gap-warn-txt{font-size:12px;color:#92400E;flex:1}
@@ -928,15 +929,7 @@ function applySheet(){snapTo(S.snap,false);}
 function renderSheetContent(){renderDayChips();if(S.snap!==SNAP.peek)renderListView();updatePeekLabel();}
 
 function renderDayChips(){
-  if(S.inDetail)return;
-  const row=document.getElementById('chips-row');
-  if(!row)return;
-  if(!S.routeGroups.length){row.innerHTML='';return;}
-  row.innerHTML=S.routeGroups.map((g,i)=>`
-    <button class="day-chip ${S.selDay===i?'on':''}" onclick="selectDay(${i})">
-      ${S.selDay===i?`<span class="day-chip-dot" style="background:${C[g.ci]}"></span>`:''}
-      ${g.label}
-    </button>`).join('');
+  // Day tabs removed — list shows all days as scrollable sections
 }
 
 function selectDay(i){
@@ -956,7 +949,7 @@ function renderListView(){
     const gw=g.gapWarn?`<div class="gap-warn"><span style="font-size:14px">⚠️</span><span class="gap-warn-txt">${g.gapWarn}</span><button class="gap-warn-btn">추천 보기</button></div>`:'';
     return `<div class="list-day-grp">
       <div class="list-day-hdr">
-        <span class="list-day-badge" style="color:${C[g.ci]}">${g.label}</span>
+        <span class="list-day-badge"><span class="list-day-dot" style="background:${C[g.ci]}"></span>${g.label}</span>
         <div class="list-day-sum">${g.summary}</div>
       </div>
       ${gw}
