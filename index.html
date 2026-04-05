@@ -9,443 +9,330 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#F7F8FA;--surface:#fff;--border:#E5E7EB;
-  --t1:#111827;--t2:#6B7280;--t3:#9CA3AF;
-  --accent:#6C63FF;--accent-bg:#EEEEFF;
-  --c0:#FF6B6B;--c1:#4ECDC4;--c2:#A78BFA;
-  --c0l:#FFF0F0;--c1l:#F0FFFE;--c2l:#F5F0FF;
-  --sh1:0 1px 4px rgba(0,0,0,.06);--sh2:0 4px 16px rgba(0,0,0,.08);--sh3:0 8px 32px rgba(0,0,0,.12);
-  --r1:10px;--r2:16px;--r3:20px;--r4:28px;
-  --nav:72px
+  --bg:#ffffff;--bg2:#f8f8f8;
+  --t1:#111111;--t2:#666666;--t3:#999999;
+  --border:rgba(0,0,0,0.08);
+  --c0:#FF6B6B;--c0l:#FFF0F0;
+  --c1:#4ECDC4;--c1l:#F0FFFE;
+  --c2:#A78BFA;--c2l:#F5F0FF;
+  --sh1:0 2px 12px rgba(0,0,0,0.08);
+  --sh2:0 8px 32px rgba(0,0,0,0.12);
+  --r2:12px;--r3:16px;--r4:20px;
+  --nav:72px;
+  --glass:rgba(255,255,255,0.88);
+  --glass-b:1px solid rgba(255,255,255,0.6);
+  --blur:blur(20px)
 }
 html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#e0e0e0}
-#app{height:100%;display:flex;flex-direction:column;max-width:430px;margin:0 auto;background:var(--surface);overflow:hidden;box-shadow:0 0 60px rgba(0,0,0,.15);position:relative}
-
-/* ── Tab panels ── */
-.tab-panel{flex:1;overflow:hidden;display:none;flex-direction:column}
+#app{height:100%;display:flex;flex-direction:column;max-width:430px;margin:0 auto;background:var(--bg);overflow:hidden;box-shadow:0 0 60px rgba(0,0,0,0.15);position:relative}
+.tab-panel{flex:1;overflow:hidden;display:none;flex-direction:column;min-height:0}
 .tab-panel.active{display:flex}
 
-/* ── Bottom nav ── */
-#nav{height:var(--nav);background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:100;padding:0 16px calc(env(safe-area-inset-bottom,0) + 8px)}
-#nav-pill{display:flex;align-items:center;background:rgba(255,255,255,.75);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.6);border-radius:28px;box-shadow:0 4px 20px rgba(0,0,0,.09),0 1px 4px rgba(0,0,0,.05);padding:5px;gap:2px;width:100%}
+/* NAV */
+#nav{height:var(--nav);display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:200;padding:0 16px calc(env(safe-area-inset-bottom,0px) + 8px);background:var(--bg);border-top:1px solid var(--border)}
+#nav-pill{display:flex;align-items:center;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:var(--glass-b);border-radius:28px;box-shadow:0 4px 20px rgba(0,0,0,0.09);padding:5px;gap:2px;width:100%}
 .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 6px;cursor:pointer;color:var(--t3);transition:all .22s;background:none;border:none;font-family:inherit;border-radius:22px}
 .nav-btn svg{transition:stroke-width .22s}
-.nav-btn.on{color:#111827}
+.nav-btn.on{color:#111}
 .nav-btn.on svg{stroke-width:2.4}
-.nav-ic{display:flex;align-items:center;justify-content:center;line-height:1}
 .nav-lb{font-size:10px;font-weight:600;letter-spacing:.2px}
 .nav-btn.on .nav-lb{font-weight:800}
 
-/* ── Page header ── */
-.ph{padding:18px 20px 10px;flex-shrink:0}
-.ph-title{font-size:22px;font-weight:800;letter-spacing:-.6px;color:var(--t1)}
+/* HEADER */
+.ph{padding:20px 20px 12px;flex-shrink:0}
+.ph-title{font-size:24px;font-weight:700;letter-spacing:-.6px;color:var(--t1)}
 .ph-sub{font-size:13px;color:var(--t2);margin-top:2px}
 
-/* ═══════════════════════════════
-   SAVED TAB
-═══════════════════════════════ */
-#tab-saved{background:var(--bg)}
+/* ═══ SPOTS TAB ═══ */
+#tab-spots{background:var(--bg2)}
 .feed{flex:1;overflow-y:auto;padding:8px 12px 16px}
 .feed::-webkit-scrollbar{display:none}
 .reel-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-
-/* portrait reel card */
-.reel-card{background:var(--surface);border-radius:var(--r2);overflow:hidden;box-shadow:var(--sh2);position:relative;cursor:pointer;transition:transform .18s}
+.reel-card{background:var(--bg);border-radius:var(--r3);overflow:hidden;box-shadow:var(--sh1);cursor:pointer;transition:transform .18s}
 .reel-card:active{transform:scale(.97)}
 .reel-thumb{aspect-ratio:9/16;position:relative;overflow:hidden;background:#ddd}
 .reel-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.reel-thumb-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.0) 30%,rgba(0,0,0,.75) 100%)}
-/* bottom text overlay */
-.reel-overlay-body{position:absolute;bottom:0;left:0;right:0;padding:10px}
+.reel-grad{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,rgba(0,0,0,.75))}
+.reel-ov{position:absolute;bottom:0;left:0;right:0;padding:10px}
 .reel-user{font-size:11px;color:rgba(255,255,255,.8);font-weight:600;margin-bottom:2px}
-.reel-title{font-size:12px;font-weight:700;line-height:1.3;color:#fff}
-.reel-meta{font-size:10px;color:rgba(255,255,255,.65);margin-top:3px}
-/* badges */
+.reel-ttl{font-size:12px;font-weight:700;line-height:1.3;color:#fff}
+.reel-date{font-size:10px;color:rgba(255,255,255,.6);margin-top:3px}
 .plat-badge{position:absolute;top:8px;left:8px;padding:3px 7px;border-radius:12px;font-size:10px;font-weight:700;color:#fff}
 .b-ig{background:linear-gradient(135deg,#f09433,#dc2743,#bc1888)}
 .b-tt{background:#010101}
-.reel-del{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;border:none;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:background .2s;z-index:2}
-.reel-del:active{background:rgba(220,38,38,.85)}
-/* spot count pill */
-.reel-spot-pill{position:absolute;bottom:8px;right:8px;background:rgba(255,255,255,.2);backdrop-filter:blur(6px);color:#fff;border-radius:12px;padding:3px 8px;font-size:10px;font-weight:700;z-index:2}
-/* expanded spots below card */
-.reel-expand{width:100%;padding:8px 12px;background:var(--surface);border:none;border-top:1px solid var(--border);font-size:12px;font-weight:600;color:var(--accent);cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;transition:background .15s}
-.reel-expand:active{background:var(--accent-bg)}
-.arrow{transition:transform .28s;display:inline-block}
-.arrow.open{transform:rotate(180deg)}
-.reel-spots{overflow:hidden;max-height:0;transition:max-height .35s ease;background:var(--bg)}
-.reel-spots.open{max-height:600px}
-.spot-mini{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);gap:12px}
+.reel-del{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;border:none;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);z-index:2}
+.spot-pill{position:absolute;bottom:8px;right:8px;background:rgba(255,255,255,.2);backdrop-filter:blur(6px);color:#fff;border-radius:10px;padding:3px 8px;font-size:10px;font-weight:700;z-index:2}
+.plan-badge{display:inline-flex;align-items:center;gap:3px;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);color:#fff;border-radius:10px;padding:3px 8px;font-size:10px;font-weight:700;position:absolute;bottom:34px;right:8px;z-index:2}
+.reel-expand{width:100%;padding:10px 14px;background:var(--bg);border:none;border-top:1px solid var(--border);font-size:12px;font-weight:600;color:var(--t2);cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit}
+.reel-spots{overflow:hidden;max-height:0;transition:max-height .3s ease;background:var(--bg2)}
+.reel-spots.open{max-height:500px}
+.spot-mini{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);gap:10px}
 .spot-mini:last-child{border-bottom:none}
-.smic-emoji{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
-.smic-info{flex:1;min-width:0}
-.smic-name{font-size:13px;font-weight:700;color:var(--t1)}
-.smic-desc{font-size:12px;color:var(--t2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.smic-del{width:27px;height:27px;border-radius:50%;background:#FFF0F0;color:#EF4444;border:none;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}
-.smic-del:active{background:#FECACA}
+.smic-em{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.smic-name{font-size:13px;font-weight:600;color:var(--t1)}
+.smic-desc{font-size:11px;color:var(--t2);margin-top:1px}
 
-/* ═══════════════════════════════
-   PLAN TAB
-═══════════════════════════════ */
-#tab-plan{position:relative;background:var(--bg)}
-.mode-bar{padding:10px 16px;display:flex;gap:8px;flex-shrink:0;background:var(--surface);border-bottom:1px solid var(--border);z-index:10}
-.mode-btn{flex:1;padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:transparent;font-size:13px;font-weight:700;color:var(--t2);cursor:pointer;font-family:inherit;transition:all .2s}
-.mode-btn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+/* ═══ PLAN TAB ═══ */
+#tab-plan{position:relative}
+#plan-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;background:var(--bg);z-index:50;text-align:center}
+#plan-empty.hidden{display:none}
+.empty-il{font-size:56px;margin-bottom:20px}
+.empty-title{font-size:20px;font-weight:700;color:var(--t1);letter-spacing:-.4px}
+.empty-sub{font-size:14px;color:var(--t2);margin-top:8px;line-height:1.6}
+.empty-cta{margin-top:28px;padding:14px 28px;background:var(--t1);color:#fff;border:none;border-radius:999px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;min-height:44px}
 
-/* map view */
-#map-view{flex:1;display:flex;flex-direction:column;overflow:hidden}
-#map-wrapper{position:relative;flex:1;min-height:0}
-#leaflet-map{width:100%;height:100%}
+/* map wrapper */
+#plan-map-wrap{flex:1;position:relative;min-height:0}
+#plan-map{width:100%;height:100%}
 
-/* floating CTA */
-#floating-cta{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:400;background:var(--accent);color:#fff;border:none;border-radius:28px;padding:13px 26px;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;box-shadow:0 6px 28px rgba(108,99,255,.5);white-space:nowrap;display:flex;align-items:center;gap:8px;letter-spacing:-.3px;transition:all .25s}
-#floating-cta:active{transform:translateX(-50%) scale(.97)}
-#floating-cta.hidden{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(10px)}
+/* day selector (top of map) */
+#day-selector{position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:50;display:flex;gap:6px}
+.day-seg{padding:8px 16px;border-radius:999px;font-size:13px;font-weight:700;border:none;cursor:pointer;font-family:inherit;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);color:var(--t2);box-shadow:0 2px 10px rgba(0,0,0,0.12);transition:all .2s;min-height:44px}
+.day-seg.on{color:#fff}
+
+/* city button */
+#city-btn{position:absolute;top:16px;left:16px;z-index:50;display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:var(--glass-b);box-shadow:0 2px 10px rgba(0,0,0,0.12);font-size:14px;font-weight:700;color:var(--t1);cursor:pointer;font-family:inherit;min-height:44px}
 
 /* bottom sheet */
-.bsheet{background:var(--surface);border-radius:var(--r4) var(--r4) 0 0;padding:6px 0 0;max-height:46vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,.07);flex-shrink:0}
-.bsheet::-webkit-scrollbar{display:none}
-.handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 14px}
+#plan-sheet{position:absolute;bottom:0;left:0;right:0;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:var(--glass-b);border-radius:20px 20px 0 0;box-shadow:0 -4px 24px rgba(0,0,0,0.10);z-index:100;overflow:hidden;transition:height .35s cubic-bezier(.32,.72,0,1)}
+.sheet-handle-row{padding:10px 0 4px;display:flex;justify-content:center;cursor:pointer;flex-shrink:0}
+.handle{width:36px;height:4px;background:rgba(0,0,0,0.15);border-radius:2px}
 
-/* pre-route sheet */
-.pre-sheet{padding:0 20px 22px}
-.spot-count-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
-.scount-text{font-size:16px;font-weight:800;color:var(--t1);letter-spacing:-.4px}
-.scount-sub{font-size:12px;color:var(--t2);margin-top:3px}
-.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
-.chip{padding:5px 10px;border-radius:20px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:3px}
-.gen-btn{width:100%;padding:15px;border-radius:var(--r2);background:var(--accent);color:#fff;border:none;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:-.3px;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:8px}
-.gen-btn:active{transform:scale(.98);opacity:.9}
+/* day chips (collapsed) */
+#sheet-chips{padding:6px 16px 14px;flex-shrink:0}
+.chips-row{display:flex;gap:8px;margin-bottom:8px}
+.day-chip{flex:1;padding:8px 4px;border-radius:999px;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;background:rgba(0,0,0,0.06);color:var(--t2);min-height:36px}
+.day-chip.on{color:#fff}
+.chip-summary{font-size:13px;color:var(--t2);line-height:1.4;padding:0 2px}
 
-/* post-route sheet */
-.route-hdr{padding:0 20px 12px}
-.route-title-row{display:flex;align-items:center;justify-content:space-between}
-.route-title{font-size:15px;font-weight:800;color:var(--t1);letter-spacing:-.3px}
-.reset-btn{font-size:12px;color:var(--t2);background:none;border:none;cursor:pointer;font-family:inherit;font-weight:600}
-.route-story{font-size:12px;color:var(--t2);background:var(--bg);padding:9px 13px;border-radius:var(--r1);margin-top:8px;line-height:1.6}
-.day-grp{padding:10px 20px;border-top:1px solid var(--border)}
-.day-grp-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.day-badge{padding:4px 11px;border-radius:20px;font-size:12px;font-weight:800;color:#fff;flex-shrink:0}
-.day-concept{font-size:12px;font-weight:600;color:var(--t2)}
-.day-spot-row{display:flex;align-items:center;gap:10px;padding:6px 4px 6px 0;position:relative;border-radius:var(--r1);transition:background .15s}
-.day-spot-row:not(:last-child)::after{content:'';position:absolute;left:12px;top:34px;bottom:-6px;width:2px;background:var(--border)}
-.day-spot-row.drag-over{background:var(--accent-bg);border-radius:var(--r1)}
-.day-spot-row[draggable=true]{cursor:default}
-.day-dot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
-.day-sname{font-size:13px;font-weight:700;color:var(--t1)}
-.day-sdesc{font-size:11px;color:var(--t2)}
-.route-del{width:22px;height:22px;border-radius:50%;background:#FFF0F0;color:#EF4444;border:none;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:0;transition:opacity .15s;font-family:inherit}
-.day-spot-row:hover .route-del{opacity:1}
-.drag-handle{width:22px;height:22px;display:flex;align-items:center;justify-content:center;color:var(--t3);cursor:grab;font-size:14px;flex-shrink:0;touch-action:none;letter-spacing:-1px}
-.drag-handle:active{cursor:grabbing}
+/* list view (expanded) */
+#sheet-list{flex:1;overflow-y:auto;padding:4px 16px 24px;display:none}
+#sheet-list::-webkit-scrollbar{display:none}
+#sheet-list.show{display:block}
+.list-day-grp{margin-bottom:4px}
+.list-day-hdr{padding:12px 0 6px}
+.list-day-badge{display:inline-flex;align-items:center;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:700;color:#fff;margin-bottom:4px}
+.list-day-sum{font-size:13px;color:var(--t2);line-height:1.4}
+.gap-warn{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#FFFBEB;border-radius:10px;margin-bottom:8px;border:1px solid #FDE68A}
+.gap-warn-txt{font-size:12px;color:#92400E;flex:1}
+.gap-warn-btn{font-size:12px;color:#D97706;font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit;white-space:nowrap}
+.list-spot-row{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;border-radius:8px}
+.list-spot-row:last-child{border-bottom:none}
+.list-spot-row:active{background:var(--bg2)}
+.list-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.list-em{font-size:20px;flex-shrink:0}
+.list-info{flex:1;min-width:0}
+.list-name{font-size:14px;font-weight:600;color:var(--t1)}
+.list-desc{font-size:12px;color:var(--t2);margin-top:1px}
+.drag-h{color:var(--t3);cursor:grab;font-size:16px;padding:4px;touch-action:none;flex-shrink:0}
+.list-spot-row.drag-over{background:var(--bg2)}
 
-/* spots view */
-#spots-view{flex:1;overflow-y:auto;padding:12px 16px 20px;background:var(--bg)}
-#spots-view::-webkit-scrollbar{display:none}
-.spot-card{background:var(--surface);border-radius:var(--r2);padding:13px 14px;margin-bottom:10px;display:flex;align-items:center;gap:13px;box-shadow:var(--sh1);transition:all .28s}
-.spot-card.removing{opacity:0;transform:translateX(16px) scale(.96)}
-.sc-emoji{width:44px;height:44px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0}
-.sc-info{flex:1;min-width:0}
-.sc-name{font-size:14px;font-weight:700;color:var(--t1)}
-.sc-desc{font-size:12px;color:var(--t2);margin-top:3px}
-.sc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.sc-del{width:32px;height:32px;border-radius:50%;background:#FFF0F0;color:#EF4444;border:none;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}
-.sc-del:active{background:#FECACA}
+/* excluded */
+.excl-section{margin-top:16px;padding-top:8px;border-top:1px solid var(--border)}
+.excl-hdr{display:flex;align-items:center;justify-content:space-between;padding:8px 0;cursor:pointer}
+.excl-hdr-txt{font-size:13px;font-weight:600;color:var(--t3)}
+.excl-row{display:flex;align-items:center;gap:10px;padding:9px 0;opacity:.7}
+.add-back{font-size:12px;font-weight:700;color:var(--t2);background:var(--bg2);border:none;border-radius:8px;padding:5px 10px;cursor:pointer;font-family:inherit;flex-shrink:0;min-height:32px}
 
-/* spot detail panel */
-#detail-panel{position:absolute;bottom:0;left:0;right:0;background:var(--surface);border-radius:var(--r4) var(--r4) 0 0;padding:6px 20px 28px;box-shadow:0 -8px 40px rgba(0,0,0,.13);transform:translateY(100%);transition:transform .32s cubic-bezier(.32,.72,0,1);z-index:500;max-height:52vh;overflow-y:auto}
-#detail-panel.on{transform:translateY(0)}
-#detail-panel::-webkit-scrollbar{display:none}
-.detail-hdr{display:flex;align-items:flex-start;gap:14px;margin-bottom:12px}
-.detail-em{width:56px;height:56px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
-.detail-name{font-size:20px;font-weight:800;letter-spacing:-.5px;color:var(--t1)}
-.detail-why{font-size:13px;color:var(--t2);margin-top:5px;line-height:1.45}
-.detail-close{margin-left:auto;width:28px;height:28px;border-radius:50%;background:var(--bg);border:none;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--t2);margin-top:2px}
-.detail-div{height:1px;background:var(--border);margin:12px 0}
-.detail-body{font-size:13px;color:var(--t2);line-height:1.7}
+/* detail card */
+#detail-card{position:absolute;bottom:0;left:0;right:0;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:var(--glass-b);border-radius:20px 20px 0 0;padding:8px 20px 32px;box-shadow:0 -8px 40px rgba(0,0,0,0.12);transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1);z-index:200}
+#detail-card.on{transform:translateY(0)}
+.dc-hdr{display:flex;align-items:flex-start;gap:14px;margin:12px 0 12px}
+.dc-em{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.dc-name{font-size:18px;font-weight:700;letter-spacing:-.4px;color:var(--t1)}
+.dc-desc{font-size:13px;color:var(--t2);margin-top:4px;line-height:1.4}
+.dc-close{margin-left:auto;width:30px;height:30px;border-radius:50%;background:var(--bg2);border:none;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t2);flex-shrink:0}
+.dc-body{font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:16px}
+.dc-excl-btn{width:100%;padding:14px;border-radius:12px;background:var(--bg2);color:var(--t1);border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;min-height:44px}
 
-/* density modal */
-#density-modal{position:absolute;inset:0;z-index:800;display:flex;align-items:flex-end;background:rgba(0,0,0,.38);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .22s}
-#density-modal.on{opacity:1;pointer-events:all}
-.density-sheet{width:100%;background:var(--surface);border-radius:var(--r4) var(--r4) 0 0;padding:6px 20px 32px;transform:translateY(16px);transition:transform .22s cubic-bezier(.32,.72,0,1)}
-#density-modal.on .density-sheet{transform:translateY(0)}
-.density-title{font-size:18px;font-weight:800;margin:14px 0 5px;letter-spacing:-.4px;color:var(--t1)}
-.density-sub{font-size:13px;color:var(--t2);margin-bottom:18px}
-.d-opt{width:100%;padding:15px 16px;border-radius:var(--r2);border:2px solid var(--border);background:var(--surface);margin-bottom:10px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;transition:all .18s;text-align:left}
-.d-opt.on{border-color:var(--accent);background:var(--accent-bg)}
-.d-ic{font-size:24px;flex-shrink:0}
-.d-label{font-size:14px;font-weight:700;color:var(--t1)}
-.d-desc{font-size:12px;color:var(--t2);margin-top:2px}
-.d-check{margin-left:auto;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;display:none;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
-.d-opt.on .d-check{display:flex}
-.d-confirm{width:100%;padding:15px;border-radius:var(--r2);background:var(--accent);color:#fff;border:none;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;margin-top:6px;letter-spacing:-.3px;transition:all .18s}
-.d-confirm:active{opacity:.9;transform:scale(.99)}
-
-/* generating overlay */
-#gen-overlay{position:absolute;inset:0;background:rgba(255,255,255,.92);backdrop-filter:blur(6px);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:700;opacity:0;pointer-events:none;transition:opacity .25s}
-#gen-overlay.on{opacity:1;pointer-events:all}
-.spinner{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:18px}
-@keyframes spin{to{transform:rotate(360deg)}}
-.gen-title{font-size:15px;font-weight:800;color:var(--t1)}
-.gen-sub{font-size:13px;color:var(--t2);margin-top:6px}
-
-/* trip nudge banner (Saved 탭 하단) */
-#plan-nudge{flex-shrink:0;margin:0 12px 16px;background:linear-gradient(135deg,#5B52F0 0%,#7C6FFF 100%);color:#fff;border-radius:var(--r2);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all .2s;box-shadow:0 6px 20px rgba(108,99,255,.35)}
-#plan-nudge:active{opacity:.9;transform:scale(.99)}
-.nudge-ai-row{display:flex;align-items:center;gap:7px;margin-bottom:4px}
-.nudge-pulse{width:7px;height:7px;border-radius:50%;background:#A5F3FC;flex-shrink:0;animation:pulse-dot 1.8s ease-in-out infinite}
-@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(.8)}}
-.nudge-ai-label{font-size:12px;font-weight:800;letter-spacing:-.1px;opacity:.85}
-.nudge-label{font-size:15px;font-weight:800;letter-spacing:-.3px;line-height:1.3}
-.nudge-sub{font-size:11px;opacity:.7;margin-top:3px}
-.nudge-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
-.nudge-arrow{font-size:20px;font-weight:700}
-.nudge-cta{font-size:11px;font-weight:700;background:rgba(255,255,255,.2);padding:4px 10px;border-radius:20px;white-space:nowrap}
-
-/* plan preview overlay (from Saved tab banner) */
-#plan-preview{position:absolute;inset:0;z-index:900;display:flex;align-items:flex-end;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .25s}
-#plan-preview.on{opacity:1;pointer-events:all}
-.pp-sheet{width:100%;background:var(--surface);border-radius:var(--r4) var(--r4) 0 0;padding:6px 20px 32px;transform:translateY(20px);transition:transform .3s cubic-bezier(.32,.72,0,1)}
-#plan-preview.on .pp-sheet{transform:translateY(0)}
-.pp-dest{font-size:24px;font-weight:800;letter-spacing:-.6px;color:var(--t1);margin:14px 0 3px}
-.pp-sub{font-size:13px;color:var(--t2);margin-bottom:18px}
-.pp-days{display:flex;gap:6px;margin-bottom:16px}
-.pp-day-btn{flex:1;padding:9px 4px;border-radius:var(--r1);border:1.5px solid var(--border);background:transparent;font-size:13px;font-weight:700;color:var(--t2);cursor:pointer;font-family:inherit;transition:all .18s}
-.pp-day-btn.on{border-color:var(--accent);background:var(--accent-bg);color:var(--accent)}
-.pp-preview{background:var(--bg);border-radius:var(--r2);padding:12px 14px;margin-bottom:18px}
-.pp-day-row{display:flex;align-items:flex-start;gap:10px;padding:7px 0}
-.pp-day-row:not(:last-child){border-bottom:1px solid var(--border)}
-.pp-day-label{font-size:11px;font-weight:800;color:#fff;padding:2px 9px;border-radius:10px;flex-shrink:0;margin-top:2px;white-space:nowrap}
-.pp-spots-txt{font-size:12px;color:var(--t2);line-height:1.6}
-.pp-save{width:100%;padding:15px;border-radius:var(--r2);background:var(--t1);color:#fff;border:none;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:-.3px;transition:all .18s}
-.pp-save:active{opacity:.9;transform:scale(.98)}
-.pp-later{width:100%;padding:10px;background:none;border:none;font-size:13px;color:var(--t3);cursor:pointer;font-family:inherit;margin-top:4px}
-
-/* destination header in route sheet */
-.dest-chip{display:inline-flex;align-items:center;gap:5px;background:var(--accent-bg);color:var(--accent);border-radius:20px;padding:4px 11px;font-size:12px;font-weight:700;margin-bottom:6px}
-
-/* save plan button */
-#save-plan-wrap{padding:12px 20px 4px;border-top:1px solid var(--border)}
-#save-plan-btn{width:100%;padding:14px;border-radius:var(--r2);background:var(--t1);color:#fff;border:none;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:-.3px;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:8px}
-#save-plan-btn:active{transform:scale(.98);opacity:.9}
-#save-plan-btn.saved{background:#DCFCE7;color:#16A34A;pointer-events:none}
-
-/* ═══════════════════════════════
-   EXPLORE TAB
-═══════════════════════════════ */
-#tab-explore{background:var(--bg)}
+/* ═══ EXPLORE TAB ═══ */
+#tab-explore{background:var(--bg2)}
 .ex-feed{flex:1;overflow-y:auto;padding:4px 16px 20px}
 .ex-feed::-webkit-scrollbar{display:none}
-.ex-card{background:var(--surface);border-radius:var(--r3);margin-bottom:14px;overflow:hidden;box-shadow:var(--sh1)}
-.ex-thumb{height:115px;position:relative;overflow:hidden}
+.ex-card{background:var(--bg);border-radius:var(--r4);margin-bottom:14px;overflow:hidden;box-shadow:var(--sh1)}
+.ex-thumb{height:118px;position:relative;overflow:hidden}
 .ex-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.ex-thumb-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.05) 0%,rgba(0,0,0,.5) 100%);display:flex;align-items:flex-end;padding:12px}
+.ex-thumb-ov{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.05),rgba(0,0,0,.5));display:flex;align-items:flex-end;padding:12px}
 .ex-author{background:rgba(0,0,0,.45);backdrop-filter:blur(4px);color:#fff;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}
-.ex-body{padding:13px 16px 8px}
-.ex-title{font-size:16px;font-weight:800;letter-spacing:-.3px;color:var(--t1)}
+.ex-body{padding:14px 16px 8px}
+.ex-title{font-size:16px;font-weight:700;letter-spacing:-.3px;color:var(--t1)}
 .ex-story{font-size:12px;color:var(--t2);margin-top:3px}
 .ex-spots{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
-.ex-pill{padding:5px 10px;border-radius:20px;background:var(--bg);font-size:12px;font-weight:600;color:var(--t2);display:flex;align-items:center;gap:3px}
+.ex-pill{padding:5px 10px;border-radius:20px;background:var(--bg2);font-size:12px;font-weight:600;color:var(--t2)}
 .ex-actions{display:flex;gap:8px;padding:10px 16px 16px}
-.ex-btn{flex:1;padding:10px;border-radius:var(--r1);border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .18s}
-.ex-primary{background:var(--accent);color:#fff}
-.ex-secondary{background:var(--bg);color:var(--t1)}
+.ex-btn{flex:1;padding:10px;border-radius:10px;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .18s;min-height:44px}
+.ex-primary{background:var(--t1);color:#fff}
+.ex-secondary{background:var(--bg2);color:var(--t1)}
 .ex-btn:active{opacity:.85;transform:scale(.98)}
-.ex-btn.done-green{background:#DCFCE7;color:#16A34A;pointer-events:none}
-.ex-btn.done-blue{background:var(--accent-bg);color:var(--accent);pointer-events:none}
+.ex-btn.done-g{background:#DCFCE7;color:#16A34A;pointer-events:none}
+.ex-btn.done-b{background:#EEF2FF;color:#6366F1;pointer-events:none}
 
-/* empty state */
-.empty{padding:52px 20px;text-align:center;color:var(--t3)}
-.empty-ic{font-size:40px;margin-bottom:12px}
-.empty-tx{font-size:14px;font-weight:600}
-
-/* toast */
-#toast{position:absolute;bottom:calc(var(--nav) + 14px);left:50%;transform:translateX(-50%) translateY(12px);background:#1A1A2E;color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;font-weight:600;white-space:nowrap;opacity:0;transition:all .28s;z-index:999;pointer-events:none}
+/* TOAST */
+#toast{position:absolute;bottom:calc(var(--nav) + 14px);left:50%;transform:translateX(-50%) translateY(12px);background:#111;color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;font-weight:600;white-space:nowrap;opacity:0;transition:all .28s;z-index:999;pointer-events:none}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* leaflet overrides */
+/* LEAFLET */
 .leaflet-container{font-family:inherit}
-.sf-mkr{width:40px;height:40px;border-radius:50%;border:2.5px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.22);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:transform .2s,box-shadow .2s;background:#ccc}
-.sf-mkr.sel{transform:scale(1.28);box-shadow:0 5px 20px rgba(0,0,0,.28);z-index:999}
+.sf-mkr{width:40px;height:40px;border-radius:50%;border:2.5px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.22);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.sf-mkr.sel{transform:scale(1.3);box-shadow:0 5px 20px rgba(0,0,0,.28);z-index:999}
 .leaflet-control-attribution{display:none!important}
-.leaflet-control-zoom{border:none!important;box-shadow:var(--sh2)!important;border-radius:var(--r1)!important;overflow:hidden}
+.leaflet-control-zoom{border:none!important;box-shadow:var(--sh1)!important;border-radius:10px!important;overflow:hidden}
 .leaflet-control-zoom a{color:var(--t1)!important;font-weight:700!important}
 </style>
 </head>
 <body>
 <div id="app">
 
-  <!-- ══════════════ SAVED TAB ══════════════ -->
-  <div id="tab-saved" class="tab-panel active">
-    <div class="ph">
-      <div class="ph-title">저장됨</div>
-      <div class="ph-sub" id="saved-sub">로딩 중...</div>
-    </div>
-    <div class="feed" id="saved-feed"></div>
-    <div id="plan-nudge" onclick="openPlanPreview()">
-      <div style="flex:1;min-width:0">
-        <div class="nudge-ai-row">
-          <div class="nudge-pulse"></div>
-          <div class="nudge-ai-label">Trip ready</div>
-        </div>
-        <div class="nudge-label">San Francisco</div>
-        <div class="nudge-sub" id="nudge-sub">스팟 7개가 모였어요</div>
-      </div>
-      <div class="nudge-right">
-        <span class="nudge-arrow">→</span>
-        <span class="nudge-cta">플랜 보기</span>
-      </div>
+<!-- ═══ SPOTS TAB ═══ -->
+<div id="tab-spots" class="tab-panel active">
+  <div class="ph">
+    <div class="ph-title">Spots</div>
+    <div class="ph-sub" id="spots-sub">로딩 중...</div>
+  </div>
+  <div class="feed" id="spots-feed"></div>
+</div>
+
+<!-- ═══ PLAN TAB ═══ -->
+<div id="tab-plan" class="tab-panel">
+  <div id="plan-empty">
+    <div class="empty-il">🗺️</div>
+    <div class="empty-title">여행이 기다리고 있어요</div>
+    <div class="empty-sub">릴스에서 저장한 장소들이<br>여기서 하나의 여행이 돼요</div>
+    <button class="empty-cta" onclick="switchTab('spots')">Spots에서 장소 저장하기</button>
+  </div>
+  <div id="plan-map-wrap">
+    <div id="plan-map"></div>
+    <button id="city-btn" onclick="toast('도시 전환 (다중 도시 시 활성화)')">
+      <span id="city-flag">🇺🇸</span>
+      <span id="city-name-txt">San Francisco</span>
+    </button>
+    <div id="day-selector">
+      <button class="day-seg" onclick="setDays(1)">1일</button>
+      <button class="day-seg on" onclick="setDays(2)">2일</button>
+      <button class="day-seg" onclick="setDays(3)">3일</button>
     </div>
   </div>
-
-  <!-- ══════════════ TRIPS TAB ══════════════ -->
-  <div id="tab-plan" class="tab-panel">
-
-    <!-- Map View (full height) -->
-    <div id="map-view" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
-      <div id="map-wrapper">
-        <div id="leaflet-map"></div>
-      </div>
-      <div class="bsheet" id="bsheet"></div>
-    </div>
-
-    <!-- Spot Detail Panel -->
-    <div id="detail-panel"></div>
-
-    <!-- Generating overlay -->
-    <div id="gen-overlay">
-      <div class="spinner"></div>
-      <div class="gen-title">플랜 만드는 중...</div>
-      <div class="gen-sub">저장된 스팟으로 최적 동선 계산 중</div>
-    </div>
-  </div>
-
-  <!-- ══════════════ EXPLORE TAB ══════════════ -->
-  <div id="tab-explore" class="tab-panel">
-    <div class="ph">
-      <div class="ph-title">탐색</div>
-      <div class="ph-sub">다른 사람들의 루트</div>
-    </div>
-    <div class="ex-feed" id="ex-feed"></div>
-  </div>
-
-  <!-- ══════════════ PLAN PREVIEW OVERLAY ══════════════ -->
-  <div id="plan-preview" onclick="if(event.target===this)closePlanPreview()">
-    <div class="pp-sheet">
+  <div id="plan-sheet">
+    <div class="sheet-handle-row" id="sheet-handle" onclick="toggleSheet()">
       <div class="handle"></div>
-      <div class="pp-dest">San Francisco</div>
-      <div class="pp-sub" id="pp-sub">스팟 7개가 모였어요</div>
-      <div class="pp-days">
-        <button class="pp-day-btn" onclick="pickPreviewDays(1)">1 day</button>
-        <button class="pp-day-btn on" onclick="pickPreviewDays(2)">2 days</button>
-        <button class="pp-day-btn" onclick="pickPreviewDays(3)">3 days</button>
-      </div>
-      <div class="pp-preview" id="pp-preview-content"></div>
-      <button class="pp-save" onclick="saveTripFromPreview()">Save This Trip</button>
-      <button class="pp-later" onclick="closePlanPreview()">나중에</button>
     </div>
+    <div id="sheet-chips">
+      <div class="chips-row" id="chips-row"></div>
+      <div class="chip-summary" id="chip-summary"></div>
+    </div>
+    <div id="sheet-list"></div>
   </div>
+  <div id="detail-card">
+    <div class="sheet-handle-row"><div class="handle"></div></div>
+    <div class="dc-hdr" id="dc-hdr"></div>
+    <div class="dc-body" id="dc-body"></div>
+    <button class="dc-excl-btn" onclick="excludeCurrent()">이 여행에서 빼기</button>
+  </div>
+</div>
 
-  <!-- ══════════════ NAV ══════════════ -->
-  <nav id="nav">
-    <div id="nav-pill">
-      <button class="nav-btn on" onclick="switchTab('saved')">
-        <span class="nav-ic">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
-        </span>
-        <span class="nav-lb">Saved</span>
-      </button>
-      <button class="nav-btn" onclick="switchTab('plan')">
-        <span class="nav-ic">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
-        </span>
-        <span class="nav-lb">Trips</span>
-      </button>
-      <button class="nav-btn" onclick="switchTab('explore')">
-        <span class="nav-ic">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-        </span>
-        <span class="nav-lb">Explore</span>
-      </button>
-    </div>
-  </nav>
+<!-- ═══ EXPLORE TAB ═══ -->
+<div id="tab-explore" class="tab-panel">
+  <div class="ph">
+    <div class="ph-title">Explore</div>
+    <div class="ph-sub">다른 사람들의 루트</div>
+  </div>
+  <div class="ex-feed" id="ex-feed"></div>
+</div>
 
-  <div id="toast"></div>
+<!-- ═══ NAV ═══ -->
+<nav id="nav">
+  <div id="nav-pill">
+    <button class="nav-btn on" onclick="switchTab('spots')">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg></span>
+      <span class="nav-lb">Spots</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('plan')">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1018 0 9 9 0 00-18 0"/><path d="M12 7v5l3 3"/></svg></span>
+      <span class="nav-lb">Plan</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('explore')">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg></span>
+      <span class="nav-lb">Explore</span>
+    </button>
+  </div>
+</nav>
+<div id="toast"></div>
 </div>
 
 <script>
-// ══════════════════════════════════════════
-//  CONSTANTS
-// ══════════════════════════════════════════
+// ═══════════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════════
 const C  = ['#FF6B6B','#4ECDC4','#A78BFA'];
 const CL = ['#FFF0F0','#F0FFFE','#F5F0FF'];
 
-// Pre-built route configs
-const ROUTES = {
-  1:{days:1,groups:[
-    {label:'Day 1',story:'브리지 → 프레시디오 카페 → 코스트 트레일 → 미션',ci:0,
-     ids:['s1','s2','s3','s4','s5','s6','s7']}
-  ]},
-  2:{days:2,groups:[
-    {label:'Day 1',story:'브리지 & 프레시디오',ci:0, ids:['s1','s2','s3']},
-    {label:'Day 2',story:'코스트 트레일 → 미션 카페 & 공원',ci:1, ids:['s4','s5','s6','s7']}
-  ]},
-  3:{days:3,groups:[
-    {label:'Day 1',story:'브리지 & 베이커 비치',ci:0, ids:['s1','s2','s3']},
-    {label:'Day 2',story:'해안 트레일 & 아우터랜즈',ci:1, ids:['s4','s5']},
-    {label:'Day 3',story:'미션 카페 & 돌로레스 파크',ci:2, ids:['s6','s7']}
-  ]}
-};
+function getDaySummary(spots) {
+  const t = spots.map(s=>s.type);
+  const has = x => t.includes(x);
+  if (has('ocean') && has('viewpoint') && has('cafe')) return '바다를 끼고 걷다가 카페로 마무리하는 날';
+  if (has('ocean') && has('viewpoint'))  return '뷰포인트에서 시작해 해안으로 이어지는 하루';
+  if (has('ocean') && has('cafe'))       return '바닷바람 맞으며 카페에서 쉬어가는 하루';
+  if (has('nature') && has('cafe'))      return '브런치하고 공원에서 쉬어가는 여유로운 하루';
+  if (has('viewpoint') && has('cafe'))   return '전망 포인트에서 시작해 카페로 이어지는 날';
+  if (t.filter(x=>x==='cafe').length>=2) return '카페를 옮겨다니며 여유롭게 보내는 날';
+  if (has('nature') && has('ocean'))     return '자연 속에서 걸으며 바다를 느끼는 하루';
+  if (has('viewpoint'))  return '탁 트인 전망을 즐기며 걷는 날';
+  if (has('nature'))     return '공원과 자연 속에서 쉬어가는 하루';
+  if (has('cafe'))       return '카페에서 천천히 시작하는 하루';
+  return '저장한 장소들을 둘러보는 날';
+}
 
-// ══════════════════════════════════════════
-//  MOCK DATA
-// ══════════════════════════════════════════
+function getGapWarning(spots) {
+  const t = spots.map(s=>s.type);
+  if (!t.includes('dining') && !t.includes('cafe')) return '식사나 카페 장소가 없어요 — 근처를 찾아볼까요?';
+  const outdoor = ['nature','ocean','viewpoint'];
+  if (spots.length >= 2 && !t.some(x=>outdoor.includes(x))) return '실내 장소만 있어요. 야외 활동을 추가해볼까요?';
+  return null;
+}
+
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
 const SPOTS_DATA = [
-  // ── North SF: Presidio / Bridge 구역 ──
   {id:'s1',name:'Golden Gate Bridge',type:'viewpoint',emoji:'🌉',
    desc:'샌프란 대표 뷰포인트',
-   detail:'이른 아침 안개가 걷히는 순간이 특히 아름다워. 남쪽 뷰포인트에서 다리 전체 뷰 감상 추천. 자전거로 건너는 것도 꼭 해봐야 할 경험.',
+   detail:'이른 아침 안개가 걷히는 순간이 특히 아름다워요. 남쪽 뷰포인트에서 다리 전체 뷰 감상 추천. 자전거로 건너는 것도 꼭 해봐야 할 경험.',
    lat:37.8199,lng:-122.4783,reelId:'r1'},
   {id:'s2',name:'Baker Beach',type:'ocean',emoji:'🌊',
    desc:'골든게이트가 보이는 해변',
-   detail:'브리지를 배경으로 한 해변. 일몰 시간대가 최고의 포토스팟. 주차는 이른 아침에 가야 여유로움. 파도가 강하니 수영은 비추.',
+   detail:'브리지를 배경으로 한 해변. 일몰 시간대가 최고의 포토스팟. 주차는 이른 아침에 가야 여유로워요.',
    lat:37.7936,lng:-122.4833,reelId:'r1'},
   {id:'s3',name:'Warming Hut Café',type:'cafe',emoji:'☕',
    desc:'프레시디오 안 숨은 카페',
-   detail:'골든게이트 브리지 바로 옆 프레시디오 공원 안에 있는 카페. 브리지 산책 후 들르기 딱 좋음. 오가닉 샌드위치와 라떼가 인기.',
+   detail:'골든게이트 바로 옆 프레시디오 공원 안 카페. 브리지 산책 후 들르기 딱 좋아요. 오가닉 샌드위치와 라떼가 인기.',
    lat:37.8069,lng:-122.4734,reelId:'r2'},
-  // ── West SF: Richmond / Outer Sunset 구역 ──
   {id:'s4',name:'Lands End',type:'nature',emoji:'⛰️',
    desc:'바다 보이는 절벽 트레일',
-   detail:'해안 절벽을 따라 걷는 산책로. 맑은 날엔 브리지까지 보임. 왕복 3km, 난이도 쉬움. 석양 무렵이 가장 아름다움.',
+   detail:'해안 절벽을 따라 걷는 산책로. 맑은 날엔 브리지까지 보여요. 왕복 3km, 난이도 쉬움. 석양 무렵이 최고.',
    lat:37.7786,lng:-122.5089,reelId:'r3'},
   {id:'s5',name:'Outerlands',type:'cafe',emoji:'☕',
    desc:'오션 비치 옆 감성 브런치',
-   detail:'Outer Sunset 지역, 오션 비치 한 블록 옆. 통나무 인테리어와 수제 빵이 유명. 주말 웨이팅 있지만 분위기가 특별함.',
+   detail:'Outer Sunset 지역, 오션 비치 한 블록 옆. 통나무 인테리어와 수제 빵이 유명해요. 주말 웨이팅 있지만 분위기 최고.',
    lat:37.7554,lng:-122.5077,reelId:'r2'},
-  // ── Central SF: Mission 구역 ──
   {id:'s6',name:'Tartine Bakery',type:'cafe',emoji:'☕',
    desc:'전설적인 미션 베이커리',
-   detail:'오후 5시부터 빵 판매 시작. 크루아상이 전설급으로 유명. 주말 웨이팅 30분 이상 기본. 미션 디스트릭트 분위기도 함께 즐길 수 있어.',
+   detail:'오후 5시부터 빵 판매 시작. 크루아상이 전설급으로 유명해요. 미션 디스트릭트 분위기도 함께 즐길 수 있어요.',
    lat:37.7614,lng:-122.4242,reelId:'r2'},
   {id:'s7',name:'Dolores Park',type:'nature',emoji:'⛰️',
    desc:'미션의 야외 피크닉 스팟',
-   detail:'타르틴에서 도보 5분. SF 로컬들이 가장 사랑하는 공원. 언덕 위에서 도심 전망이 일품. 주말엔 피크닉 분위기가 활기참.',
+   detail:'타르틴에서 도보 5분. SF 로컬들이 가장 사랑하는 공원. 언덕 위에서 도심 전망이 일품이에요.',
    lat:37.7596,lng:-122.4269,reelId:'r3'},
 ];
 
 const REELS_DATA = [
   {id:'r1',platform:'instagram',user:'@travel_sf_vibes',
-   title:'샌프란시스코 뷰포인트 투어 🌉',
-   savedAt:'2일 전',
+   title:'샌프란시스코 뷰포인트 투어 🌉',savedAt:'2일 전',
    photo:'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=600&q=80'},
   {id:'r2',platform:'tiktok',user:'@coffeehops_sf',
-   title:'SF 카페 투어 ☕ 여기 다 가봄',
-   savedAt:'3일 전',
+   title:'SF 카페 투어 ☕ 여기 다 가봄',savedAt:'3일 전',
    photo:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=600&q=80'},
   {id:'r3',platform:'instagram',user:'@coastaldrive',
-   title:'샌프란 해안 드라이브 코스 🌊',
-   savedAt:'5일 전',
+   title:'샌프란 해안 드라이브 코스 🌊',savedAt:'5일 전',
    photo:'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=600&q=80'},
 ];
 
@@ -453,7 +340,7 @@ const EXPLORE_DATA = [
   {id:'e1',title:'SF 브리지 & 브런치 루트',author:'@minji_travels',
    photo:'https://images.unsplash.com/photo-1449034446853-66c86144b0ad?auto=format&fit=crop&w=600&q=80',
    story:'브리지 뷰 → 해변 산책 → 브런치 카페',
-   spots:[{e:'🌉',n:'Golden Gate Bridge'},{e:'🌊',n:'Baker Beach'},{e:'☕',n:'Blue Bottle Coffee'},{e:'☕',n:'Tartine Bakery'}]},
+   spots:[{e:'🌉',n:'Golden Gate'},{e:'🌊',n:'Baker Beach'},{e:'☕',n:'Blue Bottle'},{e:'☕',n:'Tartine'}]},
   {id:'e2',title:'해안 드라이브 + 노을 루트',author:'@westerncoast',
    photo:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80',
    story:'트레일 → 해변 → 절벽 드라이브',
@@ -461,653 +348,470 @@ const EXPLORE_DATA = [
   {id:'e3',title:'SF 카페 호핑 + 로컬 맛집',author:'@caffeine.journey',
    photo:'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80',
    story:'스페셜티 카페 → 베이커리 → 올데이 다이닝',
-   spots:[{e:'☕',n:'Blue Bottle Coffee'},{e:'☕',n:'Tartine Bakery'},{e:'🍽️',n:'Zuni Café'}]},
+   spots:[{e:'☕',n:'Blue Bottle'},{e:'☕',n:'Tartine'},{e:'🍽️',n:'Zuni Café'}]},
   {id:'e4',title:'주말 당일치기 SF 완전정복',author:'@tripmaster_k',
    photo:'https://images.unsplash.com/photo-1534430480872-3498386e7856?auto=format&fit=crop&w=600&q=80',
    story:'뷰포인트 → 트레일 → 카페 → 노을',
-   spots:[{e:'🌉',n:'Golden Gate Bridge'},{e:'⛰️',n:'Lands End'},{e:'☕',n:'Blue Bottle Coffee'},{e:'🌊',n:'Ocean Beach'}]},
+   spots:[{e:'🌉',n:'Golden Gate'},{e:'⛰️',n:'Lands End'},{e:'☕',n:'Blue Bottle'},{e:'🌊',n:'Ocean Beach'}]},
 ];
 
-// ══════════════════════════════════════════
-//  PROXIMITY CLUSTERING (k-means, lat/lng 기반)
-// ══════════════════════════════════════════
+// ═══════════════════════════════════════════
+// K-MEANS
+// ═══════════════════════════════════════════
 function kMeans(spots, k) {
   if (!spots.length) return [];
   k = Math.min(k, spots.length);
-
-  // 초기 중심: 위도 기준 균등 분산
-  const sorted = [...spots].sort((a,b)=>a.lat - b.lat);
-  let centroids = Array.from({length:k}, (_,i) => {
-    const s = sorted[Math.floor(i * spots.length / k)];
-    return {lat: s.lat, lng: s.lng};
+  const sorted = [...spots].sort((a,b)=>a.lat-b.lat);
+  let centroids = Array.from({length:k},(_,i)=>{
+    const s = sorted[Math.floor(i*spots.length/k)];
+    return {lat:s.lat,lng:s.lng};
   });
-
-  let assignments = spots.map(()=>0);
-
-  for (let iter = 0; iter < 20; iter++) {
-    const prev = [...assignments];
-    // 각 스팟을 가장 가까운 centroid에 배정
-    assignments = spots.map(sp => {
-      let best = 0, bestD = Infinity;
-      centroids.forEach((c,ci) => {
-        const d = (sp.lat-c.lat)**2 + (sp.lng-c.lng)**2;
-        if (d < bestD) { bestD = d; best = ci; }
-      });
+  let asgn = spots.map(()=>0);
+  for(let iter=0;iter<20;iter++){
+    const prev=[...asgn];
+    asgn=spots.map(sp=>{
+      let best=0,bestD=Infinity;
+      centroids.forEach((c,ci)=>{const d=(sp.lat-c.lat)**2+(sp.lng-c.lng)**2;if(d<bestD){bestD=d;best=ci;}});
       return best;
     });
-    // centroid 재계산
-    for (let ci = 0; ci < k; ci++) {
-      const grp = spots.filter((_,i) => assignments[i] === ci);
-      if (grp.length) {
-        centroids[ci] = {
-          lat: grp.reduce((s,sp)=>s+sp.lat,0)/grp.length,
-          lng: grp.reduce((s,sp)=>s+sp.lng,0)/grp.length,
-        };
-      }
+    for(let ci=0;ci<k;ci++){
+      const g=spots.filter((_,i)=>asgn[i]===ci);
+      if(g.length)centroids[ci]={lat:g.reduce((s,sp)=>s+sp.lat,0)/g.length,lng:g.reduce((s,sp)=>s+sp.lng,0)/g.length};
     }
-    if (assignments.every((a,i)=>a===prev[i])) break;
+    if(asgn.every((a,i)=>a===prev[i]))break;
   }
-
-  // 북쪽 클러스터 = 인덱스 0 되도록 centroid 위도 기준 재정렬
-  const order = centroids
-    .map((c,i)=>({i, lat:c.lat}))
-    .sort((a,b)=>b.lat-a.lat)  // 위도 높은(북쪽) 순
-    .map(x=>x.i);
-  const remap = {};
-  order.forEach((oldCi, newCi) => { remap[oldCi] = newCi; });
-  return assignments.map(a => remap[a]);
+  const order=centroids.map((c,i)=>({i,lat:c.lat})).sort((a,b)=>b.lat-a.lat).map(x=>x.i);
+  const remap={};
+  order.forEach((old,ni)=>{remap[old]=ni;});
+  return asgn.map(a=>remap[a]);
 }
 
-function recomputeClusters() {
-  const k = S.spots.length <= 3 ? 1 : S.spots.length <= 5 ? 2 : 3;
-  const assignments = kMeans(S.spots, k);
-  S.spots.forEach((sp, i) => { sp.cluster = assignments[i] ?? 0; });
+function recomputeClusters(){
+  const active=activeSpots();
+  const k=active.length<=3?1:active.length<=5?2:3;
+  const asgn=kMeans(active,k);
+  active.forEach((sp,i)=>{sp.cluster=asgn[i]??0;});
 }
 
-// ══════════════════════════════════════════
-//  STATE
-// ══════════════════════════════════════════
-let S = {
-  tab: 'saved',
-  planMode: 'map',
-  planState: 'pre',   // 'pre' | 'generated'
-  days: 2,
-  selSpot: null,
-  spots: SPOTS_DATA.map(s=>({...s})),
-  expanded: new Set(),
-  map: null,
-  mapInited: false,
-  markers: {},
-  lines: [],
-  proxLines: [],
-  routeGroups: [],
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+const S={
+  tab:'spots',days:2,selDay:0,selSpot:null,
+  spots:SPOTS_DATA.map(s=>({...s})),
+  excluded:new Set(),
+  expanded:new Set(),
+  routeGroups:[],
+  map:null,mapInited:false,markers:{},lines:[],
+  sheetOpen:false,exclOpen:false,
 };
-recomputeClusters(); // 초기 좌표 기반 클러스터 계산
+recomputeClusters();
+buildGroups();
 
-// ══════════════════════════════════════════
-//  UTILS
-// ══════════════════════════════════════════
-function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('on');
-  clearTimeout(el._t);
-  el._t = setTimeout(()=>el.classList.remove('on'), 2200);
+// ═══════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('on');
+  clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),2400);
+}
+function getSpot(id){return S.spots.find(s=>s.id===id);}
+function activeSpots(){return S.spots.filter(s=>!S.excluded.has(s.id));}
+
+// ═══════════════════════════════════════════
+// ROUTE GROUPS
+// ═══════════════════════════════════════════
+function buildGroups(){
+  const active=activeSpots();
+  if(!active.length){S.routeGroups=[];return;}
+  recomputeClusters();
+  const k=S.days<=1?1:S.days===2?2:3;
+  const groups=[];
+  for(let ci=0;ci<k;ci++){
+    const grpSpots=active.filter(s=>s.cluster===ci);
+    if(!grpSpots.length)continue;
+    grpSpots.sort((a,b)=>b.lat-a.lat);
+    groups.push({
+      label:`Day ${ci+1}`,ci,
+      spotIds:grpSpots.map(s=>s.id),
+      summary:getDaySummary(grpSpots),
+      gapWarn:getGapWarning(grpSpots),
+    });
+  }
+  S.routeGroups=groups;
 }
 
-function getSpot(id) { return S.spots.find(s=>s.id===id); }
-
-function updateNudge() {
-  const el = document.getElementById('plan-nudge');
-  const sub = document.getElementById('nudge-sub');
-  if (!el) return;
-  const n = S.spots.length;
-  el.style.display = n > 0 ? 'flex' : 'none';
-  if (sub) sub.textContent = `스팟 ${n}개가 모였어요`;
-}
-
-// ── Plan Preview (from Saved tab banner) ──
-function openPlanPreview() {
-  const n = S.spots.length;
-  document.getElementById('pp-sub').textContent = `스팟 ${n}개가 모였어요`;
-  renderPlanPreview(S.days);
-  document.getElementById('plan-preview').classList.add('on');
-}
-
-function closePlanPreview() {
-  document.getElementById('plan-preview').classList.remove('on');
-}
-
-function pickPreviewDays(d) {
-  S.days = d;
-  document.querySelectorAll('.pp-day-btn').forEach((b,i) => {
-    b.classList.toggle('on', i+1 === d);
-  });
-  renderPlanPreview(d);
-}
-
-function renderPlanPreview(d) {
-  const cfg = ROUTES[Math.min(d, Object.keys(ROUTES).length)];
-  const rows = cfg.groups.map(g => {
-    const spots = g.ids.map(id=>S.spots.find(s=>s.id===id)).filter(Boolean);
-    if (!spots.length) return '';
-    return `
-      <div class="pp-day-row">
-        <span class="pp-day-label" style="background:${C[g.ci]}">${g.label}</span>
-        <div class="pp-spots-txt">${spots.map(s=>s.name).join(' · ')}</div>
-      </div>`;
-  }).join('');
-  document.getElementById('pp-preview-content').innerHTML = rows;
-}
-
-function saveTripFromPreview() {
-  closePlanPreview();
-  document.getElementById('gen-overlay').classList.add('on');
-  setTimeout(()=>{
-    document.getElementById('gen-overlay').classList.remove('on');
-    generateRoute();
-    switchTab('plan');
-  }, 1400);
-}
-
-// ══════════════════════════════════════════
-//  TAB SWITCHING
-// ══════════════════════════════════════════
-function switchTab(tab) {
-  S.tab = tab;
+// ═══════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════
+function switchTab(tab){
+  S.tab=tab;
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
   document.getElementById('tab-'+tab).classList.add('active');
-  const idx = ['saved','plan','explore'].indexOf(tab);
-  document.querySelectorAll('.nav-btn')[idx].classList.add('on');
-  if(tab==='plan') setTimeout(()=>initMap(), 60);
+  document.querySelectorAll('.nav-btn')[['spots','plan','explore'].indexOf(tab)].classList.add('on');
+  if(tab==='plan') setTimeout(initPlanTab,60);
 }
 
-// ══════════════════════════════════════════
-//  SAVED TAB
-// ══════════════════════════════════════════
-function renderSaved() {
-  const feed = document.getElementById('saved-feed');
-  const reels = REELS_DATA.filter(r => S.spots.some(s=>s.reelId===r.id));
+// ═══════════════════════════════════════════
+// SPOTS TAB
+// ═══════════════════════════════════════════
+function getPlanBadge(reelId){
+  if(!S.routeGroups.length) return '';
+  const days=[];
+  S.spots.filter(s=>s.reelId===reelId&&!S.excluded.has(s.id)).forEach(sp=>{
+    const g=S.routeGroups.find(g=>g.spotIds.includes(sp.id));
+    if(g&&!days.includes(g.label))days.push(g.label);
+  });
+  if(!days.length)return '';
+  return `<span class="plan-badge">🇺🇸 ${days.join(' · ')}</span>`;
+}
 
-  if (!reels.length) {
-    feed.innerHTML = `<div class="empty"><div class="empty-ic">🔖</div><div class="empty-tx">저장된 릴이 없어요</div></div>`;
-    document.getElementById('saved-sub').textContent = '릴 0개 · 스팟 0개';
+function renderSpots(){
+  const feed=document.getElementById('spots-feed');
+  const reels=REELS_DATA.filter(r=>S.spots.some(s=>s.reelId===r.id));
+  document.getElementById('spots-sub').textContent=`릴 ${reels.length}개 · Spot ${S.spots.length}개`;
+  if(!reels.length){
+    feed.innerHTML=`<div style="padding:52px 20px;text-align:center;color:#999"><div style="font-size:40px;margin-bottom:12px">🔖</div><div style="font-size:14px;font-weight:600">저장된 릴이 없어요</div></div>`;
     return;
   }
-
-  const cards = reels.map(r=>{
-    const spots = S.spots.filter(s=>s.reelId===r.id);
-    const exp = S.expanded.has(r.id);
-    const badge = r.platform==='instagram' ? '<span class="plat-badge b-ig">📸 Instagram</span>' : '<span class="plat-badge b-tt">🎵 TikTok</span>';
-    return `
-    <div>
-      <div class="reel-card" id="rc-${r.id}">
+  feed.innerHTML=`<div class="reel-grid">`+reels.map(r=>{
+    const spots=S.spots.filter(s=>s.reelId===r.id);
+    const exp=S.expanded.has(r.id);
+    const pb=r.platform==='instagram'?'<span class="plat-badge b-ig">📸 IG</span>':'<span class="plat-badge b-tt">🎵 TT</span>';
+    const planBadge=getPlanBadge(r.id);
+    return `<div>
+      <div class="reel-card">
         <div class="reel-thumb">
           <img src="${r.photo}" alt="${r.title}" loading="lazy">
-          <div class="reel-thumb-overlay"></div>
-          ${badge}
+          <div class="reel-grad"></div>
+          ${pb}
           <button class="reel-del" onclick="event.stopPropagation();delReel('${r.id}')">✕</button>
-          <div class="reel-overlay-body">
+          ${planBadge}
+          <span class="spot-pill">${spots.length} spots</span>
+          <div class="reel-ov">
             <div class="reel-user">${r.user}</div>
-            <div class="reel-title">${r.title}</div>
-            <div class="reel-meta">${r.savedAt}</div>
+            <div class="reel-ttl">${r.title}</div>
+            <div class="reel-date">${r.savedAt}</div>
           </div>
         </div>
         <button class="reel-expand" onclick="toggleReel('${r.id}')">
-          <span>스팟 ${spots.length}개</span>
-          <span class="arrow ${exp?'open':''}">▾</span>
+          <span>Spots ${spots.length}개</span>
+          <span style="transition:transform .28s;display:inline-block;transform:rotate(${exp?180:0}deg)">▾</span>
         </button>
         <div class="reel-spots ${exp?'open':''}" id="rs-${r.id}">
           ${spots.map(sp=>`
-            <div class="spot-mini" id="sm-${sp.id}">
-              <div class="smic-emoji" style="background:${CL[sp.cluster]}">${sp.emoji}</div>
-              <div class="smic-info">
+            <div class="spot-mini">
+              <div class="smic-em" style="background:${CL[sp.cluster??0]}">${sp.emoji}</div>
+              <div>
                 <div class="smic-name">${sp.name}</div>
                 <div class="smic-desc">${sp.desc}</div>
               </div>
-              <button class="smic-del" onclick="delSpot('${sp.id}')">✕</button>
             </div>`).join('')}
         </div>
       </div>
     </div>`;
-  }).join('');
-
-  feed.innerHTML = `<div class="reel-grid">${cards}</div>`;
-
-  document.getElementById('saved-sub').textContent = `릴 ${reels.length}개 · 스팟 ${S.spots.length}개`;
-  updateNudge();
+  }).join('')+`</div>`;
 }
 
-function toggleReel(id) {
-  S.expanded.has(id) ? S.expanded.delete(id) : S.expanded.add(id);
-  renderSaved();
+function toggleReel(id){
+  S.expanded.has(id)?S.expanded.delete(id):S.expanded.add(id);
+  renderSpots();
 }
 
-function delReel(reelId) {
-  S.spots = S.spots.filter(s=>s.reelId!==reelId);
-  recomputeClusters();
-  renderSaved(); syncMap();
-  updateBsheet();
-  toast('릴이 삭제됐어요');
+function delReel(reelId){
+  S.spots=S.spots.filter(s=>s.reelId!==reelId);
+  S.excluded=new Set([...S.excluded].filter(id=>S.spots.find(s=>s.id===id)));
+  buildGroups();
+  renderSpots();
+  if(S.mapInited){syncMarkers();drawLines();}
+  renderSheetContent();
+  toast('삭제됐어요');
 }
 
-function delSpot(spotId) {
-  S.spots = S.spots.filter(s=>s.id!==spotId);
-  recomputeClusters();
-  renderSaved(); syncMap();
-  updateBsheet();
-  toast('스팟이 삭제됐어요');
+// ═══════════════════════════════════════════
+// PLAN TAB INIT
+// ═══════════════════════════════════════════
+function initPlanTab(){
+  const active=activeSpots();
+  const empty=document.getElementById('plan-empty');
+  const sheet=document.getElementById('plan-sheet');
+  const mapWrap=document.getElementById('plan-map-wrap');
+  if(!active.length){
+    empty.classList.remove('hidden');
+    sheet.style.display='none';
+    mapWrap.style.visibility='hidden';
+    return;
+  }
+  empty.classList.add('hidden');
+  sheet.style.display='';
+  mapWrap.style.visibility='visible';
+  if(!S.mapInited){initMap();}
+  else{S.map.invalidateSize();syncMarkers();drawLines();}
+  updateDaySeg();
+  renderSheetContent();
 }
 
-// ══════════════════════════════════════════
-//  MAP
-// ══════════════════════════════════════════
-function initMap() {
-  if (S.mapInited) { S.map.invalidateSize(); return; }
+// ═══════════════════════════════════════════
+// MAP
+// ═══════════════════════════════════════════
+function initMap(){
+  const map=L.map('plan-map',{center:[37.76,-122.47],zoom:12,zoomControl:false});
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:19,subdomains:'abcd'}).addTo(map);
+  L.control.zoom({position:'bottomright'}).addTo(map);
+  S.map=map;S.mapInited=true;
+  addMarkers();fitActive();drawLines();
+}
 
-  const map = L.map('leaflet-map',{
-    center:[37.68,-122.47], zoom:11,
-    zoomControl:true
+function mkIcon(sp,sel=false){
+  const bg=C[sp.cluster??0];
+  return L.divIcon({html:`<div class="sf-mkr${sel?' sel':''}" style="background:${bg}">${sp.emoji}</div>`,className:'',iconSize:[40,40],iconAnchor:[20,20]});
+}
+
+function addMarkers(){
+  Object.values(S.markers).forEach(m=>m.remove());S.markers={};
+  activeSpots().forEach(sp=>{
+    const m=L.marker([sp.lat,sp.lng],{icon:mkIcon(sp)}).addTo(S.map);
+    m.on('click',()=>selSpot(sp.id));S.markers[sp.id]=m;
   });
-
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
-    maxZoom:19, subdomains:'abcd'
-  }).addTo(map);
-
-  S.map = map;
-  S.mapInited = true;
-
-  addAllMarkers();
-  fitSpots();
-  renderBsheet();
 }
 
-function mkIcon(spot, sel=false) {
-  const bg = C[spot.cluster];
-  return L.divIcon({
-    html:`<div class="sf-mkr${sel?' sel':''}" style="background:${bg}">${spot.emoji}</div>`,
-    className:'',iconSize:[40,40],iconAnchor:[20,20]
-  });
-}
-
-function addAllMarkers() {
-  Object.values(S.markers).forEach(m=>m.remove());
-  S.markers = {};
-  S.spots.forEach(sp=>{
-    const m = L.marker([sp.lat,sp.lng],{icon:mkIcon(sp)}).addTo(S.map);
-    m.on('click',()=>selectSpot(sp.id));
-    S.markers[sp.id] = m;
-  });
-  drawProximityLines();
-}
-
-function syncMap() {
-  if (!S.mapInited) return;
-  const ids = new Set(S.spots.map(s=>s.id));
-  Object.entries(S.markers).forEach(([id,m])=>{
-    if (!ids.has(id)) { m.remove(); delete S.markers[id]; }
-  });
-  S.spots.forEach(sp=>{
-    if (!S.markers[sp.id]) {
-      const m = L.marker([sp.lat,sp.lng],{icon:mkIcon(sp)}).addTo(S.map);
-      m.on('click',()=>selectSpot(sp.id));
-      S.markers[sp.id] = m;
+function syncMarkers(){
+  const active=activeSpots();const ids=new Set(active.map(s=>s.id));
+  Object.entries(S.markers).forEach(([id,m])=>{if(!ids.has(id)){m.remove();delete S.markers[id];}});
+  active.forEach(sp=>{
+    if(!S.markers[sp.id]){
+      const m=L.marker([sp.lat,sp.lng],{icon:mkIcon(sp)}).addTo(S.map);
+      m.on('click',()=>selSpot(sp.id));S.markers[sp.id]=m;
+    } else {
+      S.markers[sp.id].setIcon(mkIcon(sp,S.selSpot===sp.id));
     }
   });
-  drawProximityLines();
 }
 
-// 클러스터 내 스팟을 잇는 연결선 (루트 생성 전 동선 힌트)
-function drawProximityLines() {
-  S.proxLines.forEach(l=>l.remove());
-  S.proxLines = [];
-  if (S.planState === 'generated') return; // 루트 생성 후엔 route lines가 대신함
+function fitActive(){
+  const a=activeSpots();
+  if(!S.map||!a.length)return;
+  S.map.fitBounds(a.map(s=>[s.lat,s.lng]),{padding:[70,70]});
+}
 
-  const byCluster = {};
-  S.spots.forEach(sp=>{
-    if (!byCluster[sp.cluster]) byCluster[sp.cluster] = [];
-    byCluster[sp.cluster].push(sp);
-  });
-
-  Object.entries(byCluster).forEach(([ci, spots])=>{
-    if (spots.length < 2) return;
-    const color = C[parseInt(ci)];
-    // 북→남 순서로 정렬해서 자연스러운 동선
-    const sorted = [...spots].sort((a,b)=>b.lat - a.lat);
-    const lls = sorted.map(s=>[s.lat,s.lng]);
-    const line = L.polyline(lls, {
-      color, weight:2.5, opacity:.45, dashArray:'6,7'
-    }).addTo(S.map);
-    S.proxLines.push(line);
+function drawLines(){
+  S.lines.forEach(l=>l.remove());S.lines=[];
+  S.routeGroups.forEach(g=>{
+    const spots=g.spotIds.map(id=>getSpot(id)).filter(Boolean);
+    if(spots.length<2)return;
+    const line=L.polyline(spots.map(s=>[s.lat,s.lng]),{color:C[g.ci],weight:3,opacity:.7,dashArray:'8,5'}).addTo(S.map);
+    S.lines.push(line);
   });
 }
 
-function fitSpots() {
-  if (!S.map || !S.spots.length) return;
-  const bounds = S.spots.map(s=>[s.lat,s.lng]);
-  S.map.fitBounds(bounds,{padding:[50,50]});
-}
-
-function selectSpot(id) {
-  // Deselect prev
-  if (S.selSpot && S.markers[S.selSpot]) {
-    const prev = getSpot(S.selSpot) || SPOTS_DATA.find(s=>s.id===S.selSpot);
-    if (prev) S.markers[S.selSpot].setIcon(mkIcon(prev,false));
-  }
-  S.selSpot = id;
-  const sp = getSpot(id);
-  if (sp && S.markers[id]) S.markers[id].setIcon(mkIcon(sp,true));
+function selSpot(id){
+  if(S.selSpot&&S.markers[S.selSpot]){const p=getSpot(S.selSpot);if(p)S.markers[S.selSpot].setIcon(mkIcon(p,false));}
+  S.selSpot=id;
+  const sp=getSpot(id);
+  if(sp&&S.markers[id])S.markers[id].setIcon(mkIcon(sp,true));
   showDetail(id);
 }
 
-function showDetail(id) {
-  const sp = getSpot(id);
-  if (!sp) return;
-  const panel = document.getElementById('detail-panel');
-  panel.innerHTML = `
-    <div class="handle"></div>
-    <div class="detail-hdr">
-      <div class="detail-em" style="background:${CL[sp.cluster]}">${sp.emoji}</div>
-      <div style="flex:1">
-        <div class="detail-name">${sp.name}</div>
-        <div class="detail-why">${sp.desc}</div>
-      </div>
-      <button class="detail-close" onclick="closeDetail()">✕</button>
+function showDetail(id){
+  const sp=getSpot(id);if(!sp)return;
+  const ci=sp.cluster??0;
+  document.getElementById('dc-hdr').innerHTML=`
+    <div class="dc-em" style="background:${CL[ci]}">${sp.emoji}</div>
+    <div style="flex:1">
+      <div class="dc-name">${sp.name}</div>
+      <div class="dc-desc">${sp.desc}</div>
     </div>
-    <div class="detail-div"></div>
-    <div class="detail-body">${sp.detail}</div>
-  `;
-  panel.classList.add('on');
+    <button class="dc-close" onclick="closeDetail()">✕</button>`;
+  document.getElementById('dc-body').textContent=sp.detail;
+  document.getElementById('detail-card').classList.add('on');
 }
 
-function closeDetail() {
-  document.getElementById('detail-panel').classList.remove('on');
-  if (S.selSpot && S.markers[S.selSpot]) {
-    const sp = getSpot(S.selSpot) || SPOTS_DATA.find(s=>s.id===S.selSpot);
-    if (sp) S.markers[S.selSpot].setIcon(mkIcon(sp,false));
-  }
-  S.selSpot = null;
+function closeDetail(){
+  document.getElementById('detail-card').classList.remove('on');
+  if(S.selSpot&&S.markers[S.selSpot]){const sp=getSpot(S.selSpot);if(sp)S.markers[S.selSpot].setIcon(mkIcon(sp,false));}
+  S.selSpot=null;
 }
 
-// ══════════════════════════════════════════
-//  BOTTOM SHEET
-// ══════════════════════════════════════════
-function renderBsheet() { updateBsheet(); }
+function excludeCurrent(){
+  if(!S.selSpot)return;
+  const id=S.selSpot;
+  S.excluded.add(id);closeDetail();
+  buildGroups();syncMarkers();drawLines();
+  renderSheetContent();renderSpots();
+  toast('이 여행에서 제외했어요. Spots에는 남아 있어요.');
+}
 
-function updateBsheet() {
-  if (!S.mapInited) return;
+// ═══════════════════════════════════════════
+// DAY SELECTOR
+// ═══════════════════════════════════════════
+function setDays(d){
+  S.days=d;updateDaySeg();buildGroups();syncMarkers();drawLines();renderSheetContent();
+}
+function updateDaySeg(){
+  document.querySelectorAll('.day-seg').forEach((btn,i)=>{
+    const on=i+1===S.days;
+    btn.classList.toggle('on',on);
+    btn.style.background=on?C[i]:'';
+    btn.style.color=on?'#fff':'';
+  });
+}
 
-  const el = document.getElementById('bsheet');
-  if (S.planState === 'pre') {
-    const chips = S.spots.map(sp=>
-      `<span class="chip" style="background:${CL[sp.cluster]};color:${C[sp.cluster]}">${sp.emoji} ${sp.name.split(' ')[0]}</span>`
-    ).join('');
-    el.innerHTML = `
-      <div class="handle"></div>
-      <div class="pre-sheet">
-        <div class="spot-count-row">
-          <div>
-            <div class="scount-text">저장된 스팟 ${S.spots.length}개</div>
-            <div class="scount-sub">근처 스팟끼리 같은 색으로 묶었어요</div>
-          </div>
-        </div>
-        <div class="chips">${chips}</div>
-        <button class="gen-btn" onclick="switchTab('saved');setTimeout(openPlanPreview,200)">플랜 만들기 →</button>
-      </div>`;
+// ═══════════════════════════════════════════
+// BOTTOM SHEET
+// ═══════════════════════════════════════════
+function toggleSheet(){
+  S.sheetOpen=!S.sheetOpen;applySheet();
+}
+function applySheet(){
+  const sheet=document.getElementById('plan-sheet');
+  const list=document.getElementById('sheet-list');
+  const mapWrap=document.getElementById('plan-map-wrap');
+  if(S.sheetOpen){
+    list.classList.add('show');
+    const tabH=document.getElementById('tab-plan').offsetHeight;
+    const sheetH=Math.round(tabH*0.62);
+    sheet.style.height=sheetH+'px';
+    mapWrap.style.height=(tabH-sheetH)+'px';
+    mapWrap.style.flex='none';
+    renderListView();
+    setTimeout(()=>{if(S.map)S.map.invalidateSize();},120);
   } else {
-    const groups = S.routeGroups.map((g)=>{
-      const color = C[g.ci];
-      const spots = g.spotIds.map(id=>S.spots.find(s=>s.id===id)).filter(Boolean);
-      if (!spots.length) return '';
-      return `
-        <div class="day-grp">
-          <div class="day-grp-hdr">
-            <span class="day-badge" style="background:${color}">${g.label}</span>
-            <span class="day-concept">${g.story}</span>
-          </div>
-          ${spots.map((sp)=>`
-            <div class="day-spot-row" draggable="true"
-                 ondragstart="onDragStart(event,'${sp.id}',${g.ci})"
-                 ondragover="onDragOver(event,'${sp.id}',${g.ci})"
-                 ondrop="onDrop(event,'${sp.id}',${g.ci})"
-                 ondragend="onDragEnd(event)"
-                 data-id="${sp.id}" data-ci="${g.ci}">
-              <div class="day-dot" style="background:${color}">${sp.emoji}</div>
-              <div style="flex:1;min-width:0">
-                <div class="day-sname">${sp.name}</div>
-                <div class="day-sdesc">${sp.desc}</div>
-              </div>
-              <button class="route-del" onclick="delFromRoute('${sp.id}',${g.ci})">✕</button>
-              <div class="drag-handle" title="드래그해서 순서 변경">⠿</div>
-            </div>`).join('')}
-        </div>`;
-    }).join('');
+    list.classList.remove('show');
+    sheet.style.height='';mapWrap.style.height='';mapWrap.style.flex='';
+    setTimeout(()=>{if(S.map)S.map.invalidateSize();},120);
+    closeDetail();
+  }
+}
 
-    el.innerHTML = `
-      <div class="handle"></div>
-      <div class="route-hdr">
-        <div class="route-title-row">
-          <div>
-            <div class="dest-chip">📍 San Francisco</div>
-            <div class="route-title">${S.days}일 플랜</div>
-          </div>
-          <button class="reset-btn" onclick="resetRoute()">다시 설정</button>
-        </div>
+function renderSheetContent(){renderDayChips();if(S.sheetOpen)renderListView();}
+
+function renderDayChips(){
+  const row=document.getElementById('chips-row');
+  const sumEl=document.getElementById('chip-summary');
+  if(!S.routeGroups.length){row.innerHTML='';sumEl.textContent='';return;}
+  row.innerHTML=S.routeGroups.map((g,i)=>`
+    <button class="day-chip ${S.selDay===i?'on':''}"
+      style="${S.selDay===i?'background:'+C[g.ci]:''}"
+      onclick="selectDay(${i})">${g.label}</button>`).join('');
+  const cur=S.routeGroups[S.selDay];
+  sumEl.textContent=cur?cur.summary:'';
+}
+
+function selectDay(i){
+  S.selDay=i;renderDayChips();
+  const g=S.routeGroups[i];
+  if(g&&S.map){
+    const spots=g.spotIds.map(id=>getSpot(id)).filter(Boolean);
+    if(spots.length)S.map.fitBounds(spots.map(s=>[s.lat,s.lng]),{padding:[70,70]});
+  }
+}
+
+function renderListView(){
+  const wrap=document.getElementById('sheet-list');
+  if(!S.routeGroups.length){wrap.innerHTML='<div style="padding:20px;text-align:center;color:#999;font-size:13px">Plan에 포함된 Spot이 없어요</div>';return;}
+  let html=S.routeGroups.map(g=>{
+    const spots=g.spotIds.map(id=>getSpot(id)).filter(Boolean);
+    const gw=g.gapWarn?`<div class="gap-warn"><span style="font-size:14px">⚠️</span><span class="gap-warn-txt">${g.gapWarn}</span><button class="gap-warn-btn">추천 보기</button></div>`:'';
+    return `<div class="list-day-grp">
+      <div class="list-day-hdr">
+        <span class="list-day-badge" style="background:${C[g.ci]}">${g.label}</span>
+        <div class="list-day-sum">${g.summary}</div>
       </div>
-      ${groups}
-      <div id="save-plan-wrap">
-        <button id="save-plan-btn" onclick="savePlan()">이 플랜 저장하기</button>
-      </div>`;
-  }
-}
+      ${gw}
+      ${spots.map((sp,idx)=>`
+        <div class="list-spot-row" id="lsr-${sp.id}" draggable="true"
+          ondragstart="dStart(event,'${sp.id}','${g.label}')"
+          ondragover="dOver(event,'${sp.id}','${g.label}')"
+          ondrop="dDrop(event,'${sp.id}','${g.label}')"
+          ondragend="dEnd(event)"
+          onclick="fromList('${sp.id}')">
+          <span class="list-num" style="background:${C[g.ci]}">${idx+1}</span>
+          <span style="font-size:20px">${sp.emoji}</span>
+          <div class="list-info">
+            <div class="list-name">${sp.name}</div>
+            <div class="list-desc">${sp.desc}</div>
+          </div>
+          <span class="drag-h">⠿</span>
+        </div>`).join('')}
+    </div>`;
+  }).join('');
 
-// ══════════════════════════════════════════
-//  ROUTE GENERATION
-// ══════════════════════════════════════════
-function openDensity() {
-  document.getElementById('density-sub-txt').textContent = `저장한 스팟 ${S.spots.length}개를 AI가 분석해서 최적 플랜을 만들어드릴게요`;
-  document.getElementById('density-modal').classList.add('on');
-}
-function closeDensity() {
-  document.getElementById('density-modal').classList.remove('on');
-}
-function pickDensity(d) {
-  S.days = d;
-  document.querySelectorAll('.d-opt').forEach(b=>b.classList.toggle('on', parseInt(b.dataset.d)===d));
-}
-function confirmRoute() {
-  closeDensity();
-  document.getElementById('gen-overlay').classList.add('on');
-  setTimeout(()=>{
-    document.getElementById('gen-overlay').classList.remove('on');
-    generateRoute();
-  }, 1800);
-}
-
-function generateRoute() {
-  S.planState = 'generated';
-  S.lines.forEach(l=>l.remove()); S.lines = [];
-  S.proxLines.forEach(l=>l.remove()); S.proxLines = [];
-
-  const cfg = ROUTES[S.days];
-  // 편집 가능한 routeGroups 초기화
-  S.routeGroups = cfg.groups.map(g=>({
-    label: g.label, story: g.story, ci: g.ci,
-    spotIds: g.ids.filter(id=>S.spots.find(s=>s.id===id))
-  }));
-
-  cfg.groups.forEach((g,i)=>{
-    const color = C[g.ci];
-    const spots = g.ids.map(id=>S.spots.find(s=>s.id===id)).filter(Boolean);
-    if (spots.length < 2) return;
-    // Update marker colors to day group color
-    spots.forEach(sp=>{
-      if (S.markers[sp.id]) {
-        const tmpSpot = {...sp, cluster: g.ci};
-        S.markers[sp.id].setIcon(mkIcon(tmpSpot, S.selSpot===sp.id));
-      }
-    });
-    // Draw polyline
-    const lls = spots.map(s=>[s.lat,s.lng]);
-    const line = L.polyline(lls,{color,weight:3.5,opacity:.75,dashArray:'8,5'}).addTo(S.map);
-    S.lines.push(line);
-  });
-
-  updateBsheet();
-  toast(`${S.days}일 플랜이 완성됐어요`);
-}
-
-function savePlan() {
-  const btn = document.getElementById('save-plan-btn');
-  if (!btn) return;
-  btn.textContent = '저장 완료 ✓';
-  btn.classList.add('saved');
-  toast('San Francisco 플랜이 저장됐어요 🔖');
-}
-
-// ── 루트 스팟 삭제 ──
-function delFromRoute(spotId, groupCi) {
-  const g = S.routeGroups.find(g=>g.ci===groupCi);
-  if (!g) return;
-  g.spotIds = g.spotIds.filter(id=>id!==spotId);
-  updateBsheet();
-  toast('루트에서 삭제됐어요');
-}
-
-// ── 드래그 & 드롭 순서 변경 ──
-let _drag = null;
-
-function onDragStart(e, spotId, groupCi) {
-  _drag = {spotId, groupCi};
-  e.dataTransfer.effectAllowed = 'move';
-  e.currentTarget.style.opacity = '0.4';
-}
-function onDragEnd(e) {
-  e.currentTarget.style.opacity = '';
-  document.querySelectorAll('.day-spot-row.drag-over')
-    .forEach(el=>el.classList.remove('drag-over'));
-}
-function onDragOver(e, spotId, groupCi) {
-  e.preventDefault();
-  e.dataTransfer.dropEffect = 'move';
-  document.querySelectorAll('.day-spot-row.drag-over')
-    .forEach(el=>el.classList.remove('drag-over'));
-  if (_drag && _drag.spotId !== spotId) {
-    e.currentTarget.classList.add('drag-over');
-  }
-}
-function onDrop(e, targetSpotId, targetCi) {
-  e.preventDefault();
-  if (!_drag || _drag.spotId === targetSpotId) { _drag = null; return; }
-
-  const srcGroup = S.routeGroups.find(g=>g.ci===_drag.groupCi);
-  const tgtGroup = S.routeGroups.find(g=>g.ci===targetCi);
-  if (!srcGroup || !tgtGroup) { _drag = null; return; }
-
-  // 원본에서 제거
-  srcGroup.spotIds = srcGroup.spotIds.filter(id=>id!==_drag.spotId);
-  // 대상 위치에 삽입
-  const toIdx = tgtGroup.spotIds.indexOf(targetSpotId);
-  tgtGroup.spotIds.splice(toIdx, 0, _drag.spotId);
-
-  _drag = null;
-  updateBsheet();
-}
-
-function resetRoute() {
-  S.planState = 'pre';
-  S.lines.forEach(l=>l.remove()); S.lines = [];
-  S.routeGroups = [];
-  S.selSpot = null;
-  closeDetail();
-  S.spots.forEach(sp=>{
-    if (S.markers[sp.id]) S.markers[sp.id].setIcon(mkIcon(sp,false));
-  });
-  drawProximityLines(); // proximity lines 복원
-  updateBsheet();
-}
-
-// ══════════════════════════════════════════
-//  PLAN MODE SWITCH
-// ══════════════════════════════════════════
-function setPlanMode(mode) {
-  S.planMode = mode;
-  document.getElementById('btn-map').classList.toggle('on', mode==='map');
-  document.getElementById('btn-spots').classList.toggle('on', mode==='spots');
-  document.getElementById('map-view').style.display = mode==='map' ? 'flex' : 'none';
-  document.getElementById('spots-view').style.display = mode==='spots' ? 'block' : 'none';
-  if (mode==='map') { setTimeout(()=>{ if(S.map) S.map.invalidateSize(); },50); }
-  else { closeDetail(); renderSpots(); }
-}
-
-function renderSpots() {
-  const view = document.getElementById('spots-view');
-  if (!S.spots.length) {
-    view.innerHTML = `<div class="empty"><div class="empty-ic">📍</div><div class="empty-tx">스팟이 없어요</div></div>`;
-    return;
-  }
-  view.innerHTML = S.spots.map(sp=>`
-    <div class="spot-card" id="sc-${sp.id}">
-      <div class="sc-emoji" style="background:${CL[sp.cluster]}">${sp.emoji}</div>
-      <div class="sc-info">
-        <div class="sc-name">${sp.name}</div>
-        <div class="sc-desc">${sp.desc}</div>
+  const excl=[...S.excluded].map(id=>getSpot(id)).filter(Boolean);
+  if(excl.length){
+    html+=`<div class="excl-section">
+      <div class="excl-hdr" onclick="toggleExcl()">
+        <span class="excl-hdr-txt">이 Plan에서 제외된 Spot (${excl.length})</span>
+        <span style="font-size:12px;color:#999">${S.exclOpen?'∧':'∨'}</span>
       </div>
-      <div class="sc-dot" style="background:${C[sp.cluster]}"></div>
-      <button class="sc-del" onclick="delSpotAnim('${sp.id}')">✕</button>
-    </div>`).join('');
-}
-
-function delSpotAnim(id) {
-  const el = document.getElementById('sc-'+id);
-  if (el) {
-    el.classList.add('removing');
-    setTimeout(()=>{ delSpot(id); renderSpots(); }, 260);
+      ${S.exclOpen?excl.map(sp=>`
+        <div class="excl-row">
+          <span style="font-size:18px">${sp.emoji}</span>
+          <div class="list-info"><div class="list-name">${sp.name}</div></div>
+          <button class="add-back" onclick="addBack('${sp.id}')">+ 추가</button>
+        </div>`).join(''):''}
+    </div>`;
   }
+  wrap.innerHTML=html;
 }
 
-// ══════════════════════════════════════════
-//  EXPLORE TAB
-// ══════════════════════════════════════════
-function renderExplore() {
-  document.getElementById('ex-feed').innerHTML = EXPLORE_DATA.map(r=>`
+function toggleExcl(){S.exclOpen=!S.exclOpen;renderListView();}
+
+function addBack(id){
+  S.excluded.delete(id);buildGroups();syncMarkers();drawLines();
+  renderSheetContent();renderSpots();
+  toast('Plan에 다시 추가됐어요');
+}
+
+function fromList(id){
+  const sp=getSpot(id);if(!sp||!S.map)return;
+  S.map.setView([sp.lat,sp.lng],14,{animate:true});
+  selSpot(id);
+}
+
+// ═══════════════════════════════════════════
+// DRAG & DROP
+// ═══════════════════════════════════════════
+let _d=null;
+function dStart(e,id,day){_d={id,day};e.dataTransfer.effectAllowed='move';setTimeout(()=>{if(e.currentTarget)e.currentTarget.style.opacity='.4';},0);}
+function dEnd(e){e.currentTarget.style.opacity='';document.querySelectorAll('.list-spot-row.drag-over').forEach(el=>el.classList.remove('drag-over'));}
+function dOver(e,id,day){e.preventDefault();if(_d&&_d.id!==id)e.currentTarget.classList.add('drag-over');}
+function dDrop(e,targetId,targetDay){
+  e.preventDefault();
+  if(!_d||_d.id===targetId){_d=null;return;}
+  const src=S.routeGroups.find(g=>g.label===_d.day);
+  const tgt=S.routeGroups.find(g=>g.label===targetDay);
+  if(!src||!tgt){_d=null;return;}
+  src.spotIds=src.spotIds.filter(id=>id!==_d.id);
+  const ti=tgt.spotIds.indexOf(targetId);
+  tgt.spotIds.splice(ti>=0?ti:tgt.spotIds.length,0,_d.id);
+  _d=null;drawLines();renderSheetContent();
+}
+
+// ═══════════════════════════════════════════
+// EXPLORE
+// ═══════════════════════════════════════════
+function renderExplore(){
+  document.getElementById('ex-feed').innerHTML=EXPLORE_DATA.map(r=>`
     <div class="ex-card">
-      <div class="ex-thumb">
-        <img src="${r.photo}" alt="${r.title}" loading="lazy">
-        <div class="ex-thumb-overlay">
-          <span class="ex-author">${r.author}</span>
-        </div>
-      </div>
+      <div class="ex-thumb"><img src="${r.photo}" alt="${r.title}" loading="lazy"><div class="ex-thumb-ov"><span class="ex-author">${r.author}</span></div></div>
       <div class="ex-body">
         <div class="ex-title">${r.title}</div>
         <div class="ex-story">${r.story}</div>
-        <div class="ex-spots">
-          ${r.spots.map(s=>`<span class="ex-pill">${s.e} ${s.n}</span>`).join('')}
-        </div>
+        <div class="ex-spots">${r.spots.map(s=>`<span class="ex-pill">${s.e} ${s.n}</span>`).join('')}</div>
       </div>
       <div class="ex-actions">
-        <button class="ex-btn ex-primary" onclick="addToPlan(this)">내 플랜에 추가</button>
-        <button class="ex-btn ex-secondary" onclick="saveSpots(this)">스팟 저장</button>
+        <button class="ex-btn ex-primary" onclick="this.textContent='추가됨 ✓';this.className='ex-btn done-b';toast('Plan에 추가됐어요 ✨')">내 Plan에 추가</button>
+        <button class="ex-btn ex-secondary" onclick="this.textContent='저장됨 ✓';this.className='ex-btn done-g';toast('Spot이 저장됐어요 🔖')">Spot 저장</button>
       </div>
     </div>`).join('');
 }
 
-function addToPlan(btn) {
-  btn.textContent = '추가됨 ✓';
-  btn.classList.add('done-blue');
-  toast('내 플랜에 추가됐어요 ✨');
-}
-function saveSpots(btn) {
-  btn.textContent = '저장됨 ✓';
-  btn.classList.add('done-green');
-  toast('스팟이 저장됐어요 🔖');
-}
-
-// ══════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════
-renderSaved();
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+renderSpots();
 renderExplore();
 </script>
 </body>
