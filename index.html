@@ -1061,7 +1061,7 @@ function renderListView(){
   if(!S.routeGroups.length){wrap.innerHTML='<div style="padding:20px;text-align:center;color:#999;font-size:13px">Plan에 포함된 Spot이 없어요</div>';return;}
   // per-group editable summaries (keyed by group label)
   if(!S.groupSummaries)S.groupSummaries={};
-  let html=S.routeGroups.map(g=>{
+  let html=S.routeGroups.map((g,gi)=>{
     const spots=g.spotIds.map(id=>getSpot(id)).filter(Boolean);
     const gw=g.gapWarn?`<div class="gap-warn"><span style="font-size:14px">⚠️</span><span class="gap-warn-txt">${g.gapWarn}</span><button class="gap-warn-btn">추천 보기</button></div>`:'';
     const userSummary=S.groupSummaries[g.label];
@@ -1072,7 +1072,7 @@ function renderListView(){
       :`<span class="list-day-sub placeholder" onclick="editDaySummary('${g.label}',this)">이 날을 한 줄로 표현해보세요</span>`;
     return `<div class="list-day-grp">
       <div class="list-day-hdr">
-        <span class="list-day-badge"><span class="list-day-dot" style="background:${C[g.ci]}"></span>${g.label}</span>
+        <span class="list-day-badge" onclick="selectDay(${gi})" style="cursor:pointer"><span class="list-day-dot" style="background:${C[g.ci]}"></span>${g.label}</span>
         ${subHtml}
         <button class="list-day-edit" onclick="editDaySummary('${g.label}',this.previousElementSibling)" title="편집">✎</button>
       </div>
