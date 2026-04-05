@@ -301,6 +301,13 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 }
 .sf-mkr.pin-pop{animation:pinPop .28s cubic-bezier(.34,1.2,.64,1) both}
 
+/* map stamp ripple */
+@keyframes rippleOut{
+  0%  {transform:scale(.6);opacity:.75}
+  100%{transform:scale(2.8);opacity:0}
+}
+.map-ripple{position:absolute;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;pointer-events:none;z-index:600;animation:rippleOut .55s ease-out forwards}
+
 /* bridge close */
 @keyframes sheetDown{from{transform:translateY(0)}to{transform:translateY(105%)}}
 .bridge-sheet.closing{animation:sheetDown .2s ease-out forwards}
@@ -1419,9 +1426,10 @@ function playBridgeAnimation(newIds){
   });
 
   // t=520: pins pop one by one (140ms stagger)
-  const STAGGER=140, PIN_DUR=280;
+  const STAGGER=140;
   newIds.forEach((id,i)=>{
     setTimeout(()=>{
+      const sp=getSpot(id);
       const m=S.markers[id];if(!m)return;
       const el=m.getElement();if(!el)return;
       const inner=el.querySelector('.sf-mkr');
@@ -1430,6 +1438,18 @@ function playBridgeAnimation(newIds){
       inner.classList.remove('pin-pop');
       void inner.offsetWidth;
       inner.classList.add('pin-pop');
+      // ripple ring from pin center
+      if(sp&&S.map){
+        const pt=S.map.latLngToContainerPoint([sp.lat,sp.lng]);
+        const mapEl=S.map.getContainer();
+        const ring=document.createElement('div');
+        ring.className='map-ripple';
+        ring.style.left=pt.x+'px';
+        ring.style.top=pt.y+'px';
+        ring.style.border=`2px solid ${C[sp.cluster??0]}`;
+        mapEl.appendChild(ring);
+        setTimeout(()=>ring.remove(),600);
+      }
     },520+i*STAGGER);
   });
 
