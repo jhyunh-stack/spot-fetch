@@ -16,7 +16,7 @@
   --c0l:#FFF0F0;--c1l:#F0FFFE;--c2l:#F5F0FF;
   --sh1:0 1px 4px rgba(0,0,0,.06);--sh2:0 4px 16px rgba(0,0,0,.08);--sh3:0 8px 32px rgba(0,0,0,.12);
   --r1:10px;--r2:16px;--r3:20px;--r4:28px;
-  --nav:68px
+  --nav:72px
 }
 html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#e0e0e0}
 #app{height:100%;display:flex;flex-direction:column;max-width:430px;margin:0 auto;background:var(--surface);overflow:hidden;box-shadow:0 0 60px rgba(0,0,0,.15);position:relative}
@@ -26,11 +26,12 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .tab-panel.active{display:flex}
 
 /* ── Bottom nav ── */
-#nav{height:var(--nav);background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;flex-shrink:0;z-index:100;padding-bottom:env(safe-area-inset-bottom,0)}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;cursor:pointer;color:var(--t3);transition:color .2s;background:none;border:none;font-family:inherit}
-.nav-btn.on{color:var(--accent)}
-.nav-ic{font-size:22px;line-height:1}
-.nav-lb{font-size:10px;font-weight:600;letter-spacing:.2px}
+#nav{height:var(--nav);background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:100;padding:0 16px calc(env(safe-area-inset-bottom,0) + 8px)}
+#nav-pill{display:flex;align-items:center;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:28px;box-shadow:0 4px 24px rgba(0,0,0,.13),0 1px 4px rgba(0,0,0,.06);padding:5px;gap:2px;width:100%}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 6px;cursor:pointer;color:var(--t3);transition:all .22s;background:none;border:none;font-family:inherit;border-radius:22px}
+.nav-btn.on{color:var(--accent);background:var(--accent-bg)}
+.nav-ic{font-size:20px;line-height:1}
+.nav-lb{font-size:10px;font-weight:700;letter-spacing:.1px}
 
 /* ── Page header ── */
 .ph{padding:18px 20px 10px;flex-shrink:0}
@@ -41,27 +42,36 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
    SAVED TAB
 ═══════════════════════════════ */
 #tab-saved{background:var(--bg)}
-.feed{flex:1;overflow-y:auto;padding:4px 16px 20px}
+.feed{flex:1;overflow-y:auto;padding:8px 12px 16px}
 .feed::-webkit-scrollbar{display:none}
+.reel-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
-.reel-card{background:var(--surface);border-radius:var(--r3);margin-bottom:12px;overflow:hidden;box-shadow:var(--sh1)}
-.reel-thumb{height:155px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.reel-thumb-emoji{font-size:52px;opacity:.55}
-.plat-badge{position:absolute;top:10px;left:10px;padding:4px 9px;border-radius:20px;font-size:11px;font-weight:700;color:#fff}
+/* portrait reel card */
+.reel-card{background:var(--surface);border-radius:var(--r2);overflow:hidden;box-shadow:var(--sh2);position:relative;cursor:pointer;transition:transform .18s}
+.reel-card:active{transform:scale(.97)}
+.reel-thumb{aspect-ratio:9/16;position:relative;overflow:hidden;background:#ddd}
+.reel-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.reel-thumb-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.0) 30%,rgba(0,0,0,.75) 100%)}
+/* bottom text overlay */
+.reel-overlay-body{position:absolute;bottom:0;left:0;right:0;padding:10px}
+.reel-user{font-size:11px;color:rgba(255,255,255,.8);font-weight:600;margin-bottom:2px}
+.reel-title{font-size:12px;font-weight:700;line-height:1.3;color:#fff}
+.reel-meta{font-size:10px;color:rgba(255,255,255,.65);margin-top:3px}
+/* badges */
+.plat-badge{position:absolute;top:8px;left:8px;padding:3px 7px;border-radius:12px;font-size:10px;font-weight:700;color:#fff}
 .b-ig{background:linear-gradient(135deg,#f09433,#dc2743,#bc1888)}
 .b-tt{background:#010101}
-.reel-del{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;border:none;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:background .2s}
-.reel-del:active{background:rgba(220,38,38,.8)}
-.reel-body{padding:13px 16px 8px}
-.reel-user{font-size:11px;color:var(--t2);font-weight:600;margin-bottom:3px}
-.reel-title{font-size:15px;font-weight:700;line-height:1.35;color:var(--t1)}
-.reel-meta{font-size:12px;color:var(--t3);margin-top:4px}
-.reel-expand{width:100%;padding:10px 16px;background:var(--bg);border:none;border-top:1px solid var(--border);font-size:13px;font-weight:600;color:var(--accent);cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;transition:background .15s}
+.reel-del{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;border:none;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:background .2s;z-index:2}
+.reel-del:active{background:rgba(220,38,38,.85)}
+/* spot count pill */
+.reel-spot-pill{position:absolute;bottom:8px;right:8px;background:rgba(255,255,255,.2);backdrop-filter:blur(6px);color:#fff;border-radius:12px;padding:3px 8px;font-size:10px;font-weight:700;z-index:2}
+/* expanded spots below card */
+.reel-expand{width:100%;padding:8px 12px;background:var(--surface);border:none;border-top:1px solid var(--border);font-size:12px;font-weight:600;color:var(--accent);cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;transition:background .15s}
 .reel-expand:active{background:var(--accent-bg)}
 .arrow{transition:transform .28s;display:inline-block}
 .arrow.open{transform:rotate(180deg)}
-.reel-spots{overflow:hidden;max-height:0;transition:max-height .3s ease;background:var(--bg)}
-.reel-spots.open{max-height:500px}
+.reel-spots{overflow:hidden;max-height:0;transition:max-height .35s ease;background:var(--bg)}
+.reel-spots.open{max-height:600px}
 .spot-mini{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);gap:12px}
 .spot-mini:last-child{border-bottom:none}
 .smic-emoji{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
@@ -81,7 +91,13 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 
 /* map view */
 #map-view{flex:1;display:flex;flex-direction:column;overflow:hidden}
-#leaflet-map{flex:1;min-height:0}
+#map-wrapper{position:relative;flex:1;min-height:0}
+#leaflet-map{width:100%;height:100%}
+
+/* floating CTA */
+#floating-cta{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:400;background:var(--accent);color:#fff;border:none;border-radius:28px;padding:13px 26px;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;box-shadow:0 6px 28px rgba(108,99,255,.5);white-space:nowrap;display:flex;align-items:center;gap:8px;letter-spacing:-.3px;transition:all .25s}
+#floating-cta:active{transform:translateX(-50%) scale(.97)}
+#floating-cta.hidden{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(10px)}
 
 /* bottom sheet */
 .bsheet{background:var(--surface);border-radius:var(--r4) var(--r4) 0 0;padding:6px 0 0;max-height:46vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,.07);flex-shrink:0}
@@ -104,15 +120,21 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .route-title{font-size:15px;font-weight:800;color:var(--t1);letter-spacing:-.3px}
 .reset-btn{font-size:12px;color:var(--t2);background:none;border:none;cursor:pointer;font-family:inherit;font-weight:600}
 .route-story{font-size:12px;color:var(--t2);background:var(--bg);padding:9px 13px;border-radius:var(--r1);margin-top:8px;line-height:1.6}
-.day-grp{padding:12px 20px;border-top:1px solid var(--border)}
-.day-grp-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.day-badge{padding:4px 11px;border-radius:20px;font-size:12px;font-weight:800;color:#fff}
-.day-story-txt{font-size:12px;color:var(--t2)}
-.day-spot-row{display:flex;align-items:center;gap:11px;padding:5px 0;position:relative}
-.day-spot-row:not(:last-child)::after{content:'';position:absolute;left:13px;top:33px;bottom:-5px;width:2px;background:var(--border)}
+.day-grp{padding:10px 20px;border-top:1px solid var(--border)}
+.day-grp-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.day-badge{padding:4px 11px;border-radius:20px;font-size:12px;font-weight:800;color:#fff;flex-shrink:0}
+.day-concept{font-size:12px;font-weight:600;color:var(--t2)}
+.day-spot-row{display:flex;align-items:center;gap:10px;padding:6px 4px 6px 0;position:relative;border-radius:var(--r1);transition:background .15s}
+.day-spot-row:not(:last-child)::after{content:'';position:absolute;left:12px;top:34px;bottom:-6px;width:2px;background:var(--border)}
+.day-spot-row.drag-over{background:var(--accent-bg);border-radius:var(--r1)}
+.day-spot-row[draggable=true]{cursor:default}
 .day-dot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
 .day-sname{font-size:13px;font-weight:700;color:var(--t1)}
 .day-sdesc{font-size:11px;color:var(--t2)}
+.route-del{width:22px;height:22px;border-radius:50%;background:#FFF0F0;color:#EF4444;border:none;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:0;transition:opacity .15s;font-family:inherit}
+.day-spot-row:hover .route-del{opacity:1}
+.drag-handle{width:22px;height:22px;display:flex;align-items:center;justify-content:center;color:var(--t3);cursor:grab;font-size:14px;flex-shrink:0;touch-action:none;letter-spacing:-1px}
+.drag-handle:active{cursor:grabbing}
 
 /* spots view */
 #spots-view{flex:1;overflow-y:auto;padding:12px 16px 20px;background:var(--bg)}
@@ -164,6 +186,13 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .gen-title{font-size:15px;font-weight:800;color:var(--t1)}
 .gen-sub{font-size:13px;color:var(--t2);margin-top:6px}
 
+/* plan nudge banner (Saved 탭 하단) */
+#plan-nudge{flex-shrink:0;margin:0 16px 16px;background:var(--accent);color:#fff;border-radius:var(--r2);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(108,99,255,.3)}
+#plan-nudge:active{opacity:.9;transform:scale(.99)}
+.nudge-label{font-size:13px;font-weight:800;letter-spacing:-.2px}
+.nudge-sub{font-size:11px;opacity:.75;margin-top:2px}
+.nudge-arrow{font-size:20px;font-weight:700}
+
 /* ═══════════════════════════════
    EXPLORE TAB
 ═══════════════════════════════ */
@@ -171,7 +200,9 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .ex-feed{flex:1;overflow-y:auto;padding:4px 16px 20px}
 .ex-feed::-webkit-scrollbar{display:none}
 .ex-card{background:var(--surface);border-radius:var(--r3);margin-bottom:14px;overflow:hidden;box-shadow:var(--sh1)}
-.ex-thumb{height:115px;display:flex;align-items:flex-end;padding:12px;position:relative}
+.ex-thumb{height:115px;position:relative;overflow:hidden}
+.ex-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ex-thumb-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.05) 0%,rgba(0,0,0,.5) 100%);display:flex;align-items:flex-end;padding:12px}
 .ex-author{background:rgba(0,0,0,.45);backdrop-filter:blur(4px);color:#fff;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}
 .ex-body{padding:13px 16px 8px}
 .ex-title{font-size:16px;font-weight:800;letter-spacing:-.3px;color:var(--t1)}
@@ -214,6 +245,13 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
       <div class="ph-sub" id="saved-sub">로딩 중...</div>
     </div>
     <div class="feed" id="saved-feed"></div>
+    <div id="plan-nudge" onclick="switchTab('plan')">
+      <div>
+        <div class="nudge-label" id="nudge-label">스팟 7개로 루트 만들기</div>
+        <div class="nudge-sub">저장한 스팟으로 바로 시작해요</div>
+      </div>
+      <span class="nudge-arrow">→</span>
+    </div>
   </div>
 
   <!-- ══════════════ PLAN TAB ══════════════ -->
@@ -225,7 +263,10 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 
     <!-- Map View -->
     <div id="map-view">
-      <div id="leaflet-map"></div>
+      <div id="map-wrapper">
+        <div id="leaflet-map"></div>
+        <button id="floating-cta" onclick="openDensity()">✨ 루트 만들어보기</button>
+      </div>
       <div class="bsheet" id="bsheet"></div>
     </div>
 
@@ -279,15 +320,17 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 
   <!-- ══════════════ NAV ══════════════ -->
   <nav id="nav">
-    <button class="nav-btn on" onclick="switchTab('saved')">
-      <span class="nav-ic">🔖</span><span class="nav-lb">저장됨</span>
-    </button>
-    <button class="nav-btn" onclick="switchTab('plan')">
-      <span class="nav-ic">🗺️</span><span class="nav-lb">플랜</span>
-    </button>
-    <button class="nav-btn" onclick="switchTab('explore')">
-      <span class="nav-ic">✨</span><span class="nav-lb">탐색</span>
-    </button>
+    <div id="nav-pill">
+      <button class="nav-btn on" onclick="switchTab('saved')">
+        <span class="nav-ic">🔖</span><span class="nav-lb">저장됨</span>
+      </button>
+      <button class="nav-btn" onclick="switchTab('plan')">
+        <span class="nav-ic">🗺️</span><span class="nav-lb">플랜</span>
+      </button>
+      <button class="nav-btn" onclick="switchTab('explore')">
+        <span class="nav-ic">✨</span><span class="nav-lb">탐색</span>
+      </button>
+    </div>
   </nav>
 
   <div id="toast"></div>
@@ -303,17 +346,17 @@ const CL = ['#FFF0F0','#F0FFFE','#F5F0FF'];
 // Pre-built route configs
 const ROUTES = {
   1:{days:1,groups:[
-    {label:'Day 1',story:'브리지 뷰 → 트레일 → 카페 → 노을 해변',ci:0,
+    {label:'Day 1',story:'브리지 → 프레시디오 카페 → 코스트 트레일 → 미션',ci:0,
      ids:['s1','s2','s3','s4','s5','s6','s7']}
   ]},
   2:{days:2,groups:[
-    {label:'Day 1',story:'브리지 & 해안 트레일',ci:0, ids:['s1','s2','s3']},
-    {label:'Day 2',story:'브런치 카페 → 노을 해변 드라이브',ci:1, ids:['s4','s5','s6','s7']}
+    {label:'Day 1',story:'브리지 & 프레시디오',ci:0, ids:['s1','s2','s3']},
+    {label:'Day 2',story:'코스트 트레일 → 미션 카페 & 공원',ci:1, ids:['s4','s5','s6','s7']}
   ]},
   3:{days:3,groups:[
-    {label:'Day 1',story:'브리지 & 해변',ci:0, ids:['s1','s2']},
-    {label:'Day 2',story:'카페 & 베이커리 투어',ci:1, ids:['s3','s4','s5']},
-    {label:'Day 3',story:'해안 드라이브',ci:2, ids:['s6','s7']}
+    {label:'Day 1',story:'브리지 & 베이커 비치',ci:0, ids:['s1','s2','s3']},
+    {label:'Day 2',story:'해안 트레일 & 아우터랜즈',ci:1, ids:['s4','s5']},
+    {label:'Day 3',story:'미션 카페 & 돌로레스 파크',ci:2, ids:['s6','s7']}
   ]}
 };
 
@@ -321,6 +364,7 @@ const ROUTES = {
 //  MOCK DATA
 // ══════════════════════════════════════════
 const SPOTS_DATA = [
+  // ── North SF: Presidio / Bridge 구역 ──
   {id:'s1',name:'Golden Gate Bridge',type:'viewpoint',emoji:'🌉',
    desc:'샌프란 대표 뷰포인트',
    detail:'이른 아침 안개가 걷히는 순간이 특히 아름다워. 남쪽 뷰포인트에서 다리 전체 뷰 감상 추천. 자전거로 건너는 것도 꼭 해봐야 할 경험.',
@@ -329,55 +373,60 @@ const SPOTS_DATA = [
    desc:'골든게이트가 보이는 해변',
    detail:'브리지를 배경으로 한 해변. 일몰 시간대가 최고의 포토스팟. 주차는 이른 아침에 가야 여유로움. 파도가 강하니 수영은 비추.',
    lat:37.7936,lng:-122.4833,reelId:'r1'},
-  {id:'s3',name:'Lands End',type:'nature',emoji:'⛰️',
+  {id:'s3',name:'Warming Hut Café',type:'cafe',emoji:'☕',
+   desc:'프레시디오 안 숨은 카페',
+   detail:'골든게이트 브리지 바로 옆 프레시디오 공원 안에 있는 카페. 브리지 산책 후 들르기 딱 좋음. 오가닉 샌드위치와 라떼가 인기.',
+   lat:37.8069,lng:-122.4734,reelId:'r2'},
+  // ── West SF: Richmond / Outer Sunset 구역 ──
+  {id:'s4',name:'Lands End',type:'nature',emoji:'⛰️',
    desc:'바다 보이는 절벽 트레일',
-   detail:'해안 절벽을 따라 걷는 산책로. 맑은 날엔 브리지까지 보임. 왕복 3km, 난이도 쉬움. 트레일 끝에 카페도 있어서 커피 한 잔 하기 좋음.',
+   detail:'해안 절벽을 따라 걷는 산책로. 맑은 날엔 브리지까지 보임. 왕복 3km, 난이도 쉬움. 석양 무렵이 가장 아름다움.',
    lat:37.7786,lng:-122.5089,reelId:'r3'},
-  {id:'s4',name:'Blue Bottle Coffee',type:'cafe',emoji:'☕',
-   desc:'샌프란 대표 스페셜티 카페',
-   detail:'헤이즈 밸리 본점. 줄이 항상 길지만 그만한 가치. 라떼와 뉴올리언스 아이스커피가 대표 메뉴. 실내가 작으니 테이크아웃 권장.',
-   lat:37.7764,lng:-122.4242,reelId:'r2'},
-  {id:'s5',name:'Tartine Bakery',type:'cafe',emoji:'☕',
-   desc:'브런치 & 베이커리 명소',
+  {id:'s5',name:'Outerlands',type:'cafe',emoji:'☕',
+   desc:'오션 비치 옆 감성 브런치',
+   detail:'Outer Sunset 지역, 오션 비치 한 블록 옆. 통나무 인테리어와 수제 빵이 유명. 주말 웨이팅 있지만 분위기가 특별함.',
+   lat:37.7554,lng:-122.5077,reelId:'r2'},
+  // ── Central SF: Mission 구역 ──
+  {id:'s6',name:'Tartine Bakery',type:'cafe',emoji:'☕',
+   desc:'전설적인 미션 베이커리',
    detail:'오후 5시부터 빵 판매 시작. 크루아상이 전설급으로 유명. 주말 웨이팅 30분 이상 기본. 미션 디스트릭트 분위기도 함께 즐길 수 있어.',
    lat:37.7614,lng:-122.4242,reelId:'r2'},
-  {id:'s6',name:'Ocean Beach',type:'ocean',emoji:'🌊',
-   desc:'넓은 해변 + 노을 명소',
-   detail:'도심에서 가장 가까운 큰 해변. 서핑 포인트로도 유명. 저녁 노을이 정말 압도적. 주변에 카페와 식당이 많아 저녁 코스로 최적.',
-   lat:37.7609,lng:-122.5107,reelId:'r3'},
-  {id:'s7',name:'Half Moon Bay',type:'nature',emoji:'⛰️',
-   desc:'절벽 드라이브 코스',
-   detail:'샌프란에서 차로 30분. 호박밭과 절벽 해안이 조화로운 드라이브 코스. 가을이 특히 아름다움. 해산물 레스토랑들이 늘어서 있음.',
-   lat:37.4636,lng:-122.4286,reelId:'r3'},
+  {id:'s7',name:'Dolores Park',type:'nature',emoji:'⛰️',
+   desc:'미션의 야외 피크닉 스팟',
+   detail:'타르틴에서 도보 5분. SF 로컬들이 가장 사랑하는 공원. 언덕 위에서 도심 전망이 일품. 주말엔 피크닉 분위기가 활기참.',
+   lat:37.7596,lng:-122.4269,reelId:'r3'},
 ];
 
 const REELS_DATA = [
   {id:'r1',platform:'instagram',user:'@travel_sf_vibes',
    title:'샌프란시스코 뷰포인트 투어 🌉',
-   savedAt:'2일 전',grad:'linear-gradient(135deg,#667eea,#764ba2)',ic:'🌉'},
+   savedAt:'2일 전',
+   photo:'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=600&q=80'},
   {id:'r2',platform:'tiktok',user:'@coffeehops_sf',
    title:'SF 카페 투어 ☕ 여기 다 가봄',
-   savedAt:'3일 전',grad:'linear-gradient(135deg,#f093fb,#f5576c)',ic:'☕'},
+   savedAt:'3일 전',
+   photo:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=600&q=80'},
   {id:'r3',platform:'instagram',user:'@coastaldrive',
    title:'샌프란 해안 드라이브 코스 🌊',
-   savedAt:'5일 전',grad:'linear-gradient(135deg,#4facfe,#00f2fe)',ic:'🌊'},
+   savedAt:'5일 전',
+   photo:'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=600&q=80'},
 ];
 
 const EXPLORE_DATA = [
   {id:'e1',title:'SF 브리지 & 브런치 루트',author:'@minji_travels',
-   grad:'linear-gradient(135deg,#43e97b,#38f9d7)',
+   photo:'https://images.unsplash.com/photo-1449034446853-66c86144b0ad?auto=format&fit=crop&w=600&q=80',
    story:'브리지 뷰 → 해변 산책 → 브런치 카페',
    spots:[{e:'🌉',n:'Golden Gate Bridge'},{e:'🌊',n:'Baker Beach'},{e:'☕',n:'Blue Bottle Coffee'},{e:'☕',n:'Tartine Bakery'}]},
   {id:'e2',title:'해안 드라이브 + 노을 루트',author:'@westerncoast',
-   grad:'linear-gradient(135deg,#fa709a,#fee140)',
+   photo:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80',
    story:'트레일 → 해변 → 절벽 드라이브',
    spots:[{e:'⛰️',n:'Lands End'},{e:'🌊',n:'Ocean Beach'},{e:'⛰️',n:'Half Moon Bay'}]},
   {id:'e3',title:'SF 카페 호핑 + 로컬 맛집',author:'@caffeine.journey',
-   grad:'linear-gradient(135deg,#a18cd1,#fbc2eb)',
+   photo:'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80',
    story:'스페셜티 카페 → 베이커리 → 올데이 다이닝',
    spots:[{e:'☕',n:'Blue Bottle Coffee'},{e:'☕',n:'Tartine Bakery'},{e:'🍽️',n:'Zuni Café'}]},
   {id:'e4',title:'주말 당일치기 SF 완전정복',author:'@tripmaster_k',
-   grad:'linear-gradient(135deg,#30cfd0,#667eea)',
+   photo:'https://images.unsplash.com/photo-1534430480872-3498386e7856?auto=format&fit=crop&w=600&q=80',
    story:'뷰포인트 → 트레일 → 카페 → 노을',
    spots:[{e:'🌉',n:'Golden Gate Bridge'},{e:'⛰️',n:'Lands End'},{e:'☕',n:'Blue Bottle Coffee'},{e:'🌊',n:'Ocean Beach'}]},
 ];
@@ -453,6 +502,8 @@ let S = {
   mapInited: false,
   markers: {},
   lines: [],
+  proxLines: [],
+  routeGroups: [],
 };
 recomputeClusters(); // 초기 좌표 기반 클러스터 계산
 
@@ -468,6 +519,15 @@ function toast(msg) {
 }
 
 function getSpot(id) { return S.spots.find(s=>s.id===id); }
+
+function updateNudge() {
+  const el = document.getElementById('plan-nudge');
+  const label = document.getElementById('nudge-label');
+  if (!el) return;
+  const n = S.spots.length;
+  el.style.display = n > 0 ? 'flex' : 'none';
+  if (label) label.textContent = `스팟 ${n}개로 루트 만들기`;
+}
 
 // ══════════════════════════════════════════
 //  TAB SWITCHING
@@ -495,41 +555,47 @@ function renderSaved() {
     return;
   }
 
-  feed.innerHTML = reels.map(r=>{
+  const cards = reels.map(r=>{
     const spots = S.spots.filter(s=>s.reelId===r.id);
     const exp = S.expanded.has(r.id);
     const badge = r.platform==='instagram' ? '<span class="plat-badge b-ig">📸 Instagram</span>' : '<span class="plat-badge b-tt">🎵 TikTok</span>';
     return `
-    <div class="reel-card" id="rc-${r.id}">
-      <div class="reel-thumb" style="background:${r.grad}">
-        <span class="reel-thumb-emoji">${r.ic}</span>
-        ${badge}
-        <button class="reel-del" onclick="delReel('${r.id}')">✕</button>
-      </div>
-      <div class="reel-body">
-        <div class="reel-user">${r.user}</div>
-        <div class="reel-title">${r.title}</div>
-        <div class="reel-meta">${r.savedAt} · 스팟 ${spots.length}개</div>
-      </div>
-      <button class="reel-expand" onclick="toggleReel('${r.id}')">
-        <span>스팟 ${spots.length}개 보기</span>
-        <span class="arrow ${exp?'open':''}">▾</span>
-      </button>
-      <div class="reel-spots ${exp?'open':''}" id="rs-${r.id}">
-        ${spots.map(sp=>`
-          <div class="spot-mini" id="sm-${sp.id}">
-            <div class="smic-emoji" style="background:${CL[sp.cluster]}">${sp.emoji}</div>
-            <div class="smic-info">
-              <div class="smic-name">${sp.name}</div>
-              <div class="smic-desc">${sp.desc}</div>
-            </div>
-            <button class="smic-del" onclick="delSpot('${sp.id}')">✕</button>
-          </div>`).join('')}
+    <div>
+      <div class="reel-card" id="rc-${r.id}">
+        <div class="reel-thumb">
+          <img src="${r.photo}" alt="${r.title}" loading="lazy">
+          <div class="reel-thumb-overlay"></div>
+          ${badge}
+          <button class="reel-del" onclick="event.stopPropagation();delReel('${r.id}')">✕</button>
+          <div class="reel-overlay-body">
+            <div class="reel-user">${r.user}</div>
+            <div class="reel-title">${r.title}</div>
+            <div class="reel-meta">${r.savedAt}</div>
+          </div>
+        </div>
+        <button class="reel-expand" onclick="toggleReel('${r.id}')">
+          <span>스팟 ${spots.length}개</span>
+          <span class="arrow ${exp?'open':''}">▾</span>
+        </button>
+        <div class="reel-spots ${exp?'open':''}" id="rs-${r.id}">
+          ${spots.map(sp=>`
+            <div class="spot-mini" id="sm-${sp.id}">
+              <div class="smic-emoji" style="background:${CL[sp.cluster]}">${sp.emoji}</div>
+              <div class="smic-info">
+                <div class="smic-name">${sp.name}</div>
+                <div class="smic-desc">${sp.desc}</div>
+              </div>
+              <button class="smic-del" onclick="delSpot('${sp.id}')">✕</button>
+            </div>`).join('')}
+        </div>
       </div>
     </div>`;
   }).join('');
 
+  feed.innerHTML = `<div class="reel-grid">${cards}</div>`;
+
   document.getElementById('saved-sub').textContent = `릴 ${reels.length}개 · 스팟 ${S.spots.length}개`;
+  updateNudge();
 }
 
 function toggleReel(id) {
@@ -592,6 +658,7 @@ function addAllMarkers() {
     m.on('click',()=>selectSpot(sp.id));
     S.markers[sp.id] = m;
   });
+  drawProximityLines();
 }
 
 function syncMap() {
@@ -606,6 +673,32 @@ function syncMap() {
       m.on('click',()=>selectSpot(sp.id));
       S.markers[sp.id] = m;
     }
+  });
+  drawProximityLines();
+}
+
+// 클러스터 내 스팟을 잇는 연결선 (루트 생성 전 동선 힌트)
+function drawProximityLines() {
+  S.proxLines.forEach(l=>l.remove());
+  S.proxLines = [];
+  if (S.planState === 'generated') return; // 루트 생성 후엔 route lines가 대신함
+
+  const byCluster = {};
+  S.spots.forEach(sp=>{
+    if (!byCluster[sp.cluster]) byCluster[sp.cluster] = [];
+    byCluster[sp.cluster].push(sp);
+  });
+
+  Object.entries(byCluster).forEach(([ci, spots])=>{
+    if (spots.length < 2) return;
+    const color = C[parseInt(ci)];
+    // 북→남 순서로 정렬해서 자연스러운 동선
+    const sorted = [...spots].sort((a,b)=>b.lat - a.lat);
+    const lls = sorted.map(s=>[s.lat,s.lng]);
+    const line = L.polyline(lls, {
+      color, weight:2.5, opacity:.45, dashArray:'6,7'
+    }).addTo(S.map);
+    S.proxLines.push(line);
   });
 }
 
@@ -663,6 +756,10 @@ function renderBsheet() { updateBsheet(); }
 
 function updateBsheet() {
   if (!S.mapInited) return;
+  // floating CTA 표시/숨김
+  const cta = document.getElementById('floating-cta');
+  if (cta) cta.classList.toggle('hidden', S.planState !== 'pre');
+
   const el = document.getElementById('bsheet');
   if (S.planState === 'pre') {
     const chips = S.spots.map(sp=>
@@ -674,32 +771,36 @@ function updateBsheet() {
         <div class="spot-count-row">
           <div>
             <div class="scount-text">저장된 스팟 ${S.spots.length}개</div>
-            <div class="scount-sub">루트로 만들어드릴게요</div>
+            <div class="scount-sub">근처 스팟끼리 같은 색으로 묶었어요</div>
           </div>
         </div>
         <div class="chips">${chips}</div>
-        <button class="gen-btn" onclick="openDensity()">✨ 루트 만들어보기</button>
       </div>`;
   } else {
-    const cfg = ROUTES[S.days];
-    const allStories = cfg.groups.map(g=>g.story).join(' / ');
-    const groups = cfg.groups.map((g,i)=>{
+    const groups = S.routeGroups.map((g)=>{
       const color = C[g.ci];
-      const spots = g.ids.map(id=>S.spots.find(s=>s.id===id)).filter(Boolean);
+      const spots = g.spotIds.map(id=>S.spots.find(s=>s.id===id)).filter(Boolean);
       if (!spots.length) return '';
       return `
         <div class="day-grp">
           <div class="day-grp-hdr">
             <span class="day-badge" style="background:${color}">${g.label}</span>
-            <span class="day-story-txt">${g.story}</span>
+            <span class="day-concept">${g.story}</span>
           </div>
-          ${spots.map((sp,idx)=>`
-            <div class="day-spot-row">
+          ${spots.map((sp)=>`
+            <div class="day-spot-row" draggable="true"
+                 ondragstart="onDragStart(event,'${sp.id}',${g.ci})"
+                 ondragover="onDragOver(event,'${sp.id}',${g.ci})"
+                 ondrop="onDrop(event,'${sp.id}',${g.ci})"
+                 ondragend="onDragEnd(event)"
+                 data-id="${sp.id}" data-ci="${g.ci}">
               <div class="day-dot" style="background:${color}">${sp.emoji}</div>
-              <div>
+              <div style="flex:1;min-width:0">
                 <div class="day-sname">${sp.name}</div>
                 <div class="day-sdesc">${sp.desc}</div>
               </div>
+              <button class="route-del" onclick="delFromRoute('${sp.id}',${g.ci})">✕</button>
+              <div class="drag-handle" title="드래그해서 순서 변경">⠿</div>
             </div>`).join('')}
         </div>`;
     }).join('');
@@ -711,7 +812,6 @@ function updateBsheet() {
           <div class="route-title">${S.days}일 루트 완성 ✨</div>
           <button class="reset-btn" onclick="resetRoute()">다시 설정</button>
         </div>
-        <div class="route-story">${allStories}</div>
       </div>
       ${groups}`;
   }
@@ -742,10 +842,16 @@ function confirmRoute() {
 
 function generateRoute() {
   S.planState = 'generated';
-  // Remove old lines
   S.lines.forEach(l=>l.remove()); S.lines = [];
+  S.proxLines.forEach(l=>l.remove()); S.proxLines = [];
 
   const cfg = ROUTES[S.days];
+  // 편집 가능한 routeGroups 초기화
+  S.routeGroups = cfg.groups.map(g=>({
+    label: g.label, story: g.story, ci: g.ci,
+    spotIds: g.ids.filter(id=>S.spots.find(s=>s.id===id))
+  }));
+
   cfg.groups.forEach((g,i)=>{
     const color = C[g.ci];
     const spots = g.ids.map(id=>S.spots.find(s=>s.id===id)).filter(Boolean);
@@ -767,15 +873,65 @@ function generateRoute() {
   toast(`${S.days}일 루트가 만들어졌어요 ✨`);
 }
 
+// ── 루트 스팟 삭제 ──
+function delFromRoute(spotId, groupCi) {
+  const g = S.routeGroups.find(g=>g.ci===groupCi);
+  if (!g) return;
+  g.spotIds = g.spotIds.filter(id=>id!==spotId);
+  updateBsheet();
+  toast('루트에서 삭제됐어요');
+}
+
+// ── 드래그 & 드롭 순서 변경 ──
+let _drag = null;
+
+function onDragStart(e, spotId, groupCi) {
+  _drag = {spotId, groupCi};
+  e.dataTransfer.effectAllowed = 'move';
+  e.currentTarget.style.opacity = '0.4';
+}
+function onDragEnd(e) {
+  e.currentTarget.style.opacity = '';
+  document.querySelectorAll('.day-spot-row.drag-over')
+    .forEach(el=>el.classList.remove('drag-over'));
+}
+function onDragOver(e, spotId, groupCi) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('.day-spot-row.drag-over')
+    .forEach(el=>el.classList.remove('drag-over'));
+  if (_drag && _drag.spotId !== spotId) {
+    e.currentTarget.classList.add('drag-over');
+  }
+}
+function onDrop(e, targetSpotId, targetCi) {
+  e.preventDefault();
+  if (!_drag || _drag.spotId === targetSpotId) { _drag = null; return; }
+
+  const srcGroup = S.routeGroups.find(g=>g.ci===_drag.groupCi);
+  const tgtGroup = S.routeGroups.find(g=>g.ci===targetCi);
+  if (!srcGroup || !tgtGroup) { _drag = null; return; }
+
+  // 원본에서 제거
+  srcGroup.spotIds = srcGroup.spotIds.filter(id=>id!==_drag.spotId);
+  // 대상 위치에 삽입
+  const toIdx = tgtGroup.spotIds.indexOf(targetSpotId);
+  tgtGroup.spotIds.splice(toIdx, 0, _drag.spotId);
+
+  _drag = null;
+  updateBsheet();
+}
+
 function resetRoute() {
   S.planState = 'pre';
   S.lines.forEach(l=>l.remove()); S.lines = [];
+  S.routeGroups = [];
   S.selSpot = null;
   closeDetail();
-  // Restore original cluster colors
   S.spots.forEach(sp=>{
     if (S.markers[sp.id]) S.markers[sp.id].setIcon(mkIcon(sp,false));
   });
+  drawProximityLines(); // proximity lines 복원
   updateBsheet();
 }
 
@@ -824,8 +980,11 @@ function delSpotAnim(id) {
 function renderExplore() {
   document.getElementById('ex-feed').innerHTML = EXPLORE_DATA.map(r=>`
     <div class="ex-card">
-      <div class="ex-thumb" style="background:${r.grad}">
-        <span class="ex-author">${r.author}</span>
+      <div class="ex-thumb">
+        <img src="${r.photo}" alt="${r.title}" loading="lazy">
+        <div class="ex-thumb-overlay">
+          <span class="ex-author">${r.author}</span>
+        </div>
       </div>
       <div class="ex-body">
         <div class="ex-title">${r.title}</div>
