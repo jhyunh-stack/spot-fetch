@@ -138,7 +138,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .chip-summary{font-size:13px;color:var(--t2);line-height:1.4;padding:7px 10px;background:var(--bg2);border-radius:8px;margin-top:2px}
 
 /* list */
-#sheet-list{flex:1;overflow-y:auto;padding:4px 16px 24px;min-height:0;overscroll-behavior:contain}
+#sheet-list{flex:1;overflow-y:auto;padding:4px 16px 48px;min-height:0;overscroll-behavior:contain}
 #sheet-list::-webkit-scrollbar{display:none}
 .list-day-grp{margin-bottom:4px}
 .list-day-hdr{padding:12px 0 6px}
@@ -172,16 +172,18 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .sd-em{width:52px;height:52px;border-radius:14px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
 .sd-name{font-size:20px;font-weight:700;letter-spacing:-.4px;color:var(--t1)}
 .sd-desc{font-size:13px;color:var(--t2);margin-top:3px}
-.sd-body{font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:16px}
-.sd-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
-.sd-act-btn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:12px 14px;border-radius:12px;background:var(--bg2);border:none;cursor:pointer;font-family:inherit;transition:background .15s;text-align:left;width:100%}
-.sd-act-btn:active{background:rgba(0,0,0,0.09)}
-.sd-act-icon{font-size:17px;line-height:1;margin-bottom:3px}
-.sd-act-label{font-size:13px;font-weight:600;color:var(--t1);line-height:1.3}
-.sd-act-sub{font-size:11px;color:var(--t2);line-height:1.3}
-.sd-act-info{cursor:default}
-.sd-act-info:active{background:var(--bg2)}
-.sd-excl-btn{width:100%;padding:14px;border-radius:12px;background:var(--bg2);color:var(--t1);border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;min-height:44px}
+.sd-body{font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:14px}
+.sd-act-row{display:flex;align-items:stretch;gap:8px;margin-bottom:14px}
+.sd-map-btn{flex:1;display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:var(--bg2);border:none;cursor:pointer;font-family:inherit;text-align:left;transition:background .15s}
+.sd-map-btn:active{background:rgba(0,0,0,0.09)}
+.sd-map-icon{font-size:20px;flex-shrink:0}
+.sd-map-label{font-size:13px;font-weight:600;color:var(--t1);line-height:1.3}
+.sd-map-sub{font-size:11px;color:var(--t2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}
+.sd-reel-btn{width:50px;flex-shrink:0;border-radius:14px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;letter-spacing:.3px;transition:opacity .15s}
+.sd-reel-btn:active{opacity:.8}
+.sd-reel-ig{background:linear-gradient(135deg,#f09433 0%,#dc2743 50%,#bc1888 100%)}
+.sd-reel-tt{background:#010101}
+.sd-excl-btn{width:100%;padding:14px;border-radius:12px;background:var(--bg2);color:var(--t1);border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;min-height:44px;margin-bottom:8px}
 
 /* ═══ EXPLORE TAB ═══ */
 #tab-explore{background:var(--bg2)}
@@ -684,11 +686,7 @@ function selSpot(id){
   document.getElementById('sheet-chips').innerHTML=
     `<div class="sd-nav"><button class="sd-nav-back" onclick="closeDetail()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>목록</button></div>`;
   const reel=REELS_DATA.find(r=>r.id===sp.reelId);
-  const reelBtn=reel?`<button class="sd-act-btn" onclick="viewReel('${reel.id}')">
-    <span class="sd-act-icon">${reel.platform==='instagram'?'📸':'🎵'}</span>
-    <span class="sd-act-label">원본 릴 보기</span>
-    <span class="sd-act-sub">${reel.user}</span>
-  </button>`:'';
+  const reelBtn=reel?`<button class="sd-reel-btn ${reel.platform==='instagram'?'sd-reel-ig':'sd-reel-tt'}" onclick="viewReel('${reel.id}')">${reel.platform==='instagram'?'IG':'TT'}</button>`:'';
   const list=document.getElementById('sheet-list');
   list.style.display='block';
   list.innerHTML=`
@@ -700,23 +698,15 @@ function selSpot(id){
       </div>
     </div>
     <div class="sd-body">${sp.detail}</div>
-    <div class="sd-actions">
-      <button class="sd-act-btn" onclick="openMaps(${sp.lat},${sp.lng})">
-        <span class="sd-act-icon">🗺️</span>
-        <span class="sd-act-label">지도에서 열기</span>
-        <span class="sd-act-sub">Google Maps</span>
-      </button>
-      <button class="sd-act-btn" onclick="copyAddress('${sp.address||'San Francisco, CA'}')">
-        <span class="sd-act-icon">📍</span>
-        <span class="sd-act-label">주소 복사</span>
-        <span class="sd-act-sub">${(sp.address||'').split(',')[0]}</span>
+    <div class="sd-act-row">
+      <button class="sd-map-btn" onclick="openMaps(${sp.lat},${sp.lng})">
+        <span class="sd-map-icon">🗺️</span>
+        <div>
+          <div class="sd-map-label">지도에서 열기</div>
+          <div class="sd-map-sub">${sp.address||'San Francisco, CA'}</div>
+        </div>
       </button>
       ${reelBtn}
-      <div class="sd-act-btn sd-act-info">
-        <span class="sd-act-icon">⏱️</span>
-        <span class="sd-act-label">${sp.duration||'1-2시간'}</span>
-        <span class="sd-act-sub">예상 체류시간</span>
-      </div>
     </div>
     <button class="sd-excl-btn" onclick="excludeCurrent()">이 여행에서 빼기</button>`;
 }
