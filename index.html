@@ -230,7 +230,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 <div id="app">
 
 <!-- ═══ SPOTS TAB ═══ -->
-<div id="tab-spots" class="tab-panel active">
+<div id="tab-spots" class="tab-panel">
   <div class="ph">
     <div class="ph-title">Spots</div>
     <div class="ph-sub" id="spots-sub">로딩 중...</div>
@@ -247,7 +247,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 </div>
 
 <!-- ═══ PLAN TAB ═══ -->
-<div id="tab-plan" class="tab-panel">
+<div id="tab-plan" class="tab-panel active">
   <div id="plan-empty">
     <div class="empty-il">🗺️</div>
     <div class="empty-title">여행이 기다리고 있어요</div>
@@ -298,11 +298,11 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 <!-- ═══ NAV ═══ -->
 <nav id="nav">
   <div id="nav-pill">
-    <button class="nav-btn on" onclick="switchTab('spots')">
+    <button class="nav-btn" onclick="switchTab('spots')">
       <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg></span>
       <span class="nav-lb">Spots</span>
     </button>
-    <button class="nav-btn" onclick="switchTab('plan')">
+    <button class="nav-btn on" onclick="switchTab('plan')">
       <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg></span>
       <span class="nav-lb">Plan</span>
     </button>
@@ -462,7 +462,7 @@ function recomputeClusters(){
 // STATE
 // ═══════════════════════════════════════════
 const S={
-  tab:'spots',days:2,selDay:0,selSpot:null,inDetail:false,
+  tab:'plan',days:2,selDay:0,selSpot:null,inDetail:false,
   spots:SPOTS_DATA.map(s=>({...s})),
   excluded:new Set(),
   expanded:new Set(),
@@ -1010,6 +1010,7 @@ function renderExplore(){
 // ═══════════════════════════════════════════
 renderSpots();
 renderExplore();
+setTimeout(initPlanTab, 100);
 </script>
 </body>
 </html>
