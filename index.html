@@ -1220,11 +1220,11 @@ function renderListView(){
     const summaryText=userSummary!=null?userSummary:g.summary;
     const hasText=summaryText&&summaryText.trim().length>0;
     const subHtml=hasText
-      ?`<span class="list-day-sub" onclick="editDaySummary('${g.label}',this)">${summaryText}</span>`
-      :`<span class="list-day-sub placeholder" onclick="editDaySummary('${g.label}',this)">이 날을 한 줄로 표현해보세요</span>`;
+      ?`<span class="list-day-sub" onclick="event.stopPropagation();editDaySummary('${g.label}',this)">${summaryText}</span>`
+      :`<span class="list-day-sub placeholder" onclick="event.stopPropagation();editDaySummary('${g.label}',this)">이 날을 한 줄로 표현해보세요</span>`;
     return `<div class="list-day-grp">
-      <div class="list-day-hdr${S.selDay===gi?' selected':''}" id="day-hdr-${gi}" style="--hdr-active:${C[g.ci]}18">
-        <span class="list-day-badge" onclick="selectDay(${gi})" style="cursor:pointer"><span class="list-day-dot" style="background:${C[g.ci]}"></span>${g.label}</span>
+      <div class="list-day-hdr${S.selDay===gi?' selected':''}" id="day-hdr-${gi}" style="--hdr-active:${C[g.ci]}18" onclick="selectDay(${gi})">
+        <span class="list-day-badge"><span class="list-day-dot" style="background:${C[g.ci]}"></span>${g.label}</span>
         ${subHtml}
       </div>
       <div class="list-day-spots">
