@@ -449,18 +449,23 @@ const CL = ['#FFF0F0','#F0FFFE','#F5F0FF'];
 
 function getDaySummary(spots) {
   const t = spots.map(s=>s.type);
+  const names = spots.map(s=>s.name);
   const has = x => t.includes(x);
-  if (has('ocean') && has('viewpoint') && has('cafe')) return '바다를 끼고 걷다가 카페로 마무리하는 날';
-  if (has('ocean') && has('viewpoint'))  return '뷰포인트에서 시작해 해안으로 이어지는 하루';
-  if (has('ocean') && has('cafe'))       return '바닷바람 맞으며 카페에서 쉬어가는 하루';
-  if (has('nature') && has('cafe'))      return '브런치하고 공원에서 쉬어가는 여유로운 하루';
-  if (has('viewpoint') && has('cafe'))   return '전망 포인트에서 시작해 카페로 이어지는 날';
-  if (t.filter(x=>x==='cafe').length>=2) return '카페를 옮겨다니며 여유롭게 보내는 날';
-  if (has('nature') && has('ocean'))     return '자연 속에서 걸으며 바다를 느끼는 하루';
-  if (has('viewpoint'))  return '탁 트인 전망을 즐기며 걷는 날';
-  if (has('nature'))     return '공원과 자연 속에서 쉬어가는 하루';
-  if (has('cafe'))       return '카페에서 천천히 시작하는 하루';
-  return '저장한 장소들을 둘러보는 날';
+  const hasName = x => names.includes(x);
+  if (has('ocean') && has('viewpoint') && has('cafe')) return '바다 뷰 걷고 카페로';
+  if (has('ocean') && has('viewpoint'))  return '뷰포인트에서 해안으로';
+  if (has('ocean') && has('cafe'))       return '바닷바람 맞으며 브런치';
+  if (has('nature') && has('cafe')) {
+    if (hasName('Outerlands') || hasName('Lands End')) return '절벽 트레일에서 오션 카페로';
+    return '로컬 베이커리에서 공원까지';
+  }
+  if (has('viewpoint') && has('cafe'))   return '전망대에서 카페로';
+  if (t.filter(x=>x==='cafe').length>=2) return '카페 호핑하는 날';
+  if (has('nature') && has('ocean'))     return '트레일에서 바다까지';
+  if (has('viewpoint'))  return '탁 트인 전망 하루';
+  if (has('nature'))     return '공원에서 쉬어가는 날';
+  if (has('cafe'))       return '카페 천천히 즐기기';
+  return '저장한 장소 둘러보기';
 }
 
 function getGapWarning(spots) {
