@@ -452,20 +452,24 @@ function getDaySummary(spots) {
   const names = spots.map(s=>s.name);
   const has = x => t.includes(x);
   const hasName = x => names.includes(x);
-  if (has('ocean') && has('viewpoint') && has('cafe')) return '바다 뷰 걷고 카페로';
-  if (has('ocean') && has('viewpoint'))  return '뷰포인트에서 해안으로';
-  if (has('ocean') && has('cafe'))       return '바닷바람 맞으며 브런치';
+  if (hasName('Golden Gate Bridge') && hasName('Baker Beach')) return '브리지 뷰에서 해변까지 걷는 날';
+  if (hasName('Fisherman\'s Wharf') && has('viewpoint'))       return '항구에서 시작하는 클래식 SF 데이';
+  if (hasName('Ferry Building') && has('ocean'))               return '마켓에서 시작해 항구 따라 걷는 날';
+  if (has('ocean') && has('viewpoint') && has('cafe'))         return '바다 뷰 보고 카페에서 마무리하는 날';
+  if (has('ocean') && has('viewpoint'))  return '뷰포인트에서 해안까지 걷는 날';
+  if (has('ocean') && has('cafe'))       return '바닷바람 맞으며 브런치하는 날';
   if (has('nature') && has('cafe')) {
-    if (hasName('Outerlands') || hasName('Lands End')) return '절벽 트레일에서 오션 카페로';
-    return '로컬 베이커리에서 공원까지';
+    if (hasName('Outerlands') || hasName('Lands End')) return '절벽 트레일 걷고 오션뷰 카페 가는 날';
+    return '동네 베이커리에서 공원 피크닉하는 날';
   }
-  if (has('viewpoint') && has('cafe'))   return '전망대에서 카페로';
-  if (t.filter(x=>x==='cafe').length>=2) return '카페 호핑하는 날';
-  if (has('nature') && has('ocean'))     return '트레일에서 바다까지';
-  if (has('viewpoint'))  return '탁 트인 전망 하루';
-  if (has('nature'))     return '공원에서 쉬어가는 날';
-  if (has('cafe'))       return '카페 천천히 즐기기';
-  return '저장한 장소 둘러보기';
+  if (has('viewpoint') && has('cafe'))   return '전망 포인트 들르고 카페에서 쉬는 날';
+  if (t.filter(x=>x==='cafe').length>=2) return '카페 두 곳 호핑하는 날';
+  if (has('nature') && has('ocean'))     return '트레일에서 바다까지 이어지는 날';
+  if (hasName('Painted Ladies'))         return '골목 산책하며 포토스팟 찍는 날';
+  if (has('viewpoint'))  return '탁 트인 전망 즐기는 날';
+  if (has('nature'))     return '공원에서 여유롭게 쉬는 날';
+  if (has('cafe'))       return '카페에서 천천히 시작하는 날';
+  return '저장한 장소 둘러보는 날';
 }
 
 function getGapWarning(spots) {
@@ -482,40 +486,55 @@ function getGapWarning(spots) {
 const SPOTS_DATA = [
   // ── San Francisco ──
   {id:'s1',name:'Golden Gate Bridge',type:'viewpoint',emoji:'🌉',city:'sf',
-   desc:'샌프란 대표 뷰포인트',
+   desc:'샌프란 대표 뷰포인트',duration:'1h',
    detail:'이른 아침 안개가 걷히는 순간이 특히 아름다워요. 남쪽 뷰포인트에서 다리 전체 뷰 감상 추천. 자전거로 건너는 것도 꼭 해봐야 할 경험.',
-   address:'Golden Gate Bridge, San Francisco, CA',duration:'1-2시간',
+   address:'Golden Gate Bridge, San Francisco, CA',
    lat:37.8199,lng:-122.4783,reelId:'r1'},
   {id:'s2',name:'Baker Beach',type:'ocean',emoji:'🌊',city:'sf',
-   desc:'골든게이트가 보이는 해변',
+   desc:'골든게이트가 보이는 해변',duration:'45min',
    detail:'브리지를 배경으로 한 해변. 일몰 시간대가 최고의 포토스팟. 주차는 이른 아침에 가야 여유로워요.',
-   address:'Baker Beach, San Francisco, CA',duration:'약 1시간',
+   address:'Baker Beach, San Francisco, CA',
    lat:37.7936,lng:-122.4833,reelId:'r1'},
   {id:'s3',name:'Warming Hut Café',type:'cafe',emoji:'☕',city:'sf',
-   desc:'프레시디오 안 숨은 카페',
+   desc:'프레시디오 안 숨은 카페',duration:'30min',
    detail:'골든게이트 바로 옆 프레시디오 공원 안 카페. 브리지 산책 후 들르기 딱 좋아요. 오가닉 샌드위치와 라떼가 인기.',
-   address:'983 Marine Dr, San Francisco, CA',duration:'30-60분',
+   address:'983 Marine Dr, San Francisco, CA',
    lat:37.8069,lng:-122.4734,reelId:'r2'},
   {id:'s4',name:'Lands End',type:'nature',emoji:'⛰️',city:'sf',
-   desc:'바다 보이는 절벽 트레일',
+   desc:'바다 보이는 절벽 트레일',duration:'1h 30min',
    detail:'해안 절벽을 따라 걷는 산책로. 맑은 날엔 브리지까지 보여요. 왕복 3km, 난이도 쉬움. 석양 무렵이 최고.',
-   address:'Lands End Trail, San Francisco, CA',duration:'1-2시간',
+   address:'Lands End Trail, San Francisco, CA',
    lat:37.7786,lng:-122.5089,reelId:'r3'},
   {id:'s5',name:'Outerlands',type:'cafe',emoji:'☕',city:'sf',
-   desc:'오션 비치 옆 감성 브런치',
+   desc:'오션 비치 옆 감성 브런치',duration:'1h',
    detail:'Outer Sunset 지역, 오션 비치 한 블록 옆. 통나무 인테리어와 수제 빵이 유명해요. 주말 웨이팅 있지만 분위기 최고.',
-   address:'4001 Judah St, San Francisco, CA',duration:'1-1.5시간',
+   address:'4001 Judah St, San Francisco, CA',
    lat:37.7554,lng:-122.5077,reelId:'r2'},
   {id:'s6',name:'Tartine Bakery',type:'cafe',emoji:'☕',city:'sf',
-   desc:'전설적인 미션 베이커리',
+   desc:'전설적인 미션 베이커리',duration:'45min',
    detail:'오후 5시부터 빵 판매 시작. 크루아상이 전설급으로 유명해요. 미션 디스트릭트 분위기도 함께 즐길 수 있어요.',
-   address:'600 Guerrero St, San Francisco, CA',duration:'30-60분',
+   address:'600 Guerrero St, San Francisco, CA',
    lat:37.7614,lng:-122.4242,reelId:'r2'},
   {id:'s7',name:'Dolores Park',type:'nature',emoji:'⛰️',city:'sf',
-   desc:'미션의 야외 피크닉 스팟',
+   desc:'미션의 야외 피크닉 스팟',duration:'1h 30min',
    detail:'타르틴에서 도보 5분. SF 로컬들이 가장 사랑하는 공원. 언덕 위에서 도심 전망이 일품이에요.',
-   address:'Dolores Park, San Francisco, CA',duration:'1-2시간',
+   address:'Dolores Park, San Francisco, CA',
    lat:37.7596,lng:-122.4269,reelId:'r3'},
+  {id:'s8',name:'Fisherman\'s Wharf',type:'ocean',emoji:'🦀',city:'sf',
+   desc:'부두 해산물과 항구 뷰',duration:'1h 30min',
+   detail:'게살 차우더와 던지니스 크랩이 유명한 항구. 씰 구경과 케이블카 탑승 시작점으로도 좋아요.',
+   address:'Fisherman\'s Wharf, San Francisco, CA',
+   lat:37.8080,lng:-122.4177,reelId:'r1'},
+  {id:'s9',name:'Painted Ladies',type:'viewpoint',emoji:'🏠',city:'sf',
+   desc:'빅토리안 하우스 포토스팟',duration:'30min',
+   detail:'알라모 스퀘어 공원에서 보는 7채의 빅토리안 하우스. 배경에 도심 스카이라인이 함께 잡혀요.',
+   address:'Alamo Square, San Francisco, CA',
+   lat:37.7764,lng:-122.4328,reelId:'r3'},
+  {id:'s10',name:'Ferry Building',type:'cafe',emoji:'🛒',city:'sf',
+   desc:'로컬 마켓과 맛집이 한 곳에',duration:'1h',
+   detail:'토요일 파머스 마켓이 가장 활기차요. 스트라우스 치즈, 블루 보틀 커피 원조점도 이 안에 있어요.',
+   address:'1 Ferry Building, San Francisco, CA',
+   lat:37.7955,lng:-122.3937,reelId:'r2'},
   // ── Sydney ──
   {id:'sy1',name:'Sydney Opera House',type:'viewpoint',emoji:'🎭',city:'sydney',
    desc:'시드니의 상징적인 랜드마크',
@@ -1247,7 +1266,7 @@ function renderListView(){
           <div class="list-em-wrap">${sp.emoji}</div>
           <div class="list-info">
             <div class="list-name">${sp.name}</div>
-            <div class="list-desc">${sp.desc}</div>
+            <div class="list-desc">${sp.desc}${sp.duration?` · ${sp.duration}`:''}</div>
           </div>
           ${S.newSpots.has(sp.id)?'<span class="spot-new">new</span>':''}
           <span class="drag-h">⠿</span>
